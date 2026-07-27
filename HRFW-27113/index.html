@@ -1,0 +1,1389 @@
+<!doctype html><html><head><!-- frame-runtime --><script>window.__FRAME_PREAMBLE={"capabilities":{"downloads":"downloads.BABDwU1K.js","mcp":"mcp.hoz5jxDa.js","permissions":"permissions.ByA9Fd8x.js","self":"self.D3u1zjZe.js","user":"user.Cp1-RnjB.js"},"transforms":"_transforms.DYk1Ltlh.js","comments":"_comments.DiwQajF_.js","translate":"_translate.C5leZL2A.js"}</script><script>(function(){"use strict";const Ee="modulepreload",we=function(e){return"/"+e},Se={},ee=function(t,n,l){let i=Promise.resolve();function s(f){const c=new Event("vite:preloadError",{cancelable:!0});if(c.payload=f,window.dispatchEvent(c),!c.defaultPrevented)throw f}return i.then(f=>{for(const c of f||[])c.status==="rejected"&&s(c.reason);return t().catch(s)})},te=["light","dark","system"];function ne(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_init;return t!==null&&typeof t=="object"}function W(e){return e!==null&&typeof e=="object"&&e.__frame_size_poke===!0}function re(e){if(e===null||typeof e!="object")return!1;const t=e.__frame_theme;if(t===null||typeof t!="object")return!1;const n=t.theme;return typeof n=="string"&&te.includes(n)}function se(e){try{typeof reportError=="function"?reportError(e):setTimeout(()=>{throw e},0)}catch{}}const oe=Object.freeze(Object.assign(Object.create(null),{user:Object.freeze(Object.assign(Object.create(null),{id:null,isOwner:!1,canEdit:!1,name:null,avatarUrl:null,email:null}))}));function Y(e){if(window===top||e.type==="auxclick"&&e.button!==1)return;const t=e.composedPath?e.composedPath():[e.target];let n=null;for(let f=0;f<t.length;f++){const c=t[f];if(c&&c.matches&&c.matches("a[href],area[href]")){n=c;break}}if(!n&&e.target&&e.target.closest&&(n=e.target.closest("a[href],area[href]")),!n)return;const l=n.getAttribute("href");if(!l)return;let i,s;try{i=new URL(l,document.baseURI),s=new URL(document.baseURI).origin}catch{return}(i.protocol==="http:"||i.protocol==="https:")&&i.origin!==s&&(e.preventDefault(),parent.postMessage({__frame_nav:!0,url:i.href},"*"))}const K={};function D(e){if(window===top)return;const t=Date.now();t-(K[e]||0)<500||(K[e]=t,parent.postMessage({__frame_engaged:!0,kind:e},"*"))}const ie=2e3,x=["wheel","touchstart","touchmove","keydown","pointerdown"];let J=0;function ae(e){e.isTrusted&&(J=Date.now())}function ce(){addEventListener("click",Y,!0),addEventListener("auxclick",Y,!0)}function le(){for(let e=0;e<x.length;e++)addEventListener(x[e],ae,{capture:!0,passive:!0});addEventListener("scroll",e=>{e.isTrusted&&Date.now()-J<ie&&D("scroll")},{capture:!0,passive:!0}),addEventListener("pointermove",e=>{e.isTrusted&&D("pointer")},{capture:!0,passive:!0}),addEventListener("click",e=>{e.isTrusted&&D("click")},{capture:!0,passive:!0})}const I="__frame_scroll",ue=150,fe=310,de=160,me=3e4;function pe(){let e=0,t=!1,n=!1,l=!1,i=0;const s=a=>{try{sessionStorage.setItem(I,JSON.stringify({y:a}))}catch{}},f=()=>{if(t){t=!1;return}n=!0,clearTimeout(e),e=setTimeout(()=>s(scrollY),ue)};try{addEventListener("scroll",f,{passive:!0}),addEventListener("pagehide",()=>{clearTimeout(e),s(scrollY)})}catch{}const c=()=>{let a;try{a=sessionStorage.getItem(I)}catch{return null}if(a===null)return null;let _;try{_=JSON.parse(a)}catch{_=null}const m=_?.y;if(!(typeof m=="number"&&Number.isFinite(m)&&m>=0)){try{sessionStorage.removeItem(I)}catch{}return null}return m};let g=!1;const p=a=>{try{const _=scrollY;scrollTo({top:a,left:0,behavior:"instant"}),i=a,l=!0,s(a);const m=scrollY;m!==_&&(t=!0),m!==a&&!g&&(g=!0,addEventListener("load",()=>{try{if(scrollY===m){const y=c();p(y!==null?y:i)}}catch{}},{once:!0}))}catch{}},o=()=>{try{return!!location.hash}catch{return!0}};let u=!1;const d=()=>{try{if(u||innerWidth>fe||innerHeight>de)return;u=!0;const a=Date.now(),_=()=>{try{removeEventListener("resize",_)}catch{}if(Date.now()-a>me||n||o())return;const m=c();p(m!==null?m:i)};addEventListener("resize",_)}catch{}};let h=!1,b=!1;return{restore(){if(h||(h=!0,o()))return;const a=c();a!==null&&(p(a),d())},promoted(){if(b||(b=!0,o()))return;const a=c();a!==null?(p(a),d()):l&&p(i)}}}function he(e,t,n){const l=[...t.values()].filter(i=>i.targets.some(s=>s.startsWith(e+".")));return{wrap(i,s){const f=`${e}.${i}`,c=l.filter(g=>g.targets.includes(f));return c.length===0?(...g)=>{try{return s(...g)}catch(p){return Promise.reject(p)}}:(...g)=>{let p=g;for(const u of c){const d=u.module.parameters;if(d)try{p=d(p)}catch{return Promise.reject({code:"transform_error",id:u.id,scope:e,message:"parameters transform failed"})}}let o;try{o=s(...p)}catch(u){o=Promise.reject(u)}return o.then(u=>{for(let d=c.length-1;d>=0;d--){const h=c[d],b=h.module.returns;if(b)try{u=b(u)}catch{return n({id:h.id,scope:e,leg:"returns"}),u}}return u},u=>{for(let d=c.length-1;d>=0;d--){const h=c[d],b=h.module.throws;if(b)try{u=b(u)}catch{return n({id:h.id,scope:e,leg:"throws"}),Promise.reject(u)}}return Promise.reject(u)})}}}}function ge(e,t,n,l=()=>{}){const i=new Set(e.changes??[]),s=new Map;for(const f of i){const c=t[f];c&&s.set(f,c)}return{contract:e.contract,changes:i,flags:new Set(e.flags??[]),capabilities:e.capabilities??{},capBudgets:e.capBudgets??{},transforms:s,shellOrigin:n.shellOrigin,mount:n.mount,pipe:f=>he(f,s,l)}}(function(){const e=Object.defineProperty,t=globalThis,n=["RTCPeerConnection","webkitRTCPeerConnection","RTCDataChannel","RTCIceCandidate","RTCSessionDescription","RTCRtpSender","RTCRtpReceiver"];let l=0;for(let i=0;i<n.length;i++){const s=n[i];try{e(t,s,{value:void 0,writable:!1,configurable:!1})}catch{try{delete t[s]}catch{}try{e(t,s,{value:void 0,writable:!1,configurable:!0})}catch{}}typeof t[s]=="function"&&l++}if(l&&window!==top)try{parent.postMessage({__frame_rtc_lockdown_failed:l},"*")}catch{}})();const _e=1e4,ye=Object.freeze([...window.__FRAME_PREAMBLE?.origins??["https://claude.ai","https://preview.claude.ai"]]);function G(e){for(const t of ye)if(t.endsWith(":*"))try{const n=new URL(e);if(`${n.protocol}//${n.hostname}:*`===t)return!0}catch{}else if(e===t)return!0;return!1}const R=Object.freeze({...window.__FRAME_PREAMBLE?.capabilities}),U=window.__FRAME_PREAMBLE?.transforms,z=window.__FRAME_PREAMBLE?.comments,$=window.__FRAME_PREAMBLE?.translate,T=/^[\w.-]+\.js$/,be=/^[a-z][a-z0-9_-]{0,63}$/;let V=null,j=null;function q(e,t,n){try{Object.defineProperty(e,t,{value:n,writable:!1,configurable:!1,enumerable:!0})}catch{try{Object.defineProperty(e,t,{value:n,writable:!1,configurable:!0,enumerable:!0})}catch{}}}let B=!1;function X(e){const t=document.documentElement;e==="light"||e==="dark"?(t.dataset.theme=e,t.style.colorScheme=e,B=!0):B&&(delete t.dataset.theme,t.style.colorScheme="",B=!1)}const A=Object.assign(Object.create(null),{mcp:Object.assign(Object.create(null),{watchTool:{handlerArg:3}})}),M=new Map;function Q(e,t){const n=M.get(e);if(!n)return;const l=Object.assign(Object.create(null),t);Object.assign(n.impl,l),n.impl.__settled=()=>Promise.reject({code:"capability_removed",message:`${e}: method not in this runtime`});const i=n.queue;n.queue=[];for(const s of i){const f=l[s.method];if(f)if(A[e]?.[s.method])try{s.resolve(f(...s.args))}catch{k(s,A[e][s.method].handlerArg,{code:"transform_error",message:`${e}.${s.method} rejected its arguments`})}else f(...s.args).then(s.resolve,s.reject);else{const c={code:"capability_removed",message:`${e}.${s.method} is not in this runtime`},g=A[e]?.[s.method];if(g){k(s,g.handlerArg,c);continue}s.reject(c)}}}function ve(e,t){const n=M.get(e);if(!n)return;n.impl.__settled=()=>Promise.reject(t);const l=n.queue;n.queue=[];for(const i of l){const s=A[e]?.[i.method];if(s){k(i,s.handlerArg,t);continue}i.reject(t)}}function N(e,t){const n=oe[e];if(!n){ve(e,t);return}Q(e,Object.fromEntries(Object.entries(n).map(([l,i])=>[l,()=>Promise.resolve(i)])))}function k(e,t,n){if(e.syncState?.dead)return;const l=e.args[t];typeof l=="function"&&queueMicrotask(()=>{if(!e.syncState?.dead)try{l({type:"error",error:n})}catch(i){se(i)}})}const F=Object.getOwnPropertyDescriptor(window,"claude");if(window!==top&&!(F&&F.writable===!1)){ce(),le();let e=null;try{e=pe()}catch{}const t=F?.value??{};q(window,"claude",t);const n=o=>{const u={impl:Object.create(null),queue:[]};M.set(o,u);const d=u.impl,h=new Proxy(d,{get:(b,a)=>{if(typeof a!="string"||a==="then"||a==="toJSON"||a==="valueOf")return;if(a==="toString")return Object.prototype.toString;const _=A[o]?.[a];return _?(...m)=>{if(typeof m[_.handlerArg]!="function")throw new TypeError(`${o}.${a} requires a handler function`);const y=d[a];if(y)return y(...m);if(d.__settled){const v={dead:!1},P={args:[...m],syncState:v};return d.__settled().catch(C=>k(P,_.handlerArg,C)),()=>{v.dead=!0}}let E=null;const S={dead:!1};return u.queue.push({method:a,args:m,resolve:v=>{E=typeof v=="function"?v:null,S.dead&&E?.()},reject:()=>{},syncState:S}),()=>{S.dead=!0,E?.()}}:(...m)=>{const y=d[a]??d.__settled;return y?y(...m):new Promise((E,S)=>{u.queue.push({method:a,args:m,resolve:E,reject:S})})}},set:()=>!1});q(t,o,h)};for(const o of Object.keys(R)){if(t[o]!==void 0){q(t,o,t[o]);continue}n(o)}let l=null,i=null,s=0;const f=o=>{o.source!==parent||!G(o.origin)||ne(o.data)&&(l=o.data.__frame_init,j=o.origin,removeEventListener("message",f),clearTimeout(s),i?.())};addEventListener("message",f),parent.postMessage({__frame_connect:!0},"*");const c=new Promise(o=>{i=o,s=setTimeout(()=>{removeEventListener("message",f),o()},_e)}),g=document.readyState==="loading"?new Promise(o=>document.addEventListener("DOMContentLoaded",()=>o(),{once:!0})):Promise.resolve();g.then(()=>{try{e?.restore()}catch{}});const p=o=>{if(!(o.source!==parent||!G(o.origin))&&W(o.data)){removeEventListener("message",p);try{e?.promoted()}catch{}}};addEventListener("message",p),c.then(async()=>{if(!l||!j){for(const r of M.keys())N(r,{code:"not_granted",message:"frame initialization did not arrive - capability unavailable"});return}X(l.theme);const o=j;let u=!1,d=!1;addEventListener("message",r=>{if(r.source!==parent||r.origin!==o)return;re(r.data)&&X(r.data.__frame_theme.theme);const w=r.data?.__fc_mode;w&&typeof w=="object"&&!u&&z&&T.test(z)&&(u=!0,h(z).then(H=>H.install?.(o,w.on===!0)).catch(()=>{}));const O=r.data?.__ft_cmd;O&&typeof O=="object"&&!d&&$&&T.test($)&&(d=!0,h($).then(H=>H.install?.(o,O)).catch(()=>{}))});const h=r=>ee(()=>import("/_runtime/"+r),void 0),b=Object.keys(l.capabilities??{});for(const r of b)Object.hasOwn(R,r)||be.test(r)&&t[r]===void 0&&(n(r),N(r,{code:"capability_disabled",message:"capability not in this runtime generation"}));const a=b.filter(r=>Object.hasOwn(R,r)).map(r=>[r,R[r]]).filter(r=>typeof r[1]=="string"&&T.test(r[1])),[_,...m]=await Promise.allSettled([U&&T.test(U)?h(U):Promise.resolve({}),...a.map(([,r])=>h(r))]),y=j;V=ge(l,_.status==="fulfilled"&&_.value?.TRANSFORMS||{},{shellOrigin:y,mount:Q},r=>parent.postMessage({__frame_cap_telemetry:r},y));const E=r=>parent.postMessage({__frame_cap_telemetry:{kind:"cap-load-error",cap:r}},y),S=V;m.forEach((r,w)=>{const O=a[w][0];if(r.status!=="fulfilled"){E(O);return}try{r.value?.install?.(S)}catch{E(O)}});for(const[r,w]of M)if(!(w.queue.length===0&&Object.keys(w.impl).length>0)){if(b.includes(r)){N(r,{code:"capability_disabled",message:"capability not available in this session"});continue}N(r,{code:"not_granted",message:"capability not available in this session"})}await g,parent.postMessage({__frame_ready:!0},j);let v=-1,P=0;const C=()=>{P=0;const r=Math.max(document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0);r!==v&&(v=r,parent.postMessage({__frame_size:!0,h:r},y))},L=()=>{P||(P=setTimeout(C,200))},Z=new ResizeObserver(L);Z.observe(document.documentElement),document.body&&Z.observe(document.body),document.addEventListener("load",L,!0),document.fonts?.ready.then(L,()=>{}),addEventListener("beforeprint",()=>{v=-1,C()}),L(),addEventListener("message",r=>{if(!(r.source!==parent||r.origin!==y)&&W(r.data)){try{e?.promoted()}catch{}v=-1,L()}})})}})();</script><!-- /frame-runtime --><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<title>교육 담당자 설문 프로토타입</title>
+<style>
+  :root{
+    --page-bg:#eef0f3;
+    --app-bg:#f4f5f7;
+    --sidebar-bg:#1c1c1c;
+    --sidebar-top:#2b2b2b;
+    --sidebar-text:#c7c9cd;
+    --sidebar-text-active:#ffffff;
+    --sidebar-active-bg:#111111;
+    --accent:#2455e6;
+    --accent-soft:#e8edfc;
+    --surface:#ffffff;
+    --border:#dcdfe4;
+    --border-strong:#c7cbd3;
+    --text:#12151a;
+    --text-muted:#6a7282;
+    --text-faint:#9aa1ab;
+    --danger:#c0392b;
+    --good-bg:#e9f9ef;
+    --good-text:#0f7a3d;
+    --warn:#a15c00;
+    --radius:6px;
+    --shadow:0 12px 32px rgba(15,17,20,.18);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"]{
+    --page-bg:#0c0d10;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){ --page-bg:#0c0d10; }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--page-bg);
+    font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding:28px;
+    min-height:100vh;
+  }
+  .frame-note{
+    max-width:1400px;
+    margin:0 auto 12px;
+    font-size:12.5px;
+    color:var(--text-muted);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .frame-note b{color:var(--text);}
+  .app-shell{
+    max-width:1400px;
+    margin:0 auto;
+    display:flex;
+    height:840px;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(10,12,16,.28);
+    border:1px solid rgba(0,0,0,.06);
+    position:relative;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width:220px;
+    flex:0 0 220px;
+    background:var(--sidebar-bg);
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+  .sidebar-brand{
+    background:var(--sidebar-top);
+    padding:13px 16px;
+    color:#fff;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:-.2px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:0 0 auto;
+  }
+  .sidebar-brand .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    flex:0 0 auto;
+  }
+  .sidebar-scope{
+    padding:14px 16px 6px;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    color:#7d828b;
+    text-transform:uppercase;
+  }
+  .sidebar-nav{padding:2px 8px 16px;}
+  .sidebar-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    width:100%;
+    text-align:left;
+    padding:10px 12px;
+    border-radius:6px;
+    border:none;
+    background:transparent;
+    color:var(--sidebar-text);
+    font-size:12.5px;
+    font-weight:500;
+    cursor:pointer;
+    font-family:inherit;
+    margin-bottom:2px;
+  }
+  .sidebar-item:hover{background:rgba(255,255,255,.06);}
+  .sidebar-item.active{
+    background:var(--sidebar-active-bg);
+    color:var(--sidebar-text-active);
+    font-weight:700;
+  }
+  .sidebar-item .ic{width:16px;text-align:center;flex:0 0 auto;font-size:13px;}
+  .sidebar-foot{
+    margin-top:auto;
+    padding:14px 16px;
+    font-size:10.5px;
+    color:#5b5f66;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+
+  /* Main */
+  .main{
+    flex:1 1 auto;
+    display:flex;
+    flex-direction:column;
+    background:var(--app-bg);
+    min-width:0;
+  }
+  .topbar{
+    flex:0 0 auto;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    padding:9px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:14px;
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+  .topbar .company-pill{
+    font-weight:700;
+    color:var(--text);
+    background:var(--accent-soft);
+    color:#1d3fb0;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:11px;
+  }
+  .topbar button.link{
+    background:none;border:none;color:var(--text-muted);
+    font:inherit;cursor:pointer;padding:2px 4px;
+  }
+  .topbar button.link:hover{color:var(--text);}
+  .topbar button.link:focus-visible, .sidebar-item:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
+
+  .view-head{
+    flex:0 0 auto;
+    padding:20px 26px 4px;
+  }
+  .view-head .eyebrow{
+    font-size:11px;color:var(--text-muted);letter-spacing:.03em;margin-bottom:4px;
+  }
+  .view-head h1{
+    margin:0;font-size:20px;font-weight:700;letter-spacing:-.2px;text-wrap:balance;
+  }
+  .view-body{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:16px 26px 28px;
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    margin-bottom:16px;
+  }
+  .card-pad{padding:16px 18px;}
+
+  .filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
+  .filter-row label{font-size:12.5px;font-weight:700;color:var(--text);}
+  input[type=text], input[type=date], input[type=datetime-local], select{
+    font:inherit;font-size:12.5px;
+    padding:7px 10px;
+    border:1px solid var(--border-strong);
+    border-radius:5px;
+    background:#fff;
+    color:var(--text);
+  }
+  input:disabled, select:disabled{
+    background:#f0f1f3;
+    color:var(--text-faint);
+    border-color:var(--border);
+    cursor:not-allowed;
+  }
+  .btn{
+    font:inherit;font-size:12.5px;font-weight:700;
+    padding:8px 16px;border-radius:5px;border:1px solid transparent;
+    cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .btn-primary{background:var(--text);color:#fff;}
+  .btn-primary:hover{background:#000;}
+  .btn-ghost{background:#fff;border-color:var(--border-strong);color:var(--text);}
+  .btn-ghost:hover{background:#f2f3f5;}
+  .btn-sm{padding:5px 11px;font-size:11.5px;}
+  .btn-danger-ghost{background:#fff;border-color:#eecfc9;color:var(--danger);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .table-wrap{overflow-x:auto;}
+  thead th{
+    text-align:left;font-weight:700;color:var(--text);
+    background:#f7f8fa;border-bottom:1px solid var(--border);
+    padding:10px 12px;white-space:nowrap;
+  }
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr.clickable{cursor:pointer;}
+  tbody tr.clickable:hover{background:#fafbfd;}
+  .muted-note{padding:12px;font-size:11.5px;color:var(--text-muted);}
+  .pill{
+    display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;
+  }
+  .pill-on{background:var(--good-bg);color:var(--good-text);}
+  .pill-off{background:#f1f2f4;color:var(--text-muted);}
+  td.num{font-variant-numeric:tabular-nums;}
+
+  .form-row{
+    display:flex;border-bottom:1px solid var(--border);padding:14px 18px;
+  }
+  .form-row:last-child{border-bottom:none;}
+  .form-row .flabel{
+    flex:0 0 168px;font-weight:700;font-size:12.5px;padding-top:7px;
+  }
+  .form-row .fvalue{flex:1 1 auto;display:flex;flex-direction:column;gap:8px;}
+  .fvalue .row-inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .hint{font-size:11px;color:var(--text-muted);}
+  .hint.warn{color:var(--warn);}
+  input.wide{width:100%;max-width:520px;}
+  .radio{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;}
+  .radio input{margin:0;}
+  .readonly-value{font-size:12.5px;padding-top:7px;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#f2f3f5;border:1px solid var(--border);
+    border-radius:20px;padding:4px 10px;font-size:11.5px;
+  }
+  .chip button{border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:12px;padding:0;line-height:1;}
+  .chip button:hover{color:var(--danger);}
+  .empty-chip{font-size:11.5px;color:var(--text-faint);}
+
+  .btn-row{display:flex;gap:8px;padding-top:18px;}
+
+  /* Overlay / modal */
+  .overlay{
+    position:absolute;inset:0;
+    background:rgba(10,12,16,.5);
+    display:flex;align-items:center;justify-content:center;
+    z-index:40;
+    animation:fadeIn .12s ease-out;
+  }
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .overlay[hidden]{display:none;}
+  .modal{
+    background:#fff;border-radius:14px;box-shadow:var(--shadow);
+    width:440px;max-width:90vw;padding:26px 26px 22px;
+    position:relative;
+  }
+  .modal.wide{width:560px;}
+  .modal-close{
+    position:absolute;top:14px;right:16px;border:none;background:none;
+    font-size:18px;color:var(--text-muted);cursor:pointer;line-height:1;
+  }
+  .modal h2{margin:6px 0 4px;font-size:17px;text-align:center;}
+  .modal p.desc{margin:0 0 16px;font-size:12.5px;color:var(--text-muted);text-align:center;line-height:1.55;}
+  .survey-emoji{font-size:38px;text-align:center;margin-bottom:2px;}
+  .choice-btn{
+    width:100%;padding:12px;border:none;border-radius:10px;
+    font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:8px;
+    font-family:inherit;
+  }
+  .choice-good{background:#e6f8ee;color:#0f7a3d;}
+  .choice-bad{background:#fdecec;color:#b23327;}
+  .choice-next{background:var(--text);color:#fff;}
+  .choice-next:disabled{opacity:.4;cursor:not-allowed;}
+  .opt-list{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+  .opt-item{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--border);border-radius:8px;padding:9px 10px;
+    font-size:12.5px;cursor:pointer;
+  }
+  .opt-item input{margin:0;}
+  .modal textarea{
+    width:100%;min-height:60px;border:1px solid var(--border);border-radius:8px;
+    padding:8px;font:inherit;font-size:12px;resize:vertical;margin-bottom:12px;
+  }
+  .dont-show{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-muted);justify-content:center;margin-top:4px;}
+  .modal-search{display:flex;gap:8px;margin-bottom:12px;}
+  .modal-search input{flex:1;}
+  .person-list{border:1px solid var(--border);border-radius:8px;max-height:220px;overflow-y:auto;margin-bottom:10px;}
+  .person-row{
+    display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:12.5px;
+    border-bottom:1px solid var(--border);cursor:pointer;
+  }
+  .person-row:last-child{border-bottom:none;}
+  .person-row:hover{background:#f7f8fa;}
+  .person-row .pname{font-weight:700;min-width:64px;}
+  .person-row .pid{color:var(--text-muted);}
+  .person-row .pdept{color:var(--text-faint);margin-left:auto;font-size:11px;}
+
+  .toast-wrap{
+    position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+    z-index:60;display:flex;flex-direction:column;gap:8px;align-items:center;
+  }
+  .toast{
+    background:#12151a;color:#fff;padding:10px 18px;border-radius:20px;
+    font-size:12.5px;box-shadow:0 10px 30px rgba(0,0,0,.3);
+    animation:toastIn .18s ease-out;
+  }
+  @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  .learner-page{
+    background:#fff;border:1px solid var(--border);border-radius:8px;
+    padding:32px;min-height:420px;
+  }
+  .learner-page h2{margin:0 0 6px;font-size:18px;}
+  .learner-block{
+    height:64px;border-radius:6px;background:#f2f3f5;margin-bottom:14px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .overlay, .toast{animation:none;}
+  }
+</style>
+
+<div class="frame-note">
+  <span><b>HRFW-27113</b> 교육 담당자 설문 기능 — 정책서·기획서 기반 동작 프로토타입 (임시 데이터, 실제 서버 연동 없음)</span>
+</div>
+
+<div class="app-shell" id="app">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand"><span class="dot"></span>교육운영관리시스템</div>
+    <div class="sidebar-scope">개별 기업 에듀매니저</div>
+    <nav class="sidebar-nav" id="sidebarNavTenant"></nav>
+    <div class="sidebar-scope">0번 기업 에듀매니저</div>
+    <nav class="sidebar-nav" id="sidebarNavRoot"></nav>
+    <div class="sidebar-foot">메뉴 클릭 시 해당 기업 컨텍스트로 자동 전환됩니다.</div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span id="companyLabel" class="company-pill">UX레벨업 (개발용) · 21320</span>
+      <button class="link" id="btnSwitchCompany">기업변경</button>
+      <button class="link">로그아웃</button>
+    </div>
+
+    <div class="view-head">
+      <div class="eyebrow" id="viewEyebrow">교육 담당자 설문 관리</div>
+      <h1 id="viewTitle">목록</h1>
+    </div>
+    <div class="view-body" id="viewBody"></div>
+  </div>
+
+  <div class="overlay" id="overlaySurvey" hidden></div>
+  <div class="overlay" id="overlayPerson" hidden></div>
+  <div class="overlay" id="overlayQuestion" hidden></div>
+  <div class="overlay" id="overlayBulk" hidden></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- mock data ---------- */
+  var EDU_ROLE_LIST = [
+    {name:"홍길동", id:"hong01", dept:"교육운영팀"},
+    {name:"김담당", id:"kim22", dept:"인재개발팀"},
+    {name:"이매니저", id:"lee15", dept:"경영지원팀"},
+    {name:"박운영", id:"park09", dept:"HR지원팀"}
+  ];
+
+  var uid = 100;
+  function nextId(){ return uid++; }
+
+  /* 문항 코드 — 설문 일괄등록 엑셀에서 문항을 코드로 참조할 수 있도록 문항마다 고유 코드 부여 */
+  var qCodeSeq = 0;
+  function nextQCode(){ qCodeSeq++; return "Q" + String(qCodeSeq).padStart(3,"0"); }
+
+  /* 관리자 화면 표기용 — "긍정/부정"이라는 정식 분류처럼 오해되지 않도록, 실제 팝업 버튼 문구에 맞춘 평문 사용 */
+  function catLabel(cat){ return cat === "good" ? "도움됨" : "아쉬움"; }
+
+  /* 문항(이유) 풀 — survey_popup.html 목업의 good/bad 리스트 기반. 긍정/부정으로만 분류하고
+     각 설문은 이 풀에서 문항을 "선택"해서 붙여쓴다 (문항 자체를 새로 만드는 게 아니라 재사용). */
+  function seedQuestionPool(){
+    return [
+      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 콘텐츠를 쉽게 찾을 수 있었어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"메뉴 구성이 편리했어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"UI가 보기 쉬워졌어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 기능을 빠르게 찾을 수 있었어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 메뉴를 찾기 어려웠어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"메뉴 구성이 복잡했어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 기능이 없었어요.", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"오류가 발생했어요.", active:true}
+    ];
+  }
+  var QUESTION_POOL = seedQuestionPool();
+  function findQuestion(id){
+    for (var i=0;i<QUESTION_POOL.length;i++) if (QUESTION_POOL[i].id === id) return QUESTION_POOL[i];
+    return null;
+  }
+  function countSurveysUsing(qid){
+    return surveys.filter(function(s){ return s.questionIds.indexOf(qid) > -1; }).length;
+  }
+  function downloadQuestionCodeList(){
+    var lines = ["문항코드,구분,문항내용,사용여부"];
+    QUESTION_POOL.forEach(function(q){
+      lines.push([q.code, catLabel(q.category), '"'+q.content+'"', q.active?"사용":"미사용"].join(","));
+    });
+    var blob = new Blob(["﻿"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "기등록_설문문항_코드목록.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    toast("등록된 문항 코드 목록을 다운로드했습니다. 설문 일괄등록 엑셀에서 이 코드로 문항을 지정하세요.");
+  }
+
+  function seedSurveys(){
+    return [
+      {
+        id: nextId(),
+        title: "2026년 하반기 커스텀 개선 만족도 조사",
+        desc: "신규 커스텀 완료 후 만족도 확인",
+        managerName: "홍길동", managerId: "hong01",
+        startAt: "2026-07-01T09:00", endAt: "2026-07-31T18:00",
+        menuUrl: "/Manage/Home",
+        expose: true,
+        targets: [
+          {name:"홍길동", id:"hong01"},
+          {name:"김담당", id:"kim22"}
+        ],
+        participants: 12,
+        questionIds: QUESTION_POOL.map(function(q){ return q.id; })
+      }
+    ];
+  }
+  var surveys = seedSurveys();
+  var currentSurveyId = surveys[0].id;
+
+  /* 0번 기업 "교육 담당자 전체 설문 결과" — 설문 단위가 아니라 응답 단위로 전 기업 결과를 모아 다운로드 */
+  var allCompanyResults = [
+    {company:"SPC GFS (66911)", title:"2026년 하반기 커스텀 개선 만족도 조사", managerName:"홍길동", managerId:"hong01", respondedAt:"2026-07-03 10:12", summary:"도움됨 — 메뉴 구성이 편리했어요."},
+    {company:"SPC GFS (66911)", title:"2026년 하반기 커스텀 개선 만족도 조사", managerName:"김담당", managerId:"kim22", respondedAt:"2026-07-05 15:41", summary:"아쉬움 — 원하는 기능이 없었어요."},
+    {company:"UX레벨업 (21320)", title:"신규 UI 개편 만족도 조사", managerName:"김담당", managerId:"kim07", respondedAt:"2026-06-20 09:03", summary:"도움됨 — UI가 보기 쉬워졌어요."}
+  ];
+
+  /* ---------- app state ---------- */
+  var state = {
+    company: "tenant", // "tenant" | "root"
+    view: "s-list",    // s-list, s-register, s-edit, s-view, q-list, q-register, q-edit, q-view, all-list
+    editingSurveyId: null,
+    viewingSurveyId: null,
+    editingQuestionId: null,
+    viewingQuestionId: null,
+    targetDraft: [],       // chips being edited in a survey form
+    questionDraft: [],     // question ids selected in a survey form
+    personSearchOpenFor: null // "register" | "edit"
+  };
+
+  var els = {
+    sidebarNavTenant: document.getElementById("sidebarNavTenant"),
+    sidebarNavRoot: document.getElementById("sidebarNavRoot"),
+    companyLabel: document.getElementById("companyLabel"),
+    viewEyebrow: document.getElementById("viewEyebrow"),
+    viewTitle: document.getElementById("viewTitle"),
+    viewBody: document.getElementById("viewBody"),
+    overlaySurvey: document.getElementById("overlaySurvey"),
+    overlayPerson: document.getElementById("overlayPerson"),
+    overlayQuestion: document.getElementById("overlayQuestion"),
+    overlayBulk: document.getElementById("overlayBulk"),
+    toastWrap: document.getElementById("toastWrap")
+  };
+
+  function toast(msg){
+    var t = document.createElement("div");
+    t.className = "toast";
+    t.textContent = msg;
+    els.toastWrap.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 2600);
+  }
+
+  function esc(s){
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  /* ---------- sidebar ---------- */
+  var MENUS = {
+    tenant: [
+      {key:"s-list", label:"교육 담당자 설문 관리", group:"survey"},
+      {key:"q-list", label:"교육 담당자 설문 문항 관리", group:"question"},
+      {key:"learner-view", label:"설문 참여 화면", group:"learner"}
+    ],
+    root: [
+      {key:"all-results", label:"교육 담당자 전체 설문 결과", group:"all-results"}
+    ]
+  };
+
+  function renderSidebar(){
+    els.sidebarNavTenant.innerHTML = "";
+    MENUS.tenant.forEach(function(m){
+      var btn = document.createElement("button");
+      btn.className = "sidebar-item" + (isActiveGroup(m) ? " active" : "");
+      btn.textContent = m.label;
+      btn.addEventListener("click", function(){ go(m.key, {}, "tenant"); });
+      els.sidebarNavTenant.appendChild(btn);
+    });
+    els.sidebarNavRoot.innerHTML = "";
+    MENUS.root.forEach(function(m){
+      var btn = document.createElement("button");
+      btn.className = "sidebar-item" + (isActiveGroup(m) ? " active" : "");
+      btn.textContent = m.label;
+      btn.addEventListener("click", function(){ go(m.key, {}, "root"); });
+      els.sidebarNavRoot.appendChild(btn);
+    });
+  }
+  function isActiveGroup(m){
+    if (m.group === "survey") return state.view.indexOf("s-") === 0;
+    if (m.group === "question") return state.view.indexOf("q-") === 0;
+    if (m.group === "all-results") return state.view === "all-results";
+    if (m.group === "learner") return state.view === "learner-view";
+    return false;
+  }
+
+  function setCompany(company){
+    state.company = company;
+    els.companyLabel.textContent = company === "root"
+      ? "0번 기업 (전체관리용) · 00000"
+      : "UX레벨업 (개발용) · 21320";
+  }
+  function switchCompany(){
+    setCompany(state.company === "tenant" ? "root" : "tenant");
+    go(state.company === "root" ? "all-results" : "s-list");
+    toast(state.company === "root"
+      ? "0번 기업으로 전환 — 전체 기업 통합 조회 전용 메뉴로 바뀝니다."
+      : "개별 기업(UX레벨업)으로 전환 — 자기 기업 설문 관리 메뉴로 바뀝니다.");
+  }
+  document.getElementById("btnSwitchCompany").addEventListener("click", switchCompany);
+
+  /* ---------- routing ---------- */
+  function go(view, opts, company){
+    opts = opts || {};
+    if (company && company !== state.company) setCompany(company);
+    state.view = view;
+    if (opts.surveyId !== undefined) state.viewingSurveyId = state.editingSurveyId = opts.surveyId;
+    if (opts.questionId !== undefined) state.viewingQuestionId = state.editingQuestionId = opts.questionId;
+    renderSidebar();
+    renderView();
+  }
+
+  function findSurvey(id){
+    for (var i=0;i<surveys.length;i++) if (surveys[i].id === id) return surveys[i];
+    return null;
+  }
+
+  /* ---------- view rendering ---------- */
+  function renderView(){
+    var v = state.view;
+    if (v === "s-list") return renderSurveyList();
+    if (v === "s-register") return renderSurveyForm(null);
+    if (v === "s-edit") return renderSurveyForm(findSurvey(state.editingSurveyId));
+    if (v === "s-view") return renderSurveyView(findSurvey(state.viewingSurveyId));
+    if (v === "q-list") return renderQuestionList();
+    if (v === "q-register") return renderQuestionForm(null);
+    if (v === "q-edit") return renderQuestionForm(findQuestion(state.editingQuestionId));
+    if (v === "all-results") return renderAllResults();
+    if (v === "learner-view") return renderLearnerView();
+  }
+
+  /* menuLabel = 실제 메뉴명(항상 고정), action = 목록/등록/수정/보기 같은 하위 화면일 때만 "메뉴명 / 액션" 형태로 붙인다 */
+  function setHead(menuLabel, action){
+    els.viewEyebrow.textContent = state.company === "root" ? "0번 기업 에듀매니저" : "개별 기업 에듀매니저";
+    els.viewTitle.textContent = action ? (menuLabel + " / " + action) : menuLabel;
+  }
+
+  /* ---- 교육 담당자 설문 관리 : 목록 ---- */
+  function renderSurveyList(){
+    setHead("교육 담당자 설문 관리");
+    var rows = surveys.map(function(s){
+      return '<tr class="clickable" data-id="'+s.id+'">' +
+        '<td class="num">'+s.id+'</td>' +
+        '<td>'+esc(s.title)+'</td>' +
+        '<td>'+esc(s.managerName)+'</td>' +
+        '<td>'+esc(s.managerId)+'</td>' +
+        '<td>'+fmtRange(s.startAt,s.endAt,s.untilResponded)+'</td>' +
+        '<td>'+esc(s.menuUrl)+'</td>' +
+        '<td>'+(s.expose ? "노출" : "미노출")+'</td>' +
+        '<td class="num">'+s.participants+'</td>' +
+        '<td><button class="btn btn-ghost btn-sm act-dl" data-id="'+s.id+'">결과 다운로드</button></td>' +
+      '</tr>';
+    }).join("");
+
+    els.viewBody.innerHTML =
+      '<div class="card card-pad">' +
+        '<div class="filter-row" style="margin-bottom:10px;">' +
+          '<label>검색 기간</label>' +
+          '<input type="date" id="fFrom" value="2026-06-22"> <span>~</span> ' +
+          '<input type="date" id="fTo" value="2026-07-22">' +
+        '</div>' +
+        '<div class="filter-row">' +
+          '<select id="fKind"><option value="title">제목</option><option value="managerName">담당자명</option><option value="managerId">담당자ID</option></select>' +
+          '<input type="text" id="fQuery" placeholder="검색어 입력">' +
+          '<button class="btn btn-primary btn-sm" id="btnSearch">검색</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">' +
+        '<button class="btn btn-ghost" id="btnBulkSurvey">설문 일괄등록 (엑셀)</button>' +
+        '<button class="btn btn-primary" id="btnNewSurvey">설문등록</button>' +
+      '</div>' +
+      '<div class="card table-wrap">' +
+        '<table><thead><tr>' +
+          '<th>번호</th><th>제목</th><th>담당자명</th><th>담당자ID</th><th>설문기간</th><th>노출메뉴URL</th><th>노출여부</th><th>참여자</th><th>결과다운로드</th>' +
+        '</tr></thead><tbody id="surveyRows">' + (rows || '') + '</tbody></table>' +
+        (rows ? '' : '<div class="muted-note">등록된 설문이 없습니다. "설문등록" 버튼으로 새 설문을 만들어보세요.</div>') +
+      '</div>' +
+      '<p class="hint" style="margin-top:10px;">행 클릭 시 보기 화면으로 이동, "결과 다운로드"는 해당 설문 결과만 즉시 다운로드됩니다.</p>';
+
+    document.getElementById("btnNewSurvey").addEventListener("click", function(){ go("s-register"); });
+    document.getElementById("btnBulkSurvey").addEventListener("click", function(){
+      openBulkUploadModal({
+        title: "설문 일괄등록",
+        hint: "엑셀 양식으로 여러 설문을 한 번에 등록합니다. 문항은 문항 코드로 지정합니다 — 아래 버튼으로 코드 목록을 먼저 받아 확인하세요.",
+        extraButton: { label: "기 등록 설문 문항 다운로드", onClick: downloadQuestionCodeList },
+        onConfirm: function(fileName){
+          var allQ = QUESTION_POOL.map(function(q){ return q.id; });
+          surveys.push(
+            {id:nextId(), title:"[일괄등록] 신규 기능 만족도 조사", desc:"엑셀 일괄등록 예시", managerName:"박운영", managerId:"park09",
+             startAt:"2026-08-01T09:00", endAt:"2026-08-31T18:00", menuUrl:"/Manage/Home", expose:true,
+             targets:[{name:"박운영", id:"park09"}], questionIds:allQ, participants:0},
+            {id:nextId(), title:"[일괄등록] 상담 서비스 만족도 조사", desc:"엑셀 일괄등록 예시", managerName:"이매니저", managerId:"lee15",
+             startAt:"2026-08-01T09:00", endAt:"2026-08-31T18:00", menuUrl:"/Manage/Home", expose:false,
+             targets:[{name:"이매니저", id:"lee15"}], questionIds:allQ, participants:0}
+          );
+          toast('"'+fileName+'" 업로드 완료 — 설문 2건이 일괄 등록되었습니다.');
+          renderSurveyList();
+        }
+      });
+    });
+    document.getElementById("btnSearch").addEventListener("click", applySurveyFilter);
+    els.viewBody.querySelectorAll("tr.clickable").forEach(function(tr){
+      tr.addEventListener("click", function(e){
+        if (e.target.closest(".act-dl")) return;
+        go("s-view", {surveyId: Number(tr.dataset.id)});
+      });
+    });
+    els.viewBody.querySelectorAll(".act-dl").forEach(function(btn){
+      btn.addEventListener("click", function(){ downloadSurveyResult(findSurvey(Number(btn.dataset.id))); });
+    });
+  }
+
+  function applySurveyFilter(){
+    var kind = document.getElementById("fKind").value;
+    var q = document.getElementById("fQuery").value.trim().toLowerCase();
+    var from = document.getElementById("fFrom").value;
+    var to = document.getElementById("fTo").value;
+    if (from && to && from > to){ toast("검색 시작일이 종료일보다 늦습니다."); return; }
+    var rows = els.viewBody.querySelectorAll("#surveyRows tr");
+    var shown = 0;
+    rows.forEach(function(tr){
+      var s = findSurvey(Number(tr.dataset.id));
+      var sStart = s.startAt.slice(0,10), sEnd = s.endAt.slice(0,10);
+      var inRange = (!from || sEnd >= from) && (!to || sStart <= to);
+      var val = (kind === "title" ? s.title : kind === "managerName" ? s.managerName : s.managerId).toLowerCase();
+      var matchQuery = !q || val.indexOf(q) > -1;
+      var match = inRange && matchQuery;
+      tr.style.display = match ? "" : "none";
+      if (match) shown++;
+    });
+    toast("검색 결과: " + shown + "건");
+  }
+
+  function fmtRange(a,b,untilResponded){
+    if (untilResponded) return esc(a.replace("T"," ")) + " ~ 응답 완료 시까지";
+    return esc(a.replace("T"," ")) + " ~ " + esc(b.replace("T"," "));
+  }
+
+  function downloadSurveyResult(s){
+    var lines = ["담당자ID,담당자명,설문제목,응답일시,문항별응답"];
+    lines.push([s.managerId, s.managerName, '"'+s.title+'"', s.endAt.replace("T"," "), '"만족도: 도움됨 / 척도: 5 / 의견: 좋아요"'].join(","));
+    var blob = new Blob(["﻿" + lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = s.title.replace(/[^\w가-힣]+/g,"_") + "_결과.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('"' + s.title + '" 결과를 다운로드했습니다.');
+  }
+
+  /* ---- 교육 담당자 설문 관리 : 등록/수정 ---- */
+  function renderSurveyForm(existing){
+    var isEdit = !!existing;
+    setHead("교육 담당자 설문 관리", isEdit ? "수정" : "등록");
+    state.targetDraft = isEdit ? existing.targets.slice() : [];
+    state.questionDraft = isEdit ? existing.questionIds.slice() : QUESTION_POOL.map(function(q){return q.id;});
+
+    els.viewBody.innerHTML =
+      '<div class="card">' +
+        row("제목", '<input type="text" class="wide" id="fTitle" value="'+(isEdit?esc(existing.title):"")+'" placeholder="설문 타이틀 입력">') +
+        row("설명", '<input type="text" class="wide" id="fDesc" value="'+(isEdit?esc(existing.desc):"")+'" placeholder="설문 설명 입력">') +
+        row("문항등록",
+          '<div class="row-inline"><button class="btn btn-ghost btn-sm" id="btnPickQuestions">문항 선택</button>' +
+          '<span class="hint">팝업에서 등록된 문항 중 이 설문에 사용할 항목을 고릅니다</span></div>' +
+          '<div class="chip-row" id="questionChips"></div>') +
+        row("설문기간", '<div class="row-inline">' +
+            '<input type="datetime-local" id="fStart" value="'+(isEdit?existing.startAt:"2026-07-01T09:00")+'" style="width:190px">' +
+            '<span>~</span>' +
+            '<input type="datetime-local" id="fEnd" value="'+(isEdit?existing.endAt:"2026-07-31T18:00")+'" style="width:190px">' +
+          '</div>' +
+          '<label class="radio"><input type="checkbox" id="fUntilResponded" '+(isEdit && existing.untilResponded ? "checked":"")+'>응답 완료 시까지</label>' +
+          '<p class="hint">체크하면 종료일을 지정하지 않고 교육담당자가 응답할 때까지 계속 노출됩니다. (기간 입력은 비활성화됩니다)</p>') +
+        row("노출 메뉴 URL", '<input type="text" id="fUrl" class="wide" value="'+(isEdit?esc(existing.menuUrl):"/Manage/Home")+'" style="max-width:340px">' +
+          '<p class="hint">설문 1건당 1개 메뉴만 지정</p>') +
+        row("노출여부", radioPair("expose","노출","미노출", isEdit ? existing.expose : true)) +
+        row("대상지정 (교육담당자)",
+          '<div class="row-inline"><button class="btn btn-ghost btn-sm" id="btnPersonSearch">교육담당자 검색</button>' +
+          '<span class="hint">/Student/EduRoleV2 등록 목록에서 선택</span></div>' +
+          '<div class="chip-row" id="targetChips"></div>') +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="btnSave">'+(isEdit?"저장":"등록완료")+'</button>' +
+        '<button class="btn btn-ghost" id="btnCancel">목록</button>' +
+      '</div>';
+
+    renderTargetChips();
+    renderQuestionChips();
+    var fStart = document.getElementById("fStart");
+    var fEnd = document.getElementById("fEnd");
+    var fUntilResponded = document.getElementById("fUntilResponded");
+    function syncPeriodInputs(){
+      fStart.disabled = fEnd.disabled = fUntilResponded.checked;
+    }
+    syncPeriodInputs();
+    fUntilResponded.addEventListener("change", syncPeriodInputs);
+    document.getElementById("btnPersonSearch").addEventListener("click", function(){ openPersonSearch(); });
+    document.getElementById("btnPickQuestions").addEventListener("click", function(){ openQuestionPicker(); });
+    document.getElementById("btnCancel").addEventListener("click", function(){ go("s-list"); });
+    document.getElementById("btnSave").addEventListener("click", function(){ saveSurvey(existing); });
+  }
+
+  function row(label, contentHtml){
+    return '<div class="form-row"><div class="flabel">'+esc(label)+'</div><div class="fvalue">'+contentHtml+'</div></div>';
+  }
+  function radioPair(name, onLabel, offLabel, onDefault){
+    return '<div class="row-inline">' +
+      '<label class="radio"><input type="radio" name="'+name+'" value="on" '+(onDefault?"checked":"")+'>'+onLabel+'</label>' +
+      '<label class="radio"><input type="radio" name="'+name+'" value="off" '+(!onDefault?"checked":"")+'>'+offLabel+'</label>' +
+    '</div>';
+  }
+  function renderTargetChips(){
+    var wrap = document.getElementById("targetChips");
+    if (!wrap) return;
+    if (!state.targetDraft.length){
+      wrap.innerHTML = '<span class="empty-chip">선택된 교육담당자가 없습니다</span>';
+      return;
+    }
+    wrap.innerHTML = state.targetDraft.map(function(p,idx){
+      return '<span class="chip">'+esc(p.name)+'('+esc(p.id)+') <button data-idx="'+idx+'" title="제거">✕</button></span>';
+    }).join("");
+    wrap.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click", function(){
+        state.targetDraft.splice(Number(b.dataset.idx),1);
+        renderTargetChips();
+      });
+    });
+  }
+
+  function renderQuestionChips(){
+    var wrap = document.getElementById("questionChips");
+    if (!wrap) return;
+    if (!state.questionDraft.length){
+      wrap.innerHTML = '<span class="empty-chip">선택된 문항이 없습니다</span>';
+      return;
+    }
+    wrap.innerHTML = state.questionDraft.map(function(qid, idx){
+      var q = findQuestion(qid);
+      if (!q) return "";
+      return '<span class="chip">['+catLabel(q.category)+'] '+esc(q.code)+' '+esc(q.content)+' <button data-idx="'+idx+'" title="제거">✕</button></span>';
+    }).join("");
+    wrap.querySelectorAll("button").forEach(function(b){
+      b.addEventListener("click", function(){
+        state.questionDraft.splice(Number(b.dataset.idx),1);
+        renderQuestionChips();
+      });
+    });
+  }
+
+  function saveSurvey(existing){
+    var title = document.getElementById("fTitle").value.trim();
+    if (!title){ toast("제목을 입력하세요."); return; }
+    if (!state.questionDraft.length){ toast("문항을 1개 이상 선택하세요."); return; }
+    if (!state.targetDraft.length){ toast("대상 교육담당자를 1명 이상 선택하세요."); return; }
+    var desc = document.getElementById("fDesc").value.trim();
+    var url = document.getElementById("fUrl").value.trim() || "/Manage/Home";
+    var start = document.getElementById("fStart").value.trim().replace(" ","T");
+    var end = document.getElementById("fEnd").value.trim().replace(" ","T");
+    var untilResponded = document.getElementById("fUntilResponded").checked;
+    var expose = document.querySelector('input[name=expose]:checked').value === "on";
+
+    if (existing){
+      existing.title = title; existing.desc = desc; existing.menuUrl = url;
+      existing.startAt = start; existing.endAt = end;
+      existing.untilResponded = untilResponded;
+      existing.expose = expose;
+      existing.targets = state.targetDraft.slice();
+      existing.questionIds = state.questionDraft.slice();
+      toast('"'+title+'" 저장되었습니다.');
+      go("s-list");
+    } else {
+      var s = {
+        id: nextId(), title:title, desc:desc, menuUrl:url, startAt:start, endAt:end,
+        untilResponded:untilResponded,
+        expose:expose, targets: state.targetDraft.slice(), questionIds: state.questionDraft.slice(),
+        managerName: state.targetDraft[0] ? state.targetDraft[0].name : "미지정",
+        managerId: state.targetDraft[0] ? state.targetDraft[0].id : "-",
+        participants: 0
+      };
+      surveys.push(s);
+      currentSurveyId = s.id;
+      toast('"'+title+'" 등록되었습니다.');
+      go("s-list");
+    }
+  }
+
+  /* ---- 교육 담당자 설문 관리 : 보기 ---- */
+  function renderSurveyView(s){
+    if (!s){ go("s-list"); return; }
+    setHead("교육 담당자 설문 관리", "보기");
+    els.viewBody.innerHTML =
+      '<div class="card">' +
+        row("제목", '<div class="readonly-value">'+esc(s.title)+'</div>') +
+        row("설명", '<div class="readonly-value">'+esc(s.desc||"-")+'</div>') +
+        row("문항", '<div class="readonly-value">'+s.questionIds.length+'개 선택됨 — '+
+          s.questionIds.map(function(qid){
+            var q = findQuestion(qid);
+            return q ? "["+catLabel(q.category)+"] "+esc(q.code)+" "+esc(q.content) : "";
+          }).filter(Boolean).join("<br>")+'</div>') +
+        row("설문기간", '<div class="readonly-value">'+fmtRange(s.startAt,s.endAt,s.untilResponded)+'</div>') +
+        row("노출 메뉴 URL", '<div class="readonly-value">'+esc(s.menuUrl)+'</div>') +
+        row("노출여부", '<div class="readonly-value">'+(s.expose?"노출":"미노출")+'</div>') +
+        row("대상지정", '<div class="readonly-value">'+(s.targets.map(function(p){return p.name+'('+p.id+')';}).join(", ") || "-")+'</div>') +
+        row("참여 현황", '<div class="readonly-value">'+s.participants+'명 참여 / 대상 '+s.targets.length+'명</div>') +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-ghost" id="btnDl">결과 다운로드</button>' +
+        '<button class="btn btn-ghost" id="btnEdit">수정</button>' +
+        '<button class="btn btn-ghost" id="btnBack">목록</button>' +
+        '<button class="btn btn-primary" id="btnPreview" style="margin-left:auto;">교육담당자 화면에서 보기</button>' +
+      '</div>';
+    document.getElementById("btnDl").addEventListener("click", function(){ downloadSurveyResult(s); });
+    document.getElementById("btnEdit").addEventListener("click", function(){ go("s-edit", {surveyId:s.id}); });
+    document.getElementById("btnBack").addEventListener("click", function(){ go("s-list"); });
+    document.getElementById("btnPreview").addEventListener("click", function(){ currentSurveyId = s.id; go("learner-view"); });
+  }
+
+  /* ---- 교육담당자 화면 (설문 참여 화면) ---- */
+  function renderLearnerView(){
+    setHead("설문 참여 화면");
+    var s = findSurvey(currentSurveyId);
+    els.viewBody.innerHTML =
+      '<p class="hint" style="margin-bottom:10px;">교육담당자가 노출 메뉴 URL('+ (s?esc(s.menuUrl):"/Manage/Home") +')에 접속했을 때 실제로 보게 되는 화면입니다.</p>' +
+      '<div class="learner-page">' +
+        '<h2>메인 홈</h2>' +
+        '<p class="hint" style="margin-bottom:20px;">환영합니다. 오늘의 학습 현황을 확인해보세요.</p>' +
+        '<div class="learner-block"></div><div class="learner-block"></div><div class="learner-block" style="width:60%;"></div>' +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="btnOpenPopup">설문 팝업 열기</button>' +
+        '<button class="btn btn-ghost" id="btnResetDismiss">"오늘 하루 보지 않기" 초기화</button>' +
+      '</div>';
+    document.getElementById("btnOpenPopup").addEventListener("click", function(){
+      if (s) openSurveyPopup(s);
+    });
+    document.getElementById("btnResetDismiss").addEventListener("click", function(){
+      localStorage.removeItem(DISMISS_KEY);
+      toast('초기화되었습니다. 팝업이 다시 노출됩니다.');
+    });
+    if (s) openSurveyPopup(s);
+  }
+
+  /* ---- 교육 담당자 설문 문항 관리 : 목록 (문항 = 긍정/부정 이유 풀, 설문과 별개로 전역 관리) ---- */
+  function renderQuestionList(){
+    setHead("교육 담당자 설문 문항 관리");
+    els.viewBody.innerHTML =
+      '<div class="card card-pad">' +
+        '<div class="filter-row">' +
+          '<select id="qfCat"><option value="">전체 구분</option><option value="good">도움됨</option><option value="bad">아쉬움</option></select>' +
+          '<select id="qfActive"><option value="">전체 사용여부</option><option value="on">사용</option><option value="off">미사용</option></select>' +
+          '<input type="text" id="qfQuery" placeholder="문항 내용 검색">' +
+          '<button class="btn btn-primary btn-sm" id="btnQSearch">검색</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+        '<p class="hint" style="margin:0;">설문 등록/수정 화면의 "문항 선택" 팝업에서 이 목록을 그대로 사용합니다.</p>' +
+        '<div style="display:flex;gap:8px;">' +
+          '<button class="btn btn-ghost btn-sm" id="btnBulk">문항 일괄등록 (엑셀)</button>' +
+          '<button class="btn btn-danger-ghost btn-sm" id="btnBulkDel">선택 삭제</button>' +
+          '<button class="btn btn-primary btn-sm" id="btnAddQ">문항추가</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card table-wrap">' +
+        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>코드</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>사용 중인 설문</th><th>관리</th></tr></thead>' +
+        '<tbody id="qRows"></tbody></table>' +
+      '</div>';
+
+    var checked = {};
+
+    function draw(){
+      var cat = document.getElementById("qfCat").value;
+      var activeF = document.getElementById("qfActive").value;
+      var q = document.getElementById("qfQuery").value.trim().toLowerCase();
+      var list = QUESTION_POOL.filter(function(item){
+        if (cat && item.category !== cat) return false;
+        if (activeF === "on" && !item.active) return false;
+        if (activeF === "off" && item.active) return false;
+        if (q && item.content.toLowerCase().indexOf(q) === -1) return false;
+        return true;
+      });
+      document.getElementById("qRows").innerHTML = list.map(function(item){
+        return '<tr>' +
+          '<td><input type="checkbox" class="qRowCheck" data-id="'+item.id+'" '+(checked[item.id]?"checked":"")+'></td>' +
+          '<td>'+esc(item.code)+'</td>' +
+          '<td>'+catLabel(item.category)+'</td>' +
+          '<td>'+esc(item.content)+'</td>' +
+          '<td>'+(item.active?"사용":"미사용")+'</td>' +
+          '<td class="num">'+countSurveysUsing(item.id)+'</td>' +
+          '<td><a href="#" class="act-edit" data-id="'+item.id+'">수정</a></td>' +
+        '</tr>';
+      }).join("") || '<tr><td colspan="7"><div class="muted-note">조건에 맞는 문항이 없습니다.</div></td></tr>';
+      document.getElementById("qSelectAll").checked = false;
+      document.querySelectorAll(".qRowCheck").forEach(function(cb){
+        cb.addEventListener("change", function(){ checked[Number(cb.dataset.id)] = cb.checked; });
+      });
+      document.querySelectorAll(".act-edit").forEach(function(a){ a.addEventListener("click", function(e){ e.preventDefault(); go("q-edit", {questionId:Number(a.dataset.id)}); }); });
+    }
+    draw();
+    document.getElementById("qSelectAll").addEventListener("change", function(){
+      var on = this.checked;
+      document.querySelectorAll(".qRowCheck").forEach(function(cb){
+        cb.checked = on;
+        checked[Number(cb.dataset.id)] = on;
+      });
+    });
+    document.getElementById("btnBulkDel").addEventListener("click", function(){
+      var ids = Object.keys(checked).filter(function(id){ return checked[id]; }).map(Number);
+      if (!ids.length){ toast("삭제할 문항을 먼저 선택하세요."); return; }
+      var inUse = ids.reduce(function(sum,id){ return sum + countSurveysUsing(id); }, 0);
+      var msg = ids.length + "개 문항을 삭제하시겠습니까?" + (inUse ? " (사용 중인 설문 " + inUse + "건에서도 함께 제거됩니다)" : "");
+      if (!confirm(msg)) return;
+      QUESTION_POOL = QUESTION_POOL.filter(function(item){ return ids.indexOf(item.id) === -1; });
+      surveys.forEach(function(s){ s.questionIds = s.questionIds.filter(function(id){ return ids.indexOf(id) === -1; }); });
+      checked = {};
+      toast(ids.length + "개 문항이 삭제되었습니다.");
+      draw();
+    });
+    document.getElementById("btnQSearch").addEventListener("click", draw);
+    document.getElementById("qfQuery").addEventListener("keydown", function(e){ if (e.key === "Enter") draw(); });
+    document.getElementById("btnAddQ").addEventListener("click", function(){ go("q-register"); });
+    document.getElementById("btnBulk").addEventListener("click", function(){
+      openBulkUploadModal({
+        title: "문항 일괄등록",
+        hint: "엑셀 양식으로 여러 문항(도움됨/아쉬움)을 한 번에 등록합니다.",
+        onConfirm: function(fileName){
+          QUESTION_POOL.push(
+            {id:nextId(), code:nextQCode(), category:"good", content:"[일괄등록] 응대 속도가 빨라졌어요.", active:true},
+            {id:nextId(), code:nextQCode(), category:"bad", content:"[일괄등록] 이전보다 더 불편해졌어요.", active:true}
+          );
+          toast('"'+fileName+'" 업로드 완료 — 문항 2개가 일괄 등록되었습니다.');
+          draw();
+        }
+      });
+    });
+  }
+
+  function renderQuestionForm(existing){
+    var isEdit = !!existing;
+    setHead("교육 담당자 설문 문항 관리", isEdit ? "수정" : "등록");
+    var category = isEdit ? existing.category : "good";
+    var active = isEdit ? existing.active : true;
+
+    els.viewBody.innerHTML =
+      '<div class="card">' +
+        (isEdit ? row("문항코드", '<div class="readonly-value">'+esc(existing.code)+'</div>') : '') +
+        row("구분",
+          '<div class="row-inline">' +
+            '<label class="radio"><input type="radio" name="qcat" value="good" '+(category==="good"?"checked":"")+'>도움됨</label>' +
+            '<label class="radio"><input type="radio" name="qcat" value="bad" '+(category==="bad"?"checked":"")+'>아쉬움</label>' +
+          '</div>' +
+          '<p class="hint">교육담당자가 "도움이 되었어요"를 고르면 도움됨 문항이, "아쉬워요"를 고르면 아쉬움 문항이 노출됩니다.</p>') +
+        row("문항내용", '<input type="text" class="wide" id="qContent" value="'+(isEdit?esc(existing.content):"")+'" placeholder="예: 메뉴 구성이 편리했어요.">') +
+        row("사용여부",
+          '<div class="row-inline">' +
+            '<label class="radio"><input type="radio" name="qactive" value="on" '+(active?"checked":"")+'>사용</label>' +
+            '<label class="radio"><input type="radio" name="qactive" value="off" '+(!active?"checked":"")+'>미사용</label>' +
+          '</div>' +
+          '<p class="hint">미사용으로 바꾸면 문항 선택 팝업과 설문 참여 화면에 더 이상 노출되지 않습니다.</p>') +
+      '</div>' +
+      (isEdit ? row("사용 중인 설문", '<div class="readonly-value">'+countSurveysUsing(existing.id)+'건</div>') : '') +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="btnSaveQ">'+(isEdit?"저장":"문항 저장")+'</button>' +
+        '<button class="btn btn-ghost" id="btnCancelQ">목록</button>' +
+        (isEdit ? '<button class="btn btn-danger-ghost" id="btnDeleteQ" style="margin-left:auto;">삭제</button>' : '') +
+      '</div>';
+
+    document.getElementById("btnCancelQ").addEventListener("click", function(){ go("q-list"); });
+    document.getElementById("btnSaveQ").addEventListener("click", function(){
+      var content = document.getElementById("qContent").value.trim() || "새 문항";
+      var cat = document.querySelector('input[name=qcat]:checked').value;
+      var isActive = document.querySelector('input[name=qactive]:checked').value === "on";
+      if (isEdit){
+        existing.category = cat; existing.content = content; existing.active = isActive;
+        toast("문항이 저장되었습니다.");
+      } else {
+        QUESTION_POOL.push({id:nextId(), code:nextQCode(), category:cat, content:content, active:isActive});
+        toast("문항이 등록되었습니다.");
+      }
+      go("q-list");
+    });
+    if (isEdit) document.getElementById("btnDeleteQ").addEventListener("click", function(){
+      var inUse = countSurveysUsing(existing.id);
+      var msg = '"'+existing.content+'" 문항을 삭제하시겠습니까?' + (inUse ? " (사용 중인 설문 " + inUse + "건에서도 함께 제거됩니다)" : "");
+      if (!confirm(msg)) return;
+      QUESTION_POOL = QUESTION_POOL.filter(function(item){ return item.id !== existing.id; });
+      surveys.forEach(function(s){ s.questionIds = s.questionIds.filter(function(id){ return id !== existing.id; }); });
+      toast("문항이 삭제되었습니다.");
+      go("q-list");
+    });
+  }
+
+  /* ---- 교육 담당자 전체 설문 결과 (0번 기업) — 기간만 선택해서 바로 다운로드 (목록 렌더링 없음) ----
+     화면에 전체 데이터를 리스트로 그리면 기업 수가 많아질수록 조회 자체가 느려지고 부하가 커진다.
+     그래서 조건만 고르고 바로 다운로드하는 방식으로 처리 — 미리보기 테이블 없음(단, 몇 건이 잡히는지는
+     가벼운 카운트만 미리 보여준다 — 조건에 맞는 게 0건인지도 모른 채 다운로드 버튼을 누르게 하지 않기 위함).
+     기업 선택은 넣지 않음: 다운로드 후 엑셀에서 기업명 컬럼으로 얼마든지 걸러낼 수 있어 화면에 선택 UI를
+     따로 둘 실익이 없음. 담당자도 필터로 넣지 않음: 전사 통계가 목적이라 "누가"가 아니라 "무슨 응답이
+     얼마나"가 중요하고, 특정 담당자 응답이 궁금한 경우는 개별 기업의 "교육 담당자 설문 관리 > 보기"에서
+     확인하는 영역이라 제외. */
+  function filterAllResultsByDate(from, to){
+    return allCompanyResults.filter(function(r){
+      var d = r.respondedAt.slice(0,10);
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+      return true;
+    });
+  }
+
+  function renderAllResults(){
+    setHead("교육 담당자 전체 설문 결과");
+    els.viewBody.innerHTML =
+      '<div class="card card-pad">' +
+        '<div class="filter-row">' +
+          '<label>응답 기간</label>' +
+          '<input type="date" id="arFrom" value="2026-06-01"> <span>~</span> ' +
+          '<input type="date" id="arTo" value="2026-07-22">' +
+        '</div>' +
+      '</div>' +
+      '<div class="card card-pad" style="display:flex;align-items:center;justify-content:space-between;">' +
+        '<div>' +
+          '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">선택한 기간으로 바로 다운로드</div>' +
+          '<p class="hint" id="arCount" style="margin:0;">건수 확인 중…</p>' +
+        '</div>' +
+        '<button class="btn btn-primary" id="btnResultsDl" style="flex:0 0 auto;">엑셀 다운로드</button>' +
+      '</div>';
+
+    var elFrom = document.getElementById("arFrom");
+    var elTo = document.getElementById("arTo");
+    var elCount = document.getElementById("arCount");
+
+    function updateCount(){
+      var from = elFrom.value, to = elTo.value;
+      if (from && to && from > to){
+        elCount.textContent = "시작일이 종료일보다 늦습니다. 기간을 다시 확인하세요.";
+        elCount.classList.add("warn");
+        return null;
+      }
+      elCount.classList.remove("warn");
+      var n = filterAllResultsByDate(from, to).length;
+      elCount.textContent = "현재 조건으로 " + n + "건이 다운로드됩니다. (화면에 목록을 띄우지 않아 조회 부하는 없습니다)";
+      return n;
+    }
+    updateCount();
+    elFrom.addEventListener("change", updateCount);
+    elTo.addEventListener("change", updateCount);
+
+    document.getElementById("btnResultsDl").addEventListener("click", function(){
+      var from = elFrom.value, to = elTo.value;
+      if (from && to && from > to){ toast("시작일이 종료일보다 늦습니다. 기간을 다시 확인하세요."); return; }
+      var filtered = filterAllResultsByDate(from, to);
+      if (!filtered.length){ toast("조건에 맞는 응답이 없습니다."); return; }
+      var lines = ["기업명,설문제목,담당자명,담당자ID,응답일시,응답요약"];
+      filtered.forEach(function(r){ lines.push([r.company,'"'+r.title+'"',r.managerName,r.managerId,r.respondedAt,'"'+r.summary+'"'].join(",")); });
+      var blob = new Blob(["﻿"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = "교육담당자_전체설문결과.csv";
+      document.body.appendChild(a); a.click(); a.remove();
+      toast(filtered.length + "건 다운로드했습니다. (모의 데이터)");
+    });
+  }
+
+  /* ---------- 팝업: 교육담당자 검색 ---------- */
+  function openPersonSearch(){
+    var overlay = els.overlayPerson;
+    var picked = state.targetDraft.map(function(p){return p.id;});
+    overlay.innerHTML =
+      '<div class="modal wide">' +
+        '<button class="modal-close" id="pClose">✕</button>' +
+        '<h2>교육담당자 검색</h2>' +
+        '<p class="desc">/Student/EduRoleV2 (교육담당자 관리) 등록 목록에서 선택</p>' +
+        '<div class="modal-search"><input type="text" id="pSearch" placeholder="이름 또는 아이디 검색"><button class="btn btn-primary btn-sm">검색</button></div>' +
+        '<div class="person-list" id="pList"></div>' +
+        '<div class="btn-row" style="padding-top:4px;">' +
+          '<button class="btn btn-primary" id="pConfirm">선택 완료</button>' +
+          '<button class="btn btn-ghost" id="pCancel">취소</button>' +
+        '</div>' +
+      '</div>';
+    overlay.hidden = false;
+
+    var selection = {};
+    picked.forEach(function(id){ selection[id] = true; });
+
+    function renderList(filter){
+      var list = EDU_ROLE_LIST.filter(function(p){
+        if (!filter) return true;
+        filter = filter.toLowerCase();
+        return p.name.toLowerCase().indexOf(filter)>-1 || p.id.toLowerCase().indexOf(filter)>-1;
+      });
+      document.getElementById("pList").innerHTML = list.map(function(p){
+        return '<div class="person-row"><input type="checkbox" data-id="'+esc(p.id)+'" '+(selection[p.id]?"checked":"")+'>'+
+          '<span class="pname">'+esc(p.name)+'</span><span class="pid">'+esc(p.id)+'</span><span class="pdept">'+esc(p.dept)+'</span></div>';
+      }).join("") || '<div class="muted-note">검색 결과가 없습니다.</div>';
+      document.querySelectorAll("#pList input[type=checkbox]").forEach(function(cb){
+        cb.addEventListener("change", function(){ selection[cb.dataset.id] = cb.checked; });
+      });
+      document.querySelectorAll("#pList .person-row").forEach(function(row){
+        row.addEventListener("click", function(e){
+          if (e.target.tagName === "INPUT") return;
+          var cb = row.querySelector("input"); cb.checked = !cb.checked;
+          selection[cb.dataset.id] = cb.checked;
+        });
+      });
+    }
+    renderList("");
+    document.getElementById("pSearch").addEventListener("input", function(){ renderList(this.value); });
+    document.getElementById("pClose").addEventListener("click", closePersonSearch);
+    document.getElementById("pCancel").addEventListener("click", closePersonSearch);
+    document.getElementById("pConfirm").addEventListener("click", function(){
+      state.targetDraft = EDU_ROLE_LIST.filter(function(p){ return selection[p.id]; });
+      renderTargetChips();
+      closePersonSearch();
+      toast(state.targetDraft.length + "명 선택되었습니다.");
+    });
+  }
+  function closePersonSearch(){ els.overlayPerson.hidden = true; els.overlayPerson.innerHTML=""; }
+
+  /* ---------- 팝업: 문항 선택 (설문 등록/수정에서 문항 풀 중 선택) ---------- */
+  function openQuestionPicker(){
+    var overlay = els.overlayQuestion;
+    var selection = {};
+    state.questionDraft.forEach(function(id){ selection[id] = true; });
+
+    overlay.innerHTML =
+      '<div class="modal wide">' +
+        '<button class="modal-close" id="qpClose">✕</button>' +
+        '<h2>문항 선택</h2>' +
+        '<p class="desc">교육 담당자 설문 문항 관리에 등록된 문항 중 이 설문에서 사용할 항목을 고르세요. (미사용 문항은 표시되지 않습니다)</p>' +
+        '<div class="modal-search"><input type="text" id="qpSearch" placeholder="문항 내용 검색"><button class="btn btn-primary btn-sm">검색</button></div>' +
+        '<div class="person-list" id="qpList" style="max-height:280px;"></div>' +
+        '<div class="btn-row" style="padding-top:4px;">' +
+          '<button class="btn btn-primary" id="qpConfirm">선택 완료</button>' +
+          '<button class="btn btn-ghost" id="qpCancel">취소</button>' +
+          '<button class="btn btn-ghost" id="qpNew" style="margin-left:auto;">새 문항 만들기</button>' +
+        '</div>' +
+      '</div>';
+    overlay.hidden = false;
+
+    function renderList(filter){
+      var list = QUESTION_POOL.filter(function(q){
+        if (!q.active) return false;
+        if (!filter) return true;
+        return q.content.toLowerCase().indexOf(filter.toLowerCase()) > -1;
+      });
+      function group(cat, label){
+        var items = list.filter(function(q){ return q.category === cat; });
+        if (!items.length) return "";
+        return '<div style="padding:8px 12px;background:#f7f8fa;font-size:11px;font-weight:700;color:var(--text-muted);">'+label+'</div>' +
+          items.map(function(q){
+            return '<div class="person-row"><input type="checkbox" data-id="'+q.id+'" '+(selection[q.id]?"checked":"")+'>' +
+              '<span>'+esc(q.code)+' '+esc(q.content)+'</span></div>';
+          }).join("");
+      }
+      var html = group("good","도움됨") + group("bad","아쉬움");
+      document.getElementById("qpList").innerHTML = html || '<div class="muted-note">검색 결과가 없습니다.</div>';
+      document.querySelectorAll("#qpList input[type=checkbox]").forEach(function(cb){
+        cb.addEventListener("change", function(){ selection[Number(cb.dataset.id)] = cb.checked; });
+      });
+      document.querySelectorAll("#qpList .person-row").forEach(function(r){
+        r.addEventListener("click", function(e){
+          if (e.target.tagName === "INPUT") return;
+          var cb = r.querySelector("input"); cb.checked = !cb.checked;
+          selection[Number(cb.dataset.id)] = cb.checked;
+        });
+      });
+    }
+    renderList("");
+    document.getElementById("qpSearch").addEventListener("input", function(){ renderList(this.value); });
+    document.getElementById("qpClose").addEventListener("click", closeQuestionPicker);
+    document.getElementById("qpCancel").addEventListener("click", closeQuestionPicker);
+    document.getElementById("qpNew").addEventListener("click", function(){
+      closeQuestionPicker();
+      go("q-register");
+    });
+    document.getElementById("qpConfirm").addEventListener("click", function(){
+      state.questionDraft = QUESTION_POOL.filter(function(q){ return selection[q.id]; }).map(function(q){ return q.id; });
+      renderQuestionChips();
+      closeQuestionPicker();
+      toast(state.questionDraft.length + "개 문항이 선택되었습니다.");
+    });
+  }
+  function closeQuestionPicker(){ els.overlayQuestion.hidden = true; els.overlayQuestion.innerHTML = ""; }
+
+  /* ---------- 팝업: 엑셀 일괄등록 (설문/문항 공용) ---------- */
+  function openBulkUploadModal(opts){
+    var overlay = els.overlayBulk;
+    var chosenFileName = null;
+    overlay.innerHTML =
+      '<div class="modal">' +
+        '<button class="modal-close" id="bkClose">✕</button>' +
+        '<h2 style="font-size:16px;">'+esc(opts.title)+'</h2>' +
+        '<p class="desc">'+esc(opts.hint)+'</p>' +
+        (opts.extraButton ?
+          '<div class="row-inline" style="justify-content:center;margin-bottom:10px;">' +
+            '<button class="btn btn-ghost btn-sm" id="bkExtra">'+esc(opts.extraButton.label)+'</button>' +
+          '</div>'
+        : "") +
+        '<div class="row-inline" style="justify-content:center;margin-bottom:10px;">' +
+          '<button class="btn btn-ghost btn-sm" id="bkFileBtn">파일 선택</button>' +
+          '<span class="hint" id="bkFileName">선택된 파일 없음</span>' +
+        '</div>' +
+        '<div class="row-inline" style="justify-content:center;margin-bottom:16px;">' +
+          '<button class="btn btn-ghost btn-sm" id="bkSample">샘플 다운로드</button>' +
+        '</div>' +
+        '<input type="file" id="bkFileInput" accept=".xlsx,.xls,.csv" style="display:none;">' +
+        '<button class="choice-btn choice-next" id="bkConfirm" disabled>업로드</button>' +
+        '<button class="btn btn-ghost" id="bkCancel" style="width:100%;justify-content:center;">취소</button>' +
+      '</div>';
+    overlay.hidden = false;
+    if (opts.extraButton){
+      document.getElementById("bkExtra").addEventListener("click", opts.extraButton.onClick);
+    }
+
+    var fileInput = document.getElementById("bkFileInput");
+    document.getElementById("bkFileBtn").addEventListener("click", function(){ fileInput.click(); });
+    fileInput.addEventListener("change", function(){
+      if (fileInput.files && fileInput.files[0]){
+        chosenFileName = fileInput.files[0].name;
+      } else {
+        chosenFileName = "sample_upload.xlsx";
+      }
+      document.getElementById("bkFileName").textContent = chosenFileName;
+      document.getElementById("bkConfirm").disabled = false;
+    });
+    document.getElementById("bkSample").addEventListener("click", function(){
+      toast("샘플 양식을 다운로드했습니다. (목업)");
+    });
+    document.getElementById("bkClose").addEventListener("click", closeBulkUploadModal);
+    document.getElementById("bkCancel").addEventListener("click", closeBulkUploadModal);
+    document.getElementById("bkConfirm").addEventListener("click", function(){
+      closeBulkUploadModal();
+      opts.onConfirm(chosenFileName);
+    });
+  }
+  function closeBulkUploadModal(){ els.overlayBulk.hidden = true; els.overlayBulk.innerHTML = ""; }
+
+  /* ---------- 팝업: 설문 참여 팝업 (딤드 오버레이) ---------- */
+  var DISMISS_KEY = "hrfw27113_dontShowToday";
+  var lastDontShowAgain = false;
+  function todayStr(){
+    var d = new Date();
+    var m = String(d.getMonth()+1).padStart(2,"0");
+    var day = String(d.getDate()).padStart(2,"0");
+    return d.getFullYear() + "-" + m + "-" + day;
+  }
+  function openSurveyPopup(survey, force){
+    if (!force && localStorage.getItem(DISMISS_KEY) === todayStr()){
+      toast('오늘 "오늘 하루 보지 않기"를 선택해 팝업이 노출되지 않습니다. (자정 이후 다시 노출)');
+      return;
+    }
+    var overlay = els.overlaySurvey;
+    var chosen = null;
+    lastDontShowAgain = false;
+
+    var poolItems = survey.questionIds.map(findQuestion).filter(Boolean).filter(function(q){ return q.active; });
+    var GOOD = poolItems.filter(function(q){ return q.category === "good"; }).map(function(q){ return q.content; }).concat(["기타"]);
+    var BAD = poolItems.filter(function(q){ return q.category === "bad"; }).map(function(q){ return q.content; }).concat(["기타"]);
+
+    function step1(){
+      overlay.innerHTML =
+        '<div class="modal">' +
+          '<button class="modal-close" id="sClose">✕</button>' +
+          '<div class="survey-emoji">🎉</div>' +
+          '<h2>기능이 개선되었어요!</h2>' +
+          '<p class="desc">이번 개선 기능은 어떠셨나요?<br>더 나은 서비스를 위해 의견을 들려주세요.</p>' +
+          '<button class="choice-btn choice-good" id="sGood">😊 도움이 되었어요</button>' +
+          '<button class="choice-btn choice-bad" id="sBad">😥 아쉬워요</button>' +
+          '<label class="dont-show"><input type="checkbox" id="sDont"> 오늘 하루 보지 않기</label>' +
+        '</div>';
+      overlay.hidden = false;
+      document.getElementById("sClose").addEventListener("click", function(){ captureDont(); closeSurveyPopup(); });
+      document.getElementById("sGood").addEventListener("click", function(){ chosen="good"; captureDont(); step2(); });
+      document.getElementById("sBad").addEventListener("click", function(){ chosen="bad"; captureDont(); step2(); });
+    }
+    function captureDont(){
+      var el = document.getElementById("sDont");
+      if (el) lastDontShowAgain = el.checked;
+    }
+    function step2(){
+      var list = chosen === "good" ? GOOD : BAD;
+      overlay.innerHTML =
+        '<div class="modal">' +
+          '<button class="modal-close" id="sClose2">✕</button>' +
+          '<h2 style="font-size:15px;">'+(chosen==="good"?"어떤 점이 가장 도움이 되었나요?":"어떤 점이 가장 아쉬우셨나요?")+'</h2>' +
+          '<div class="opt-list" id="optList">' + list.map(function(o,i){
+            return '<label class="opt-item"><input type="checkbox" data-o="'+i+'">'+esc(o)+'</label>';
+          }).join("") + '</div>' +
+          '<textarea placeholder="기타 의견을 입력해주세요. (선택)"></textarea>' +
+          '<button class="choice-btn choice-next" id="sSubmit">제출</button>' +
+        '</div>';
+      document.getElementById("sClose2").addEventListener("click", closeSurveyPopup);
+      document.getElementById("sSubmit").addEventListener("click", function(){
+        step3();
+        survey.participants += 1;
+      });
+    }
+    function step3(){
+      overlay.innerHTML =
+        '<div class="modal">' +
+          '<div class="survey-emoji" style="color:#17c964;">✔</div>' +
+          '<h2>소중한 의견 감사합니다.</h2>' +
+          '<p class="desc">고객님의 의견을 반영하여 더 나은 서비스를 제공하겠습니다.</p>' +
+          '<button class="choice-btn choice-next" id="sDone">닫기</button>' +
+        '</div>';
+      document.getElementById("sDone").addEventListener("click", closeSurveyPopup);
+    }
+    step1();
+  }
+  function closeSurveyPopup(){
+    if (lastDontShowAgain){
+      localStorage.setItem(DISMISS_KEY, todayStr());
+      toast('"오늘 하루 보지 않기"가 저장되었습니다. 자정이 지나면 다시 노출됩니다.');
+    }
+    els.overlaySurvey.hidden = true;
+    els.overlaySurvey.innerHTML = "";
+    if (state.view === "s-list") renderSurveyList();
+    if (state.view === "s-view") renderSurveyView(findSurvey(state.viewingSurveyId));
+  }
+
+  /* ---------- boot ---------- */
+  renderSidebar();
+  renderView();
+})();
+</script>
+
+</body></html>
