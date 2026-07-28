@@ -1,0 +1,248 @@
+<!-- @dsCard group="Layout" -->
+<title>Page Layout — EDU Design System Home</title>
+<style id="ds-tokens">
+/* EDU Design System Design System — Monotone Token Sheet */
+:root {
+  /* ── Colors ── */
+  --color-black:    #14161a;
+  --color-gray-900: #24262b;
+  --color-gray-700: #494d55;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #9aa1ab;
+  --color-gray-300: #c7cbd3;
+  --color-gray-200: #dee1e6;
+  --color-gray-100: #f1f2f4;
+  --color-gray-50:  #f7f8fa;
+  --color-white:    #FFFFFF;
+
+  /* Semantic */
+  --color-bg:          var(--color-gray-50);
+  --color-surface:     var(--color-white);
+  --color-border:      var(--color-gray-200);
+  --color-border-dark: var(--color-gray-300);
+
+  --color-text-primary:   var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-disabled:  var(--color-gray-400);
+  --color-text-inverse:   var(--color-white);
+
+  /* Accent (replaces brand red — stays neutral) */
+  --color-accent:        var(--color-black);
+  --color-accent-subtle: var(--color-gray-100);
+  --color-accent-hover:  var(--color-gray-700);
+
+  /* ── Typography ── */
+  --font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+  --font-size-xs:  11px;
+  --font-size-sm:  12px;
+  --font-size-md:  14px;
+  --font-size-lg:  16px;
+  --font-size-xl:  18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold:600;
+  --font-weight-bold:    700;
+
+  --line-height-tight:  1.3;
+  --line-height-normal: 1.5;
+  --line-height-loose:  1.8;
+
+  /* ── Spacing ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border Radius ── */
+  --radius-none:   0px;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-pill:   999px;
+  --radius-circle: 50%;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(15,17,20,.06);
+  --shadow-md: 0 4px 12px rgba(15,17,20,.08);
+  --shadow-lg: 0 12px 32px rgba(15,17,20,.16);
+
+  /* ── Layout ── */
+  --layout-max-width:   1130px;
+  --layout-gnb-height:  60px;
+  --layout-sidebar-w:   150px;
+  --layout-h-padding:   24px;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); font-size: var(--font-size-md); color: var(--color-text-primary); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+
+</style>
+<style>
+  body { padding: 32px; background: var(--color-bg); font-family: var(--font-family); }
+  h2 { font-size: 16px; font-weight: 700; margin-bottom: 24px; color: var(--color-text-primary); }
+
+  .page { width: 100%; max-width: 960px; display: flex; flex-direction: column; gap: 0; border: 1px solid var(--color-border); border-radius: var(--radius-sm); overflow: hidden; background: var(--color-surface); }
+  .band { border-bottom: 1px solid var(--color-border); }
+  .band:last-child { border-bottom: none; }
+  .band-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-disabled); padding: 6px 16px 0; }
+  .band-inner { padding: 12px 16px; display: flex; gap: 8px; }
+  .block { border: 1px dashed var(--color-gray-300); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--color-gray-500); text-align: center; line-height: 1.3; }
+
+  /* Fixed height bands */
+  .gnb-band .band-inner { height: 44px; }
+  .gnb-band .block { flex: 1; }
+
+  .hero-band .band-inner { height: 200px; }
+  .hero-bg { flex: 1; background: var(--color-gray-100); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--color-gray-400); }
+
+  .status-band .band-inner { height: 140px; }
+  .status-band .block { flex: 1; }
+  .status-band .block-qm { flex: none; width: 140px; background: var(--color-gray-900); border: none; color: rgba(255,255,255,0.85); }
+
+  .section-band .band-inner { flex-direction: column; gap: 8px; }
+  .sh-mock { height: 28px; background: var(--color-gray-50); border-radius: 3px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 600; color: var(--color-gray-500); }
+  .cards-row { display: flex; gap: 6px; }
+  .card-mock { height: 120px; flex: 1; background: var(--color-gray-50); border: 1px dashed var(--color-gray-300); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-gray-400); }
+
+  .insight-band .band-inner { height: 160px; }
+  .insight-l { flex: 1.5; background: var(--color-gray-50); border: 1px dashed var(--color-gray-300); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--color-gray-500); }
+  .insight-r { flex: 1; background: var(--color-gray-50); border: 1px dashed var(--color-gray-300); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--color-gray-500); }
+
+  .bottom-band .band-inner { height: 100px; }
+  .bottom-band .block { flex: 1; }
+
+  .footer-band .band-inner { height: 36px; background: var(--color-gray-50); align-items: center; justify-content: center; }
+  .footer-band .foot-text { font-size: 11px; color: var(--color-text-disabled); }
+
+  /* Right side fixed nav (outside flow) */
+  .layout-wrapper { position: relative; }
+  .side-fixed { position: absolute; right: -130px; top: 44px; width: 110px; background: var(--color-gray-900); border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 12px 8px; }
+  .side-fixed-item { font-size: 10px; color: rgba(255,255,255,0.6); text-align: center; width: 100%; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .side-fixed-item:last-child { border-bottom: none; }
+
+  .legend { margin-top: 32px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--color-text-secondary); }
+  .legend-box { width: 16px; height: 16px; border-radius: 2px; }
+</style>
+<body>
+  <h2>EDU Design System — Home Page 레이아웃 구조 (1130px 기준)</h2>
+
+  <div class="layout-wrapper">
+    <div class="page">
+
+      <!-- GNB -->
+      <div class="band gnb-band">
+        <div class="band-label">GNB — 로고 + 메뉴(텍스트) + 검색바</div>
+        <div class="band-inner">
+          <div class="block" style="width:100px;flex:none;">Logo</div>
+          <div class="block" style="flex:1;">메뉴 (텍스트, 요구사항에 맞게 추가)</div>
+          <div class="block" style="width:160px;flex:none;">검색바</div>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="band hero-band">
+        <div class="band-label">HeroBanner (전체폭)</div>
+        <div class="band-inner">
+          <div class="hero-bg">HeroBanner 배경 이미지 영역</div>
+        </div>
+      </div>
+
+      <!-- 퀵메뉴 + 나의학습현황 2열 (6:4 비율 — 폭보다 배치 비중이 중요한 영역) -->
+      <div class="band status-band">
+        <div class="band-label">2열 HORIZONTAL(6:4) — 퀵메뉴(QuickMenu) | 나의학습현황</div>
+        <div class="band-inner">
+          <div class="block block-qm" style="flex:6;">QuickMenu<br>(6개)</div>
+          <div class="block" style="flex:4;">나의<br>학습현황</div>
+        </div>
+      </div>
+
+      <!-- 관심분야 추천과정 -->
+      <div class="band section-band">
+        <div class="band-label">관심분야 추천과정 (4열)</div>
+        <div class="band-inner">
+          <div class="sh-mock">관심분야 추천과정</div>
+          <div class="cards-row">
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI 추천과정 -->
+      <div class="band section-band">
+        <div class="band-label">AI 추천과정 (4열)</div>
+        <div class="band-inner">
+          <div class="sh-mock">AI 추천과정</div>
+          <div class="cards-row">
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 온라인 추천과정 -->
+      <div class="band section-band">
+        <div class="band-label">온라인 추천과정 (4열)</div>
+        <div class="band-inner">
+          <div class="sh-mock">온라인 추천과정</div>
+          <div class="cards-row">
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+            <div class="card-mock">CourseCard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom 3col -->
+      <div class="band bottom-band">
+        <div class="band-label">Bottom 3열 — 공지사항 | 모바일 APP 설치 | 학습문의</div>
+        <div class="band-inner">
+          <div class="block">공지<br>사항</div>
+          <div class="block">모바일<br>APP 설치</div>
+          <div class="block">학습문의<br>1588-6559</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="band footer-band">
+        <div class="band-inner"><span class="foot-text">Copyright © SeAH. All Right Reserved.</span></div>
+      </div>
+
+    </div>
+
+    <!-- Right FloatingSideNav -->
+    <div class="side-fixed">
+      <div class="side-fixed-item" style="color:rgba(255,255,255,0.9);font-weight:700;">FloatingSideNav</div>
+      <div class="side-fixed-item">홍*길 님</div>
+      <div class="side-fixed-item">마이클래스</div>
+      <div class="side-fixed-item">1:1 상담</div>
+      <div class="side-fixed-item">학습문의</div>
+      <div class="side-fixed-item">모바일앱</div>
+      <div class="side-fixed-item">공유게시판</div>
+      <div class="side-fixed-item">최근 본 과정</div>
+      <div class="side-fixed-item">↑ TOP</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box" style="background:var(--color-gray-100);border:1px dashed var(--color-gray-300);"></div>콘텐츠 블록</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--color-gray-900);"></div>어두운 배경 영역 (QuickMenu, SideNav)</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--color-gray-50);border:1px solid var(--color-border);"></div>서피스 / 카드 영역</div>
+  </div>
+</body>

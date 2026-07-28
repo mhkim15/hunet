@@ -1,0 +1,256 @@
+<!-- @dsCard group="Layout" -->
+<title>GNB — EDU Design System</title>
+<style id="ds-tokens">
+/* EDU Design System Design System — Monotone Token Sheet */
+:root {
+  /* ── Colors ── */
+  --color-black:    #14161a;
+  --color-gray-900: #24262b;
+  --color-gray-700: #494d55;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #9aa1ab;
+  --color-gray-300: #c7cbd3;
+  --color-gray-200: #dee1e6;
+  --color-gray-100: #f1f2f4;
+  --color-gray-50:  #f7f8fa;
+  --color-white:    #FFFFFF;
+
+  /* Semantic */
+  --color-bg:          var(--color-gray-50);
+  --color-surface:     var(--color-white);
+  --color-border:      var(--color-gray-200);
+  --color-border-dark: var(--color-gray-300);
+
+  --color-text-primary:   var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-disabled:  var(--color-gray-400);
+  --color-text-inverse:   var(--color-white);
+
+  /* Accent (replaces brand red — stays neutral) */
+  --color-accent:        var(--color-black);
+  --color-accent-subtle: var(--color-gray-100);
+  --color-accent-hover:  var(--color-gray-700);
+
+  /* ── Typography ── */
+  --font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+  --font-size-xs:  11px;
+  --font-size-sm:  12px;
+  --font-size-md:  14px;
+  --font-size-lg:  16px;
+  --font-size-xl:  18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 24px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold:600;
+  --font-weight-bold:    700;
+
+  --line-height-tight:  1.3;
+  --line-height-normal: 1.5;
+  --line-height-loose:  1.8;
+
+  /* ── Spacing ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border Radius ── */
+  --radius-none:   0px;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-pill:   999px;
+  --radius-circle: 50%;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(15,17,20,.06);
+  --shadow-md: 0 4px 12px rgba(15,17,20,.08);
+  --shadow-lg: 0 12px 32px rgba(15,17,20,.16);
+
+  /* ── Layout ── */
+  --layout-max-width:   1130px;
+  --layout-gnb-height:  60px;
+  --layout-sidebar-w:   150px;
+  --layout-h-padding:   24px;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); font-size: var(--font-size-md); color: var(--color-text-primary); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+
+</style>
+<style>
+  body { padding: 24px; background: var(--color-bg); display: flex; flex-direction: column; gap: 24px; }
+  .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+
+  /* GNB — 로고 + 메뉴(텍스트, 요구사항에 맞게 추가) + 검색바 */
+  .gnb { background: var(--color-surface); border-bottom: 1px solid var(--color-border); height: 60px; display: flex; align-items: center; padding: 0 24px; gap: 0; position: relative; }
+  .gnb-logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-black); min-width: 120px; }
+  .gnb-menu { flex: 1; display: flex; align-items: center; justify-content: space-around; gap: 12px; }
+  .gnb-menu-item { font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; text-decoration: none; }
+  .gnb-menu-item:hover { color: var(--color-black); }
+  .gnb-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0 14px; height: 32px; min-width: 200px; background: var(--color-gray-50); flex-shrink: 0; }
+  .gnb-search-input { border: none; outline: none; background: transparent; font-size: 13px; color: var(--color-text-secondary); flex: 1; font-family: var(--font-family); }
+  .gnb-search-icon { width: 14px; height: 14px; color: var(--color-gray-400); }
+
+  /* Utility bar — GNB 위에 얹는 얇은 띠(로그인/회원가입/관리자 + 검색). 참고 화면(2026-07-10)에서
+     검색은 이 띠로 옮기고 메인 GNB 행은 메뉴만 고르게 펼친다. */
+  .utility-bar { background: var(--color-gray-50); border-bottom: 1px solid var(--color-border); height: 34px; display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding: 0 24px; font-size: 12px; color: var(--color-text-secondary); }
+  .utility-link { cursor: pointer; }
+  .utility-link:hover { color: var(--color-text-primary); }
+  .utility-search { display: flex; align-items: center; gap: 6px; }
+  .utility-search-input { border: none; outline: none; background: transparent; font-size: 12px; color: var(--color-text-secondary); width: 170px; font-family: var(--font-family); }
+
+  /* Quick Menu (left vertical) */
+  .quick-menu { background: var(--color-black); width: 140px; border-radius: var(--radius-sm); overflow: hidden; }
+  .qm-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
+  .qm-item:last-child { border-bottom: none; }
+  .qm-icon { width: 20px; height: 20px; background: rgba(255,255,255,0.25); border-radius: 4px; flex-shrink: 0; }
+  .qm-label { font-size: 13px; color: var(--color-white); font-weight: 500; }
+
+  /* Quick Menu Grid (icon grid card, PC home) */
+  .qm-grid-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 24px; width: 340px; }
+  .qm-grid-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px 8px; }
+  .qm-grid-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+  .qm-grid-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--color-gray-400); }
+  .qm-grid-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+
+  /* Floating Side Nav (right) */
+  .side-nav { background: var(--color-gray-900); width: 150px; border-radius: var(--radius-sm); overflow: hidden; }
+  .sn-top { padding: 16px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sn-top-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.15); border-radius: 50%; margin: 0 auto 6px; }
+  .sn-top-title { font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 2px; }
+  .sn-top-name { font-size: 13px; color: var(--color-white); font-weight: 600; }
+  .sn-item { display: flex; align-items: center; justify-content: center; padding: 12px; font-size: 13px; color: rgba(255,255,255,0.7); border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer; text-align: center; }
+  .sn-item:last-child { border-bottom: none; }
+
+  /* Footer (사이트 최하단) */
+  .site-footer { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 20px 24px; border-top: 1px solid var(--color-border); background: var(--color-surface); font-size: 12px; color: var(--color-text-disabled); }
+  .site-footer .foot-links { display: flex; gap: 12px; }
+  .site-footer .foot-links span { color: var(--color-text-secondary); cursor: pointer; }
+</style>
+<body>
+
+  <div>
+    <div class="label">GNB (Global Navigation Bar)</div>
+    <!-- ds-template:GNB.gnb -->
+    <div class="gnb">
+      <div class="gnb-logo" data-ds-field="logo">기업명</div>
+      <nav class="gnb-menu" data-ds-slot="menu">
+        <!-- ds-template:GNB.gnb-menu-item -->
+        <a class="gnb-menu-item" data-ds-field="label">AX 캠퍼스</a>
+        <!-- /ds-template -->
+        <a class="gnb-menu-item">이러닝</a>
+        <a class="gnb-menu-item">마이크로러닝</a>
+        <a class="gnb-menu-item">오프라인러닝</a>
+        <a class="gnb-menu-item">소셜러닝</a>
+        <a class="gnb-menu-item">마이클래스</a>
+      </nav>
+      <div class="gnb-search">
+        <span class="gnb-search-icon">🔍</span>
+        <input class="gnb-search-input" placeholder="검색어를 입력해주세요" disabled>
+      </div>
+    </div>
+    <!-- /ds-template -->
+  </div>
+
+  <div>
+    <div class="label">GNB Header (유틸리티 바 + 메인 GNB, 렌더러가 실제로 쓰는 조합형)</div>
+    <!-- ds-template:GNB.header -->
+    <div>
+      <div class="utility-bar">
+        <span class="utility-link">로그인</span>
+        <span class="utility-link">회원가입</span>
+        <span class="utility-link">관리자</span>
+        <div class="utility-search"><span class="gnb-search-icon">🔍</span><input class="utility-search-input" placeholder="검색어를 입력해주세요" disabled></div>
+      </div>
+      <div class="gnb">
+        <div class="gnb-logo" data-ds-field="logo">기업명</div>
+        <nav class="gnb-menu" data-ds-slot="menu">
+          <a class="gnb-menu-item">과정안내</a>
+          <a class="gnb-menu-item">수강신청</a>
+          <a class="gnb-menu-item">나의강의실</a>
+          <a class="gnb-menu-item">학습지원</a>
+          <a class="gnb-menu-item">커뮤니티</a>
+          <a class="gnb-menu-item">고객센터</a>
+        </nav>
+      </div>
+    </div>
+    <!-- /ds-template -->
+  </div>
+
+  <div style="display:flex; gap:32px; align-items:flex-start;">
+    <div>
+      <div class="label">QuickMenu (카테고리 메뉴)</div>
+      <!-- ds-template:GNB.quick-menu -->
+      <div class="quick-menu" data-ds-slot="items">
+        <!-- ds-template:GNB.qm-item -->
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label" data-ds-field="label">AX 캠퍼스</span></div>
+        <!-- /ds-template -->
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label">이러닝</span></div>
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label">마이크로러닝</span></div>
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label">오프라인러닝</span></div>
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label">소셜러닝</span></div>
+        <div class="qm-item"><div class="qm-icon"></div><span class="qm-label">마이클래스</span></div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+
+    <div>
+      <div class="label">QuickMenuGrid (아이콘 그리드, PC 홈)</div>
+      <!-- ds-template:GNB.qm-grid -->
+      <div class="qm-grid-card">
+        <div class="qm-grid-list" data-ds-slot="items">
+          <!-- ds-template:GNB.qm-grid-item -->
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label" data-ds-field="label">교육신청</div></div>
+          <!-- /ds-template -->
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label">지식콘텐츠</div></div>
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label">나의강의실</div></div>
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label">직무동아리</div></div>
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label">IDP</div></div>
+          <div class="qm-grid-item"><div class="qm-grid-icon">Icon</div><div class="qm-grid-label">공지사항</div></div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+
+    <div>
+      <div class="label">FloatingSideNav (우측 고정)</div>
+      <!-- ds-template:GNB.side-nav -->
+      <div class="side-nav">
+        <div class="sn-top">
+          <div class="sn-top-icon"></div>
+          <div class="sn-top-title" data-ds-field="company">기업명</div>
+          <div class="sn-top-name" data-ds-field="welcome">홍*길 님 환영</div>
+        </div>
+        <div class="sn-item">마이클래스</div>
+        <div class="sn-item">1:1 상담</div>
+        <div class="sn-item">학습문의</div>
+        <div class="sn-item">모바일앱다운로드</div>
+        <div class="sn-item">공유게시판</div>
+        <div class="sn-item">최근 본 과정</div>
+        <div class="sn-item">↑ TOP</div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Footer (사이트 최하단)</div>
+    <!-- ds-template:GNB.footer -->
+    <div class="site-footer">
+      <span>© 기업명 All rights reserved.</span>
+      <div class="foot-links"><span>개인정보처리방침</span><span>이용약관</span></div>
+    </div>
+    <!-- /ds-template -->
+  </div>
+
+</body>

@@ -1,0 +1,374 @@
+<!-- @dsCard group="Mobile" -->
+<title>Mobile Home — EDU Design System</title>
+<link rel="stylesheet" href="_tokens.css">
+<style>
+  body { padding: 32px; background: #E8EAF0; display: flex; flex-direction: column; gap: 48px; font-family: var(--font-family); }
+  .section-wrap { display: flex; flex-direction: column; gap: 10px; }
+  .label { font-size: 11px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: .07em; }
+  /* 모바일 프레임 */
+  .mo-frame { width: 390px; background: var(--color-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.10); }
+  .mo { font-family: var(--font-family); font-size: 14px; color: var(--color-text-primary); -webkit-font-smoothing: antialiased; }
+
+  /* ════════════════════════════════════════════
+     1. AppHeader
+     구조: [검색아이콘] [hunet 로고(중앙)] [햄버거]
+     ════════════════════════════════════════════ */
+  .mo-appheader { background: var(--color-surface); display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--color-border); }
+  .mo-appheader-icon { width: 24px; height: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; flex-shrink: 0; }
+  .mo-appheader-icon span { display: block; width: 18px; height: 2px; background: var(--color-text-primary); border-radius: 1px; }
+  .mo-appheader-search { width: 20px; height: 20px; border: 2px solid var(--color-text-primary); border-radius: 50%; position: relative; }
+  .mo-appheader-search::after { content: ''; position: absolute; bottom: -5px; right: -3px; width: 7px; height: 2px; background: var(--color-text-primary); border-radius: 1px; transform: rotate(45deg); }
+  .mo-appheader-logo { font-size: 18px; font-weight: 700; color: var(--color-black); letter-spacing: -0.5px; }
+
+  /* ════════════════════════════════════════════
+     2. QuickMenu (2열 아이콘 그리드)
+     구조: 2열 grid, 각 셀 = 흰 카드(아이콘 + 라벨)
+     ════════════════════════════════════════════ */
+  .mo-quickmenu { background: var(--color-surface); padding: 12px; }
+  .mo-qm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mo-qm-item { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 16px 12px 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; }
+  .mo-qm-item:hover { background: var(--color-gray-50); }
+  .mo-qm-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; }
+  .mo-qm-icon img { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .mo-qm-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); text-align: center; }
+
+  /* ════════════════════════════════════════════
+     3. 공지사항
+     구조: 헤더(제목 + 더보기+ 버튼) + 공지 목록
+     ════════════════════════════════════════════ */
+  .mo-notice { background: var(--color-surface); padding: 16px; }
+  .mo-notice-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .mo-notice-title { font-size: 16px; font-weight: 700; }
+  .mo-notice-more { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #E32929; font-weight: 600; }
+  .mo-notice-more-plus { width: 18px; height: 18px; background: #E32929; border-radius: 50%; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .mo-notice-list { display: flex; flex-direction: column; gap: 0; }
+  .mo-notice-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--color-border); gap: 12px; }
+  .mo-notice-item:last-child { border-bottom: none; }
+  .mo-notice-text { font-size: 13px; color: var(--color-text-primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mo-notice-date { font-size: 11px; color: var(--color-text-disabled); flex-shrink: 0; }
+
+  /* ════════════════════════════════════════════
+     4. 검색바
+     구조: 전체폭 입력창 + 우측 돋보기 아이콘
+     ════════════════════════════════════════════ */
+  .mo-searchbar { background: var(--color-surface); padding: 10px 16px; border-top: 1px solid var(--color-border); }
+  .mo-search-inner { display: flex; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 0 14px; height: 38px; background: var(--color-gray-50); }
+  .mo-search-input { flex: 1; border: none; background: transparent; font-size: 13px; color: var(--color-text-secondary); font-family: var(--font-family); outline: none; }
+  .mo-search-btn { width: 18px; height: 18px; border: 2px solid var(--color-text-secondary); border-radius: 50%; position: relative; flex-shrink: 0; }
+  .mo-search-btn::after { content: ''; position: absolute; bottom: -4px; right: -3px; width: 6px; height: 2px; background: var(--color-text-secondary); border-radius: 1px; transform: rotate(45deg); }
+
+  /* ════════════════════════════════════════════
+     5. ContentSection — 기본형 (섹션헤더 + 가로 스크롤 카드)
+     구조: 섹션헤더 행 → 가로 스크롤 카드 레일
+     ════════════════════════════════════════════ */
+  .mo-section { background: var(--color-surface); padding: 16px 0 4px; margin-top: 8px; }
+  .mo-section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; margin-bottom: 12px; }
+  .mo-section-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
+  .mo-section-action { font-size: 12px; color: var(--color-text-secondary); }
+  /* 가로 스크롤 레일 */
+  .mo-rail { display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 12px; scrollbar-width: none; }
+  .mo-rail::-webkit-scrollbar { display: none; }
+  /* 컨텐츠 카드 (썸네일 + 제목) */
+  .mo-card { flex-shrink: 0; width: 150px; cursor: pointer; }
+  .mo-card-thumb { width: 100%; aspect-ratio: 4/3; background: var(--color-gray-200); border-radius: var(--radius-sm); overflow: hidden; position: relative; margin-bottom: 7px; }
+  .mo-card-thumb-badge { position: absolute; bottom: 5px; right: 5px; background: var(--color-gray-300); color: var(--color-text-secondary); font-size: 9px; padding: 2px 5px; border-radius: 3px; }
+  .mo-card-thumb-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 28px; height: 28px; background: var(--color-gray-300); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); font-size: 11px; }
+  .mo-card-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* ════════════════════════════════════════════
+     5b. ContentSection — 맞춤형 콘텐츠 (타이틀+설명+관심분야설정+카테고리칩+가로 스크롤 카드)
+     ════════════════════════════════════════════ */
+  .mo-interest-btn { display: flex; align-items: center; gap: 4px; padding: 5px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; color: var(--color-text-secondary); background: var(--color-surface); cursor: pointer; flex-shrink: 0; }
+  .mo-section-header.align-top { align-items: flex-start; }
+  .mo-personal-left { display: flex; flex-direction: column; gap: 2px; }
+  .mo-personal-eyebrow { font-size: 12px; color: var(--color-text-secondary); }
+  .mo-personal-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
+  .mo-personal-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.4; }
+  .mo-personal-chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 16px 10px; margin-top: 2px; scrollbar-width: none; }
+  .mo-personal-chips::-webkit-scrollbar { display: none; }
+  .mo-chip { flex-shrink: 0; padding: 4px 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 500; border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-secondary); font-family: var(--font-family); }
+  .mo-chip.active { background: var(--color-black); color: var(--color-white); border-color: var(--color-black); }
+  .mo-card-thumb-ph { width: 100%; aspect-ratio: 4/3; background: var(--color-gray-100); border-radius: var(--radius-sm); margin-bottom: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--color-gray-400); }
+
+  /* ════════════════════════════════════════════
+     6. 나의 학습현황 — 탭 + 진도율 + 진행바 + 학습하기 CTA
+     ════════════════════════════════════════════ */
+  .mo-status { background: var(--color-surface); padding: 16px; }
+  .mo-status-card { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 16px; }
+  .mo-ms-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .mo-ms-title { font-size: 15px; font-weight: 700; }
+  .mo-ms-more { font-size: 12px; color: var(--color-text-secondary); }
+  .mo-ms-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .mo-ms-tab { padding: 6px 14px; font-size: 12px; font-weight: 500; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text-secondary); font-family: var(--font-family); }
+  .mo-ms-tab.active { background: var(--color-black); color: var(--color-white); border-color: var(--color-black); }
+  .mo-ms-course-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .mo-ms-course-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mo-ms-course-arrow { color: var(--color-gray-400); flex-shrink: 0; }
+  .mo-ms-progress-info { font-size: 12px; margin-bottom: 8px; }
+  .mo-ms-progress-pct { font-weight: 700; color: var(--color-black); }
+  .mo-ms-progress-days { color: var(--color-text-secondary); margin-left: 2px; }
+  .mo-ms-progress-track { width: 100%; height: 6px; background: var(--color-gray-200); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+  .mo-ms-progress-fill { height: 100%; background: var(--color-black); border-radius: 3px; }
+  .mo-ms-progress-legend { display: flex; justify-content: flex-end; gap: 12px; font-size: 10px; color: var(--color-text-secondary); margin-bottom: 16px; }
+  .mo-ms-legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .mo-ms-legend-dot.mine { background: var(--color-black); }
+  .mo-ms-legend-dot.recommend { background: var(--color-gray-300); }
+  .mo-ms-cta-btn { width: 100%; padding: 13px; background: var(--color-black); color: var(--color-white); border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; font-family: var(--font-family); }
+
+  /* ════════════════════════════════════════════
+     7. Footer
+     ════════════════════════════════════════════ */
+  .mo-footer { background: var(--color-surface); border-top: 1px solid var(--color-border); padding: 14px 16px; font-size: 11px; color: var(--color-text-disabled); text-align: center; }
+</style>
+<body>
+
+  <!-- 1. AppHeader -->
+  <div class="section-wrap">
+    <div class="label">1. AppHeader — 검색(좌) · 로고(중) · 햄버거(우)</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.AppHeader -->
+      <div class="mo mo-appheader">
+        <div class="mo-appheader-search"></div>
+        <div class="mo-appheader-logo" data-ds-field="logo">기업명</div>
+        <div class="mo-appheader-icon">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 2. QuickMenu -->
+  <div class="section-wrap">
+    <div class="label">2. QuickMenu — 2열 아이콘 그리드 (아이콘 + 라벨)</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.QuickMenu -->
+      <div class="mo mo-quickmenu">
+        <div class="mo-qm-grid" data-ds-slot="items">
+          <!-- ds-template:Mobile.mo-qm-item -->
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label" data-ds-field="label">온라인교육</div></div>
+          <!-- /ds-template -->
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">도서학습</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">마이크로러닝</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">러닝메이커</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">사내집합교육</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">외부교육</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">커뮤니티</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">부가기능</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">결제내역</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">상담실</div></div>
+          <div class="mo-qm-item"><div class="mo-qm-icon"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23E5E7EB'/%3E%3Crect x='10' y='12' width='20' height='16' rx='2' fill='%23C8CDD8'/%3E%3Ccircle cx='16' cy='18' r='2.5' fill='%23E5E7EB'/%3E%3Cpath d='M10 24 L15 19 L19 22 L23 17 L30 24Z' fill='%23E5E7EB'/%3E%3C/svg%3E" alt="icon"></div><div class="mo-qm-label">나의 강의실</div></div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 3. 공지사항 -->
+  <div class="section-wrap">
+    <div class="label">3. 공지사항 — 더보기+ 버튼 + 날짜 포함 목록</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.Notice -->
+      <div class="mo mo-notice">
+        <div class="mo-notice-header">
+          <div class="mo-notice-title" data-ds-field="title">공지사항</div>
+          <div class="mo-notice-more">
+            더보기
+            <div class="mo-notice-more-plus">+</div>
+          </div>
+        </div>
+        <div class="mo-notice-list" data-ds-slot="items">
+          <!-- ds-template:Mobile.mo-notice-item -->
+          <div class="mo-notice-item">
+            <span class="mo-notice-text" data-ds-field="text">고정글 테스트 입니다.</span>
+            <span class="mo-notice-date" data-ds-field="date">2023.05.03</span>
+          </div>
+          <!-- /ds-template -->
+          <div class="mo-notice-item">
+            <span class="mo-notice-text">[12/31 앱 기능 업데이트 공지] 화면 잠금에도, 다른 앱 사용 시에도 영상이 재...</span>
+            <span class="mo-notice-date">2024.12.19</span>
+          </div>
+          <div class="mo-notice-item">
+            <span class="mo-notice-text">테스트공지입니다.</span>
+            <span class="mo-notice-date">2024.11.07</span>
+          </div>
+          <div class="mo-notice-item">
+            <span class="mo-notice-text">pdf 자료</span>
+            <span class="mo-notice-date">2024.10.22</span>
+          </div>
+          <div class="mo-notice-item">
+            <span class="mo-notice-text">테스트17</span>
+            <span class="mo-notice-date">2024.09.15</span>
+          </div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 4. 검색바 -->
+  <div class="section-wrap">
+    <div class="label">4. SearchBar — 전체폭 pill 입력창</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.SearchBar -->
+      <div class="mo mo-searchbar">
+        <div class="mo-search-inner">
+          <input class="mo-search-input" placeholder="과목명을 입력해주세요" disabled>
+          <div class="mo-search-btn"></div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 5a. ContentSection — 기본형 (마이크로러닝/온라인/유튜브 공통) -->
+  <div class="section-wrap">
+    <div class="label">5a. ContentSection — 기본형 (섹션제목 + 가로 스크롤 카드)</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.ContentSection -->
+      <div class="mo mo-section">
+        <div class="mo-section-header">
+          <div class="mo-section-title" data-ds-field="title">마이크로러닝 추천 콘텐츠</div>
+        </div>
+        <div class="mo-rail" data-ds-slot="cards">
+          <!-- ds-template:Mobile.mo-card-play -->
+          <div class="mo-card">
+            <div class="mo-card-thumb">
+              <div class="mo-card-thumb-play">▶</div>
+            </div>
+            <div class="mo-card-title" data-ds-field="title">마케팅 스토리텔링의 기술</div>
+          </div>
+          <!-- /ds-template -->
+          <div class="mo-card">
+            <div class="mo-card-thumb">
+              <div class="mo-card-thumb-play">▶</div>
+            </div>
+            <div class="mo-card-title">스피치 목표 설정하기</div>
+          </div>
+          <div class="mo-card">
+            <div class="mo-card-thumb">
+              <div class="mo-card-thumb-play">▶</div>
+            </div>
+            <div class="mo-card-title">나를 사랑하는 방법, 자존감 높이기</div>
+          </div>
+          <div class="mo-card">
+            <div class="mo-card-thumb">
+              <div class="mo-card-thumb-play">▶</div>
+            </div>
+            <div class="mo-card-title">협상의 기술 — 원하는 것을 얻는 법</div>
+          </div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 5b. ContentSection — 맞춤형 콘텐츠 (타이틀+설명+관심분야설정+카테고리칩+가로 스크롤 카드) -->
+  <div class="section-wrap">
+    <div class="label">5b. ContentSection — 맞춤형 콘텐츠 (타이틀+설명+관심분야설정+카테고리칩+가로 스크롤 카드)</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.PersonalizedContent -->
+      <div class="mo mo-section">
+        <div class="mo-section-header align-top">
+          <div class="mo-personal-left">
+            <div class="mo-personal-eyebrow" data-ds-field="eyebrow">안*태님의</div>
+            <div class="mo-personal-title" data-ds-field="title">맞춤형 콘텐츠</div>
+            <div class="mo-personal-desc" data-ds-field="desc">개인 맞춤형 콘텐츠입니다.</div>
+          </div>
+          <button class="mo-interest-btn">☰ 관심분야 설정</button>
+        </div>
+        <div class="mo-personal-chips" data-ds-slot="chips">
+          <!-- ds-template:Mobile.mo-chip -->
+          <button class="mo-chip active" data-ds-field="label">IT</button>
+          <!-- /ds-template -->
+          <button class="mo-chip">영어</button>
+          <button class="mo-chip">자기관리</button>
+        </div>
+        <div class="mo-rail" data-ds-slot="cards">
+          <!-- ds-template:Mobile.mo-card-plain -->
+          <div class="mo-card">
+            <div class="mo-card-thumb"></div>
+            <div class="mo-card-title" data-ds-field="title">[북러닝] 데이터과학자의 사고법 (도서 제공)</div>
+          </div>
+          <!-- /ds-template -->
+          <div class="mo-card">
+            <div class="mo-card-thumb"></div>
+            <div class="mo-card-title">[H Pick+셀] EBS 디지털 시대의 숙명, 사이버 보안</div>
+          </div>
+          <div class="mo-card">
+            <div class="mo-card-thumb"></div>
+            <div class="mo-card-title">ChatGPT로 쉽게 하는 파이썬 업무자동화</div>
+          </div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 6. 나의 학습현황 — 탭 + 진도율 + 진행바 + 학습하기 CTA -->
+  <div class="section-wrap">
+    <div class="label">6. 나의 학습현황 — 탭 + 진도율 + 진행바 + 학습하기</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.LearningStatus -->
+      <div class="mo mo-status">
+        <div class="mo-status-card">
+          <div class="mo-ms-header">
+            <div class="mo-ms-title" data-ds-field="title">나의 학습현황</div>
+            <div class="mo-ms-more">더보기 ›</div>
+          </div>
+          <div class="mo-ms-tabs">
+            <button class="mo-ms-tab active" data-ds-field="tab1">이러닝</button>
+            <button class="mo-ms-tab" data-ds-field="tab2">마이크로러닝</button>
+          </div>
+          <div class="mo-ms-course-row">
+            <div class="mo-ms-course-title">[KDHC] [내일을 잇는 클래스] 공공기관 청렴·반부패 교육</div>
+            <div class="mo-ms-course-arrow">›</div>
+          </div>
+          <div class="mo-ms-progress-info"><span class="mo-ms-progress-pct">진도율 : 100%</span><span class="mo-ms-progress-days">24일 남았습니다.</span></div>
+          <div class="mo-ms-progress-track"><div class="mo-ms-progress-fill" style="width:100%"></div></div>
+          <div class="mo-ms-progress-legend">
+            <span><span class="mo-ms-legend-dot mine"></span>나의진도</span>
+            <span><span class="mo-ms-legend-dot recommend"></span>권장진도</span>
+          </div>
+          <button class="mo-ms-cta-btn">학습하기</button>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <!-- 7. AI 맞춤형 콘텐츠 — 타이틀+설명+가로 스크롤 카드 -->
+  <div class="section-wrap">
+    <div class="label">7. AI 맞춤형 콘텐츠 — 타이틀+설명+가로 스크롤 카드</div>
+    <div class="mo-frame">
+      <!-- ds-template:Mobile.PersonalizedContentAI -->
+      <div class="mo mo-section">
+        <div class="mo-section-header align-top">
+          <div class="mo-personal-left">
+            <div class="mo-personal-eyebrow" data-ds-field="eyebrow">홍길동님의</div>
+            <div class="mo-personal-title" data-ds-field="title">AI 맞춤형 콘텐츠</div>
+            <div class="mo-personal-desc" data-ds-field="desc">AI 기반으로 추천해 드리는 개인 맞춤형 콘텐츠 입니다.</div>
+          </div>
+        </div>
+        <div class="mo-rail" data-ds-slot="cards">
+          <!-- ds-template:Mobile.mo-card-ph -->
+          <div class="mo-card">
+            <div class="mo-card-thumb-ph">Thumbnail</div>
+            <div class="mo-card-title" data-ds-field="title">직무 역량 강화를 위한 리더십 과정</div>
+          </div>
+          <!-- /ds-template -->
+          <div class="mo-card">
+            <div class="mo-card-thumb-ph">Thumbnail</div>
+            <div class="mo-card-title">데이터 분석 기초 입문</div>
+          </div>
+          <div class="mo-card">
+            <div class="mo-card-thumb-ph">Thumbnail</div>
+            <div class="mo-card-title">업무 생산성을 높이는 AI 활용법</div>
+          </div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+</body>
