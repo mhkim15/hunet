@@ -458,7 +458,8 @@
         expose: true,
         targets: [
           {name:"홍길동", id:"hong01"},
-          {name:"김담당", id:"kim22"}
+          {name:"김담당", id:"kim22"},
+          {name:"이매니저", id:"lee15"}
         ],
         participants: 12,
         questionIds: QUESTION_POOL.map(function(q){ return q.id; })
@@ -612,8 +613,7 @@
       return '<tr class="clickable" data-id="'+s.id+'">' +
         '<td class="num">'+s.id+'</td>' +
         '<td>'+esc(s.title)+'</td>' +
-        '<td>'+esc(s.managerName)+'</td>' +
-        '<td>'+esc(s.managerId)+'</td>' +
+        '<td>'+fmtTargetsCell(s.targets)+'</td>' +
         '<td>'+fmtRange(s.startAt,s.endAt,s.untilResponded)+'</td>' +
         '<td>'+esc(s.menuUrl)+'</td>' +
         '<td>'+(s.expose ? "노출" : "미노출")+'</td>' +
@@ -630,7 +630,7 @@
           '<input type="date" id="fTo" value="2026-07-22">' +
         '</div>' +
         '<div class="filter-row">' +
-          '<select id="fKind"><option value="title">제목</option><option value="managerName">담당자명</option><option value="managerId">담당자ID</option></select>' +
+          '<select id="fKind"><option value="title">제목</option><option value="targets">교육담당자</option></select>' +
           '<input type="text" id="fQuery" placeholder="검색어 입력">' +
           '<button class="btn btn-primary btn-sm" id="btnSearch">검색</button>' +
         '</div>' +
@@ -641,7 +641,7 @@
       '</div>' +
       '<div class="card table-wrap">' +
         '<table><thead><tr>' +
-          '<th>번호</th><th>제목</th><th>담당자명</th><th>담당자ID</th><th>설문기간</th><th>노출메뉴URL</th><th>노출여부</th><th>참여자</th><th>결과다운로드</th>' +
+          '<th>번호</th><th>제목</th><th>교육담당자</th><th>설문기간</th><th>노출메뉴URL</th><th>노출여부</th><th>참여자</th><th>결과다운로드</th>' +
         '</tr></thead><tbody id="surveyRows">' + (rows || '') + '</tbody></table>' +
         (rows ? '' : '<div class="muted-note">등록된 설문이 없습니다. "설문등록" 버튼으로 새 설문을 만들어보세요.</div>') +
       '</div>' +
@@ -692,8 +692,9 @@
       var s = findSurvey(Number(tr.dataset.id));
       var sStart = s.startAt.slice(0,10), sEnd = s.endAt.slice(0,10);
       var inRange = (!from || sEnd >= from) && (!to || sStart <= to);
-      var val = (kind === "title" ? s.title : kind === "managerName" ? s.managerName : s.managerId).toLowerCase();
-      var matchQuery = !q || val.indexOf(q) > -1;
+      var matchQuery = !q || (kind === "title"
+        ? s.title.toLowerCase().indexOf(q) > -1
+        : s.targets.some(function(p){ return p.name.toLowerCase().indexOf(q) > -1 || p.id.toLowerCase().indexOf(q) > -1; }));
       var match = inRange && matchQuery;
       tr.style.display = match ? "" : "none";
       if (match) shown++;
@@ -706,8 +707,19 @@
     return esc(a.replace("T"," ")) + " ~ " + esc(b.replace("T"," "));
   }
 
+  /* 대상지정 교육담당자가 여러 명일 수 있으므로, 목록에서는 앞 2명만 보여주고 나머지는
+     "외 N명"으로 축약 — 전체 명단은 title 속성(hover)과 보기 화면에서 확인 가능 */
+  function fmtTargetsCell(targets){
+    if (!targets || !targets.length) return '<span class="empty-chip">미지정</span>';
+    var names = targets.map(function(p){ return p.name+'('+p.id+')'; });
+    var shown = names.slice(0,2).join(", ");
+    var more = names.length > 2 ? ' 외 '+(names.length-2)+'명' : '';
+    var full = esc(names.join(", "));
+    return '<span title="'+full+'">'+esc(shown)+esc(more)+'</span>';
+  }
+
   function downloadSurveyResult(s){
-    var lines = ["담당자ID,담당자명,설문제목,응답일시,문항별응답"];
+    var lines = ["교육담당자ID,교육담당자명,설문제목,응답일시,문항별응답"];
     lines.push([s.managerId, s.managerName, '"'+s.title+'"', s.endAt.replace("T"," "), '"만족도: 도움됨 / 척도: 5 / 의견: 좋아요"'].join(","));
     var blob = new Blob(["﻿" + lines.join("\n")], {type:"text/csv;charset=utf-8;"});
     var a = document.createElement("a");
@@ -1117,7 +1129,7 @@
       if (from && to && from > to){ toast("시작일이 종료일보다 늦습니다. 기간을 다시 확인하세요."); return; }
       var filtered = filterAllResultsByDate(from, to);
       if (!filtered.length){ toast("조건에 맞는 응답이 없습니다."); return; }
-      var lines = ["기업명,설문제목,담당자명,담당자ID,응답일시,응답요약"];
+      var lines = ["기업명,설문제목,교육담당자명,교육담당자ID,응답일시,응답요약"];
       filtered.forEach(function(r){ lines.push([r.company,'"'+r.title+'"',r.managerName,r.managerId,r.respondedAt,'"'+r.summary+'"'].join(",")); });
       var blob = new Blob(["﻿"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
       var a = document.createElement("a");
