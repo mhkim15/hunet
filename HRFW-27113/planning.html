@@ -943,7 +943,7 @@
         '</div>' +
       '</div>' +
       '<div class="card table-wrap">' +
-        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>코드</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>관리</th></tr></thead>' +
+        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>번호</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>관리</th></tr></thead>' +
         '<tbody id="qRows"></tbody></table>' +
       '</div>';
 
@@ -963,7 +963,7 @@
       document.getElementById("qRows").innerHTML = list.map(function(item){
         return '<tr>' +
           '<td><input type="checkbox" class="qRowCheck" data-id="'+item.id+'" '+(checked[item.id]?"checked":"")+'></td>' +
-          '<td>'+esc(item.code)+'</td>' +
+          '<td class="num">'+item.id+'</td>' +
           '<td>'+catLabel(item.category)+'</td>' +
           '<td>'+esc(item.content)+'</td>' +
           '<td>'+(item.active?"사용":"미사용")+'</td>' +
