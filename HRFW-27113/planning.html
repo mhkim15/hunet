@@ -652,7 +652,7 @@
       openBulkUploadModal({
         title: "설문 일괄등록",
         hint: "엑셀 양식으로 여러 설문을 한 번에 등록합니다. 문항은 문항 코드로, 교육담당자는 담당자ID로 지정합니다 — 한 셀에 콤마(,)로 구분해 여러 개를 적으면 됩니다. 예) 교육담당자ID 열: hong01,kim22,lee15 / 문항코드 열: Q001,Q002. 아래 버튼으로 문항 코드 목록을 먼저 받아 확인하세요.",
-        extraButton: { label: "기 등록 설문 문항 다운로드", onClick: downloadQuestionCodeList },
+        extraButton: { label: "설문 문항 코드 다운로드", onClick: downloadQuestionCodeList },
         onConfirm: function(fileName){
           var allQ = QUESTION_POOL.map(function(q){ return q.id; });
           surveys.push(
@@ -943,7 +943,7 @@
         '</div>' +
       '</div>' +
       '<div class="card table-wrap">' +
-        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>코드</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>사용 중인 설문</th><th>관리</th></tr></thead>' +
+        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>코드</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>관리</th></tr></thead>' +
         '<tbody id="qRows"></tbody></table>' +
       '</div>';
 
@@ -967,10 +967,9 @@
           '<td>'+catLabel(item.category)+'</td>' +
           '<td>'+esc(item.content)+'</td>' +
           '<td>'+(item.active?"사용":"미사용")+'</td>' +
-          '<td class="num">'+countSurveysUsing(item.id)+'</td>' +
           '<td><a href="#" class="act-edit" data-id="'+item.id+'">수정</a></td>' +
         '</tr>';
-      }).join("") || '<tr><td colspan="7"><div class="muted-note">조건에 맞는 문항이 없습니다.</div></td></tr>';
+      }).join("") || '<tr><td colspan="6"><div class="muted-note">조건에 맞는 문항이 없습니다.</div></td></tr>';
       document.getElementById("qSelectAll").checked = false;
       document.querySelectorAll(".qRowCheck").forEach(function(cb){
         cb.addEventListener("change", function(){ checked[Number(cb.dataset.id)] = cb.checked; });
@@ -1039,7 +1038,6 @@
           '</div>' +
           '<p class="hint">미사용으로 바꾸면 문항 선택 팝업과 설문 참여 화면에 더 이상 노출되지 않습니다.</p>') +
       '</div>' +
-      (isEdit ? row("사용 중인 설문", '<div class="readonly-value">'+countSurveysUsing(existing.id)+'건</div>') : '') +
       '<div class="btn-row">' +
         '<button class="btn btn-primary" id="btnSaveQ">'+(isEdit?"저장":"문항 저장")+'</button>' +
         '<button class="btn btn-ghost" id="btnCancelQ">목록</button>' +
