@@ -65,15 +65,17 @@
 
   /* ── Border Radius ── */
   --radius-none:   0px;
-  --radius-sm:     6px;
-  --radius-md:     10px;
+  --radius-sm:     12px;
+  --radius-md:     16px;
   --radius-pill:   999px;
   --radius-circle: 50%;
 
-  /* ── Shadows ── */
-  --shadow-sm: 0 1px 2px rgba(15,17,20,.06);
-  --shadow-md: 0 4px 12px rgba(15,17,20,.08);
-  --shadow-lg: 0 12px 32px rgba(15,17,20,.16);
+  /* ── Shadows (soft, elevation 기반 — 카드는 테두리 대신 그림자로 뜬다) ── */
+  --shadow-sm: 0 1px 3px rgba(15,17,20,.06);
+  --shadow-md: 0 8px 24px rgba(15,17,20,.08);
+  --shadow-lg: 0 20px 48px rgba(15,17,20,.16);
+  --shadow-card: 0 1px 2px rgba(15,17,20,.04), 0 1px 1px rgba(15,17,20,.03);
+  --shadow-card-hover: 0 12px 28px rgba(15,17,20,.10), 0 2px 6px rgba(15,17,20,.05);
 
   /* ── Layout ── */
   --layout-max-width:   1130px;
@@ -93,7 +95,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
 
   /* Daily Insight card */
   .insight-wrap { display: flex; gap: 16px; max-width: 800px; }
-  .insight-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); overflow: hidden; flex: 1.4; }
+  .insight-card { background: var(--color-surface); border: none; border-radius: var(--radius-sm); overflow: hidden; flex: 1.4; box-shadow: var(--shadow-card); }
   .insight-thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-200); position: relative; display: flex; align-items: center; justify-content: center; }
   .insight-play { width: 44px; height: 44px; background: rgba(0,0,0,0.45); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
   .insight-tag { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-80px); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 4px 14px; font-size: 12px; font-weight: 600; color: var(--color-text-primary); }
@@ -101,10 +103,10 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .insight-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
   .insight-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-  /* Bottom 3-col */
-  .bottom3 { display: flex; gap: 0; border: 1px solid var(--color-border); border-radius: var(--radius-sm); overflow: hidden; background: var(--color-surface); max-width: 900px; }
-  .b3-col { flex: 1; padding: 20px; border-right: 1px solid var(--color-border); }
-  .b3-col:last-child { border-right: none; }
+  /* Bottom 3-col — 공지사항 / 모바일 APP 설치 / 학습문의. 각 칼럼은 독립 카드로,
+     추천과정 카드 그리드(CourseCard .grid)와 동일한 16px 간격으로 배치한다. */
+  .bottom3 { display: flex; gap: 16px; max-width: 900px; }
+  .b3-col { flex: 1; padding: 24px; background: var(--color-surface); border: none; border-radius: var(--radius-sm); box-shadow: var(--shadow-card); }
   .b3-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .b3-title { font-size: 15px; font-weight: 700; }
   .b3-more { font-size: 12px; color: var(--color-text-secondary); text-decoration: none; }
@@ -150,23 +152,25 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   </div>
 
   <div>
-    <div class="label">Bottom 3-Column (공지 / 게시판 / 학습문의)</div>
+    <div class="label">Bottom 3-Column (공지사항 / 모바일 APP 설치 / 학습문의 — 렌더러 기본 조합)</div>
     <div class="bottom3">
       <!-- ds-template:DailyInsight.b3-notice -->
       <div class="b3-col">
-        <div class="b3-header"><div class="b3-title" data-ds-field="title">시스템 공지사항</div><a href="#" class="b3-more">더보기 ›</a></div>
+        <div class="b3-header"><div class="b3-title" data-ds-field="title">공지사항</div><a href="#" class="b3-more">더보기 ›</a></div>
         <div class="b3-empty">등록된 공지사항이 없습니다.</div>
       </div>
       <!-- /ds-template -->
-      <!-- ds-template:DailyInsight.b3-board -->
+      <!-- ds-template:DailyInsight.b3-app-install -->
       <div class="b3-col">
-        <div class="b3-header"><div class="b3-title" data-ds-field="title">공유게시판</div><a href="#" class="b3-more">더보기 ›</a></div>
-        <div class="b3-list" data-ds-slot="items">
-          <div class="b3-item">세아온 특강심 소개</div>
-          <div class="b3-item">2026년 그룹 신입임원 교육 내용 공유</div>
-          <div class="b3-item">2025년 Challenge Leader Course 교육 내용</div>
-          <div class="b3-item">2025년 세아그룹 승진자 교육 내용 공유</div>
+        <div class="b3-header"><div class="b3-title" data-ds-field="title">모바일 APP 설치</div></div>
+        <div class="b3-app-body">
+          <div class="b3-steps">
+            <div class="b3-step-item"><span class="b3-step-num">①</span><span class="b3-step-text">네이버, 다음 등의 어플 중 하나를 실행하여 QR코드를 촬영해 주세요.</span></div>
+            <div class="b3-step-item"><span class="b3-step-num">②</span><span class="b3-step-text">휴대폰번호로 설치URL을 보내드립니다.</span></div>
+          </div>
+          <div class="b3-qr">QR</div>
         </div>
+        <div class="b3-input-row"><input class="b3-input" placeholder="휴대폰 번호 입력"><button class="b3-send-btn">보내기</button></div>
       </div>
       <!-- /ds-template -->
       <!-- ds-template:DailyInsight.b3-contact -->
@@ -184,19 +188,17 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   </div>
 
   <div>
-    <div class="label">Bottom 3-Column — 앱설치 칼럼 (QR + 단계 안내)</div>
-    <div class="bottom3" style="max-width:320px;">
-      <!-- ds-template:DailyInsight.b3-app-install -->
+    <div class="label">Bottom 3-Column — 대체 칼럼: 공유게시판 (공지사항 대신 쓸 수 있는 옵션)</div>
+    <div class="bottom3" style="max-width:280px;">
+      <!-- ds-template:DailyInsight.b3-board -->
       <div class="b3-col">
-        <div class="b3-header"><div class="b3-title" data-ds-field="title">모바일 APP 설치</div></div>
-        <div class="b3-app-body">
-          <div class="b3-steps">
-            <div class="b3-step-item"><span class="b3-step-num">①</span><span class="b3-step-text">네이버, 다음 등의 어플 중 하나를 실행하여 QR코드를 촬영해 주세요.</span></div>
-            <div class="b3-step-item"><span class="b3-step-num">②</span><span class="b3-step-text">휴대폰번호로 설치URL을 보내드립니다.</span></div>
-          </div>
-          <div class="b3-qr">QR</div>
+        <div class="b3-header"><div class="b3-title" data-ds-field="title">공유게시판</div><a href="#" class="b3-more">더보기 ›</a></div>
+        <div class="b3-list" data-ds-slot="items">
+          <div class="b3-item">세아온 특강심 소개</div>
+          <div class="b3-item">2026년 그룹 신입임원 교육 내용 공유</div>
+          <div class="b3-item">2025년 Challenge Leader Course 교육 내용</div>
+          <div class="b3-item">2025년 세아그룹 승진자 교육 내용 공유</div>
         </div>
-        <div class="b3-input-row"><input class="b3-input" placeholder="휴대폰 번호 입력"><button class="b3-send-btn">보내기</button></div>
       </div>
       <!-- /ds-template -->
     </div>
