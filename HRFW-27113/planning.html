@@ -651,17 +651,19 @@
     document.getElementById("btnBulkSurvey").addEventListener("click", function(){
       openBulkUploadModal({
         title: "설문 일괄등록",
-        hint: "엑셀 양식으로 여러 설문을 한 번에 등록합니다. 문항은 문항 코드로 지정합니다 — 아래 버튼으로 코드 목록을 먼저 받아 확인하세요.",
+        hint: "엑셀 양식으로 여러 설문을 한 번에 등록합니다. 문항은 문항 코드로, 교육담당자는 담당자ID로 지정합니다 — 한 셀에 콤마(,)로 구분해 여러 개를 적으면 됩니다. 예) 교육담당자ID 열: hong01,kim22,lee15 / 문항코드 열: Q001,Q002. 아래 버튼으로 문항 코드 목록을 먼저 받아 확인하세요.",
         extraButton: { label: "기 등록 설문 문항 다운로드", onClick: downloadQuestionCodeList },
         onConfirm: function(fileName){
           var allQ = QUESTION_POOL.map(function(q){ return q.id; });
           surveys.push(
-            {id:nextId(), title:"[일괄등록] 신규 기능 만족도 조사", desc:"엑셀 일괄등록 예시", managerName:"박운영", managerId:"park09",
+            {id:nextId(), title:"[일괄등록] 신규 기능 만족도 조사", desc:"엑셀 일괄등록 예시 — 교육담당자ID 열에 park09,lee15 콤마구분 입력",
+             managerName:"박운영", managerId:"park09",
              startAt:"2026-08-01T09:00", endAt:"2026-08-31T18:00", menuUrl:"/Manage/Home", expose:true,
-             targets:[{name:"박운영", id:"park09"}], questionIds:allQ, participants:0},
-            {id:nextId(), title:"[일괄등록] 상담 서비스 만족도 조사", desc:"엑셀 일괄등록 예시", managerName:"이매니저", managerId:"lee15",
+             targets:[{name:"박운영", id:"park09"},{name:"이매니저", id:"lee15"}], questionIds:allQ, participants:0},
+            {id:nextId(), title:"[일괄등록] 상담 서비스 만족도 조사", desc:"엑셀 일괄등록 예시 — 교육담당자ID 열에 kim22 단일 입력",
+             managerName:"김담당", managerId:"kim22",
              startAt:"2026-08-01T09:00", endAt:"2026-08-31T18:00", menuUrl:"/Manage/Home", expose:false,
-             targets:[{name:"이매니저", id:"lee15"}], questionIds:allQ, participants:0}
+             targets:[{name:"김담당", id:"kim22"}], questionIds:allQ, participants:0}
           );
           toast('"'+fileName+'" 업로드 완료 — 설문 2건이 일괄 등록되었습니다.');
           renderSurveyList();
