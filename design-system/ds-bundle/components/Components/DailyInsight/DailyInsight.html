@@ -96,9 +96,8 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   /* Daily Insight card */
   .insight-wrap { display: flex; gap: 16px; max-width: 800px; }
   .insight-card { background: var(--color-surface); border: none; border-radius: var(--radius-sm); overflow: hidden; flex: 1.4; box-shadow: var(--shadow-card); }
-  .insight-thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-200); position: relative; display: flex; align-items: center; justify-content: center; }
-  .insight-play { width: 44px; height: 44px; background: rgba(0,0,0,0.45); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 18px; }
-  .insight-tag { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-80px); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 4px 14px; font-size: 12px; font-weight: 600; color: var(--color-text-primary); }
+  .insight-thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); position: relative; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); }
+  .insight-tag { position: absolute; top: 12px; left: 12px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 4px 14px; font-size: 12px; font-weight: 600; color: var(--color-text-primary); }
   .insight-body { padding: 16px; }
   .insight-title { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
   .insight-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -140,7 +139,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
       <div class="insight-card">
         <div class="insight-thumb">
           <div class="insight-tag">Daily Insight</div>
-          <div class="insight-play">▶</div>
+          Thumbnail
         </div>
         <div class="insight-body">
           <div class="insight-title" data-ds-field="title">분위기 메이커가 조직을 움직인다 : 에너지 리더십</div>
