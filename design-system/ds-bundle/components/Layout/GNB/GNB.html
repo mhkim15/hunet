@@ -1,18 +1,19 @@
 <!-- @dsCard group="Layout" -->
 <title>GNB — EDU Design System</title>
 <style id="ds-tokens">
-/* EDU Design System Design System — Monotone Token Sheet */
+/* EDU Design System — v2 "Apple" Token Sheet (HIG 스타일: SF 시스템 폰트, 큰 radius,
+   옅은 elevation, 모노톤 블랙 액센트). */
 :root {
-  /* ── Colors ── */
-  --color-black:    #14161a;
-  --color-gray-900: #24262b;
-  --color-gray-700: #494d55;
-  --color-gray-500: #6b7280;
-  --color-gray-400: #9aa1ab;
-  --color-gray-300: #c7cbd3;
-  --color-gray-200: #dee1e6;
-  --color-gray-100: #f1f2f4;
-  --color-gray-50:  #f7f8fa;
+  /* ── Colors — Apple 시스템 그레이 스케일 ── */
+  --color-black:    #1c1c1e;
+  --color-gray-900: #3a3a3c;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-400: #aeaeb2;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
   --color-white:    #FFFFFF;
 
   /* Semantic */
@@ -21,34 +22,34 @@
   --color-border:      var(--color-gray-200);
   --color-border-dark: var(--color-gray-300);
 
-  --color-text-primary:   var(--color-gray-900);
+  --color-text-primary:   var(--color-black);
   --color-text-secondary: var(--color-gray-500);
   --color-text-disabled:  var(--color-gray-400);
   --color-text-inverse:   var(--color-white);
 
-  /* Accent (replaces brand red — stays neutral) */
+  /* Accent — 모노톤(블랙) 유지. 화려한 컬러 대신 크고 부드러운 형태감으로 애플 느낌을 낸다. */
   --color-accent:        var(--color-black);
   --color-accent-subtle: var(--color-gray-100);
   --color-accent-hover:  var(--color-gray-700);
 
-  /* ── Typography ── */
-  --font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  11px;
-  --font-size-sm:  12px;
-  --font-size-md:  14px;
-  --font-size-lg:  16px;
-  --font-size-xl:  18px;
-  --font-size-2xl: 20px;
-  --font-size-3xl: 24px;
+  --font-size-xs:  12px;
+  --font-size-sm:  13px;
+  --font-size-md:  15px;
+  --font-size-lg:  17px;
+  --font-size-xl:  20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
   --font-weight-semibold:600;
   --font-weight-bold:    700;
 
-  --line-height-tight:  1.3;
-  --line-height-normal: 1.5;
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.47;
   --line-height-loose:  1.8;
 
   /* ── Spacing ── */
@@ -63,19 +64,19 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* ── Border Radius ── */
+  /* ── Border Radius — Apple의 크고 부드러운 "연속 곡률" 코너 느낌 ── */
   --radius-none:   0px;
-  --radius-sm:     12px;
-  --radius-md:     16px;
+  --radius-sm:     16px;
+  --radius-md:     24px;
   --radius-pill:   999px;
   --radius-circle: 50%;
 
-  /* ── Shadows (soft, elevation 기반 — 카드는 테두리 대신 그림자로 뜬다) ── */
-  --shadow-sm: 0 1px 3px rgba(15,17,20,.06);
-  --shadow-md: 0 8px 24px rgba(15,17,20,.08);
-  --shadow-lg: 0 20px 48px rgba(15,17,20,.16);
-  --shadow-card: 0 1px 2px rgba(15,17,20,.04), 0 1px 1px rgba(15,17,20,.03);
-  --shadow-card-hover: 0 12px 28px rgba(15,17,20,.10), 0 2px 6px rgba(15,17,20,.05);
+  /* ── Shadows — 아주 옅고 넓게, 카드는 테두리 없이 그림자만으로 뜬다 ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.03);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.07);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,.14);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,.05), 0 20px 44px rgba(0,0,0,.10);
 
   /* ── Layout ── */
   --layout-max-width:   1130px;
@@ -93,19 +94,21 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   body { padding: 24px; background: var(--color-bg); display: flex; flex-direction: column; gap: 24px; }
   .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
 
-  /* GNB — 로고 + 메뉴(텍스트, 요구사항에 맞게 추가) + 검색바 */
-  .gnb { background: var(--color-surface); border-bottom: 1px solid var(--color-border); height: 60px; display: flex; align-items: center; padding: 0 24px; gap: 0; position: relative; }
+  /* GNB 헤더 카드 — 유틸리티바(로그인~검색)와 메인 GNB를 하나의 흰 카드로 묶어 세이프존
+     전체 폭을 덮는다(2026-07-29 사용자 피드백 — 두 개의 반투명 띠로 나뉘어 배경이 옅게
+     보이던 것을 하나의 불투명 카드로 통합). */
+  .gnb-header { background: var(--color-surface); border-radius: var(--radius-sm); box-shadow: var(--shadow-card); overflow: hidden; }
+  .gnb { background: transparent; height: 60px; display: flex; align-items: center; padding: 0 24px; gap: 0; position: relative; }
   .gnb-logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: var(--color-black); min-width: 120px; }
   .gnb-menu { flex: 1; display: flex; align-items: center; justify-content: space-around; gap: 12px; }
   .gnb-menu-item { font-size: 14px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; text-decoration: none; }
-  .gnb-menu-item:hover { color: var(--color-black); }
-  .gnb-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0 14px; height: 32px; min-width: 200px; background: var(--color-gray-50); flex-shrink: 0; }
+  .gnb-menu-item:hover { color: var(--color-text-secondary); }
+  .gnb-search { display: flex; align-items: center; gap: 8px; border: none; border-radius: var(--radius-pill); padding: 0 14px; height: 32px; min-width: 200px; background: var(--color-gray-100); flex-shrink: 0; }
   .gnb-search-input { border: none; outline: none; background: transparent; font-size: 13px; color: var(--color-text-secondary); flex: 1; font-family: var(--font-family); }
   .gnb-search-icon { width: 14px; height: 14px; color: var(--color-gray-400); }
 
-  /* Utility bar — GNB 위에 얹는 얇은 띠(로그인/회원가입/관리자 + 검색). 참고 화면(2026-07-10)에서
-     검색은 이 띠로 옮기고 메인 GNB 행은 메뉴만 고르게 펼친다. */
-  .utility-bar { background: var(--color-gray-50); border-bottom: 1px solid var(--color-border); height: 34px; display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding: 0 24px; font-size: 12px; color: var(--color-text-secondary); }
+  /* Utility bar — 같은 gnb-header 카드 안, 메인 GNB 위에 얹는 얇은 띠(로그인/회원가입/관리자 + 검색) */
+  .utility-bar { background: transparent; border-bottom: 1px solid var(--color-border); height: 34px; display: flex; align-items: center; justify-content: flex-end; gap: 18px; padding: 0 24px; font-size: 12px; color: var(--color-text-secondary); }
   .utility-link { cursor: pointer; }
   .utility-link:hover { color: var(--color-text-primary); }
   .utility-search { display: flex; align-items: center; gap: 6px; }
@@ -168,7 +171,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   <div>
     <div class="label">GNB Header (유틸리티 바 + 메인 GNB, 렌더러가 실제로 쓰는 조합형)</div>
     <!-- ds-template:GNB.header -->
-    <div>
+    <div class="gnb-header">
       <div class="utility-bar">
         <span class="utility-link">로그인</span>
         <span class="utility-link">회원가입</span>

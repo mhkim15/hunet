@@ -1,18 +1,19 @@
 <!-- @dsCard group="Components" -->
 <title>LearningStatus Cards — EDU Design System</title>
 <style id="ds-tokens">
-/* EDU Design System Design System — Monotone Token Sheet */
+/* EDU Design System — v2 "Apple" Token Sheet (HIG 스타일: SF 시스템 폰트, 큰 radius,
+   옅은 elevation, 모노톤 블랙 액센트). */
 :root {
-  /* ── Colors ── */
-  --color-black:    #14161a;
-  --color-gray-900: #24262b;
-  --color-gray-700: #494d55;
-  --color-gray-500: #6b7280;
-  --color-gray-400: #9aa1ab;
-  --color-gray-300: #c7cbd3;
-  --color-gray-200: #dee1e6;
-  --color-gray-100: #f1f2f4;
-  --color-gray-50:  #f7f8fa;
+  /* ── Colors — Apple 시스템 그레이 스케일 ── */
+  --color-black:    #1c1c1e;
+  --color-gray-900: #3a3a3c;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-400: #aeaeb2;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
   --color-white:    #FFFFFF;
 
   /* Semantic */
@@ -21,34 +22,34 @@
   --color-border:      var(--color-gray-200);
   --color-border-dark: var(--color-gray-300);
 
-  --color-text-primary:   var(--color-gray-900);
+  --color-text-primary:   var(--color-black);
   --color-text-secondary: var(--color-gray-500);
   --color-text-disabled:  var(--color-gray-400);
   --color-text-inverse:   var(--color-white);
 
-  /* Accent (replaces brand red — stays neutral) */
+  /* Accent — 모노톤(블랙) 유지. 화려한 컬러 대신 크고 부드러운 형태감으로 애플 느낌을 낸다. */
   --color-accent:        var(--color-black);
   --color-accent-subtle: var(--color-gray-100);
   --color-accent-hover:  var(--color-gray-700);
 
-  /* ── Typography ── */
-  --font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  11px;
-  --font-size-sm:  12px;
-  --font-size-md:  14px;
-  --font-size-lg:  16px;
-  --font-size-xl:  18px;
-  --font-size-2xl: 20px;
-  --font-size-3xl: 24px;
+  --font-size-xs:  12px;
+  --font-size-sm:  13px;
+  --font-size-md:  15px;
+  --font-size-lg:  17px;
+  --font-size-xl:  20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
   --font-weight-semibold:600;
   --font-weight-bold:    700;
 
-  --line-height-tight:  1.3;
-  --line-height-normal: 1.5;
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.47;
   --line-height-loose:  1.8;
 
   /* ── Spacing ── */
@@ -63,19 +64,19 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* ── Border Radius ── */
+  /* ── Border Radius — Apple의 크고 부드러운 "연속 곡률" 코너 느낌 ── */
   --radius-none:   0px;
-  --radius-sm:     12px;
-  --radius-md:     16px;
+  --radius-sm:     16px;
+  --radius-md:     24px;
   --radius-pill:   999px;
   --radius-circle: 50%;
 
-  /* ── Shadows (soft, elevation 기반 — 카드는 테두리 대신 그림자로 뜬다) ── */
-  --shadow-sm: 0 1px 3px rgba(15,17,20,.06);
-  --shadow-md: 0 8px 24px rgba(15,17,20,.08);
-  --shadow-lg: 0 20px 48px rgba(15,17,20,.16);
-  --shadow-card: 0 1px 2px rgba(15,17,20,.04), 0 1px 1px rgba(15,17,20,.03);
-  --shadow-card-hover: 0 12px 28px rgba(15,17,20,.10), 0 2px 6px rgba(15,17,20,.05);
+  /* ── Shadows — 아주 옅고 넓게, 카드는 테두리 없이 그림자만으로 뜬다 ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.03);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.07);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,.14);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,.05), 0 20px 44px rgba(0,0,0,.10);
 
   /* ── Layout ── */
   --layout-max-width:   1130px;
@@ -99,22 +100,24 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .ms-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
   .ms-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
   .ms-more { font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
-  .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
-  .tab { padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-family: var(--font-family); }
-  .tab.active { background: var(--color-black); color: var(--color-white); border-color: var(--color-black); }
+  /* 세그먼트 컨트롤(iOS UISegmentedControl 관례) — 회색 트랙 위에 흰 알약이 얹힌 형태 */
+  .tabs { display: flex; gap: 2px; margin-bottom: 18px; background: var(--color-gray-100); border-radius: var(--radius-pill); padding: 3px; }
+  .tab { flex: 1; text-align: center; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); background: transparent; border: none; border-radius: var(--radius-pill); font-family: var(--font-family); transition: background .15s, box-shadow .15s; }
+  .tab.active { background: var(--color-white); color: var(--color-text-primary); font-weight: 600; box-shadow: var(--shadow-sm); }
   .ms-course-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; cursor: pointer; }
   .ms-course-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ms-course-arrow { font-size: 15px; color: var(--color-gray-400); flex-shrink: 0; }
   .ms-progress-info { font-size: 13px; margin-bottom: 10px; }
-  .ms-progress-pct { font-weight: 700; color: var(--color-black); }
+  .ms-progress-pct { font-weight: 700; color: var(--color-accent); }
   .ms-progress-days { color: var(--color-text-secondary); margin-left: 2px; }
   .ms-progress-track { width: 100%; height: 6px; background: var(--color-gray-200); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
-  .ms-progress-fill { height: 100%; background: var(--color-black); border-radius: 3px; }
+  .ms-progress-fill { height: 100%; background: var(--color-accent); border-radius: 3px; }
   .ms-progress-legend { display: flex; justify-content: flex-end; gap: 14px; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 18px; }
   .ms-legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-  .ms-legend-dot.mine { background: var(--color-black); }
+  .ms-legend-dot.mine { background: var(--color-accent); }
   .ms-legend-dot.recommend { background: var(--color-gray-300); }
-  .ms-cta-btn { width: 100%; padding: 14px; background: var(--color-black); color: var(--color-white); border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-family); }
+  .ms-cta-btn { width: 100%; padding: 14px; background: var(--color-accent); color: var(--color-white); border: none; border-radius: var(--radius-pill); font-size: 15px; font-weight: 600; cursor: pointer; font-family: var(--font-family); transition: opacity .15s; }
+  .ms-cta-btn:hover { opacity: .85; }
 
   /* 연간학습현황 */
   .year-status { background: var(--color-surface); border: none; border-radius: var(--radius-sm); width: 200px; padding: 24px; box-shadow: var(--shadow-card); }
@@ -134,7 +137,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
   .cal-day-head { font-size: 11px; color: var(--color-text-secondary); padding: 4px 0; font-weight: 600; }
   .cal-day { font-size: 12px; color: var(--color-text-primary); padding: 5px 0; border-radius: 50%; cursor: pointer; }
-  .cal-day.today { background: var(--color-black); color: var(--color-white); border-radius: 50%; }
+  .cal-day.today { background: var(--color-accent); color: var(--color-white); border-radius: 50%; }
   .cal-day.marked { background: var(--color-gray-200); border-radius: 50%; }
   .cal-day.dim { color: var(--color-gray-300); }
   .cal-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border); }

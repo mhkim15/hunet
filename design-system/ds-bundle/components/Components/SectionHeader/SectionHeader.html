@@ -1,18 +1,19 @@
 <!-- @dsCard group="Components" -->
 <title>SectionHeader — EDU Design System</title>
 <style id="ds-tokens">
-/* EDU Design System Design System — Monotone Token Sheet */
+/* EDU Design System — v2 "Apple" Token Sheet (HIG 스타일: SF 시스템 폰트, 큰 radius,
+   옅은 elevation, 모노톤 블랙 액센트). */
 :root {
-  /* ── Colors ── */
-  --color-black:    #14161a;
-  --color-gray-900: #24262b;
-  --color-gray-700: #494d55;
-  --color-gray-500: #6b7280;
-  --color-gray-400: #9aa1ab;
-  --color-gray-300: #c7cbd3;
-  --color-gray-200: #dee1e6;
-  --color-gray-100: #f1f2f4;
-  --color-gray-50:  #f7f8fa;
+  /* ── Colors — Apple 시스템 그레이 스케일 ── */
+  --color-black:    #1c1c1e;
+  --color-gray-900: #3a3a3c;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-400: #aeaeb2;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
   --color-white:    #FFFFFF;
 
   /* Semantic */
@@ -21,34 +22,34 @@
   --color-border:      var(--color-gray-200);
   --color-border-dark: var(--color-gray-300);
 
-  --color-text-primary:   var(--color-gray-900);
+  --color-text-primary:   var(--color-black);
   --color-text-secondary: var(--color-gray-500);
   --color-text-disabled:  var(--color-gray-400);
   --color-text-inverse:   var(--color-white);
 
-  /* Accent (replaces brand red — stays neutral) */
+  /* Accent — 모노톤(블랙) 유지. 화려한 컬러 대신 크고 부드러운 형태감으로 애플 느낌을 낸다. */
   --color-accent:        var(--color-black);
   --color-accent-subtle: var(--color-gray-100);
   --color-accent-hover:  var(--color-gray-700);
 
-  /* ── Typography ── */
-  --font-family: "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  11px;
-  --font-size-sm:  12px;
-  --font-size-md:  14px;
-  --font-size-lg:  16px;
-  --font-size-xl:  18px;
-  --font-size-2xl: 20px;
-  --font-size-3xl: 24px;
+  --font-size-xs:  12px;
+  --font-size-sm:  13px;
+  --font-size-md:  15px;
+  --font-size-lg:  17px;
+  --font-size-xl:  20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
   --font-weight-semibold:600;
   --font-weight-bold:    700;
 
-  --line-height-tight:  1.3;
-  --line-height-normal: 1.5;
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.47;
   --line-height-loose:  1.8;
 
   /* ── Spacing ── */
@@ -63,19 +64,19 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* ── Border Radius ── */
+  /* ── Border Radius — Apple의 크고 부드러운 "연속 곡률" 코너 느낌 ── */
   --radius-none:   0px;
-  --radius-sm:     12px;
-  --radius-md:     16px;
+  --radius-sm:     16px;
+  --radius-md:     24px;
   --radius-pill:   999px;
   --radius-circle: 50%;
 
-  /* ── Shadows (soft, elevation 기반 — 카드는 테두리 대신 그림자로 뜬다) ── */
-  --shadow-sm: 0 1px 3px rgba(15,17,20,.06);
-  --shadow-md: 0 8px 24px rgba(15,17,20,.08);
-  --shadow-lg: 0 20px 48px rgba(15,17,20,.16);
-  --shadow-card: 0 1px 2px rgba(15,17,20,.04), 0 1px 1px rgba(15,17,20,.03);
-  --shadow-card-hover: 0 12px 28px rgba(15,17,20,.10), 0 2px 6px rgba(15,17,20,.05);
+  /* ── Shadows — 아주 옅고 넓게, 카드는 테두리 없이 그림자만으로 뜬다 ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.03);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.07);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,.14);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,.05), 0 20px 44px rgba(0,0,0,.10);
 
   /* ── Layout ── */
   --layout-max-width:   1130px;
@@ -98,17 +99,17 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .sh { display: flex; align-items: center; justify-content: space-between; }
   .sh-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
   .sh-more { font-size: 13px; color: var(--color-text-secondary); text-decoration: none; display: flex; align-items: center; gap: 3px; }
-  .sh-more:hover { color: var(--color-black); }
+  .sh-more:hover { color: var(--color-accent); }
 
   /* With subtitle */
   .sh-group { display: flex; flex-direction: column; gap: 2px; }
   .sh-subtitle { font-size: 13px; color: var(--color-text-secondary); font-weight: 400; }
 
-  /* With category tabs */
+  /* With category tabs — 필터 칩은 캡슐(pill) 형태, 선택 시 모노톤 블랙 */
   .sh-with-tabs { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .tab-list { display: flex; gap: 8px; }
-  .tab-chip { padding: 4px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid var(--color-border); background: transparent; color: var(--color-text-secondary); font-family: var(--font-family); }
-  .tab-chip.active { background: var(--color-black); color: var(--color-white); border-color: var(--color-black); }
+  .tab-chip { padding: 6px 16px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: var(--color-gray-100); color: var(--color-text-secondary); font-family: var(--font-family); }
+  .tab-chip.active { background: var(--color-accent); color: var(--color-white); }
 
   /* Personalized section (맞춤형 콘텐츠 / AI 맞춤형 콘텐츠) — 좌측 헤더 + 우측 3열 카드 그리드 */
   .personal-section { display: flex; gap: 32px; align-items: flex-start; }
@@ -117,7 +118,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .ph-name { font-size: 20px; font-weight: 700; line-height: 1.3; margin-top: -4px; }
   .ph-name em { font-style: normal; color: var(--color-gray-500); }
   .ph-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
-  .ph-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: var(--color-surface); font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-primary); font-family: var(--font-family); width: fit-content; }
+  .ph-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--radius-pill); border: none; background: var(--color-accent-subtle); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--color-accent); font-family: var(--font-family); width: fit-content; }
   .ph-chips { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
   .ph-arrows { display: flex; gap: 6px; margin-top: 4px; }
   .ph-arrow-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-family); }
