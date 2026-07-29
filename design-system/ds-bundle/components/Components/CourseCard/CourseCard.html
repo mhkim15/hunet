@@ -35,13 +35,13 @@
   /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  12px;
-  --font-size-sm:  13px;
-  --font-size-md:  15px;
-  --font-size-lg:  17px;
-  --font-size-xl:  20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
+  --font-size-xs:  14px;
+  --font-size-sm:  15px;
+  --font-size-md:  17px;
+  --font-size-lg:  19px;
+  --font-size-xl:  22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 32px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
@@ -94,7 +94,7 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   body { padding: 32px; background: var(--color-bg); }
   h2 { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); margin-bottom: 8px; }
   .section { margin-bottom: 40px; }
-  .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
+  .label { font-size: 13px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 14px; }
   .grid { display: flex; flex-wrap: wrap; gap: 16px; }
 
   /* Card base — 테두리 대신 은은한 그림자로 뜬 카드(elevation), 호버 시 살짝 떠오름 */
@@ -103,38 +103,38 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
 
   /* Standard course card (4-col grid) — identical UI to MicroLearning Card */
   .card-std { width: 220px; }
-  .card-std .thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); position: relative; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); }
+  .card-std .thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); position: relative; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-gray-400); }
   .card-std .body { padding: 14px 14px 16px; }
-  .card-std .title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; }
-  .card-std .meta { font-size: 11px; color: var(--color-text-disabled); }
+  .card-std .title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; }
+  .card-std .meta { font-size: 13px; color: var(--color-text-disabled); }
 
   /* Micro-learning card (4-col, wider thumbnail) */
   .card-micro { width: 220px; }
-  .card-micro .thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); position: relative; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); }
-  .card-micro .tag { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 3px; }
+  .card-micro .thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); position: relative; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-gray-400); }
+  .card-micro .tag { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 3px; }
   .card-micro .body { padding: 14px 14px 16px; }
-  .card-micro .title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-micro .title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
   /* Ranking list item */
   .rank-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
   .rank-item:last-child { border-bottom: none; }
-  .rank-num { font-size: 16px; font-weight: 700; color: var(--color-gray-300); width: 20px; text-align: center; }
+  .rank-num { font-size: 18px; font-weight: 700; color: var(--color-gray-300); width: 20px; text-align: center; }
   .rank-info { flex: 1; }
-  .rank-cat { font-size: 11px; color: var(--color-text-disabled); margin-bottom: 2px; }
-  .rank-title { font-size: 13px; color: var(--color-text-primary); font-weight: 500; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-  .rank-btn { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 12px; border: none; cursor: pointer; font-family: var(--font-family); }
+  .rank-cat { font-size: 13px; color: var(--color-text-disabled); margin-bottom: 2px; }
+  .rank-title { font-size: 15px; color: var(--color-text-primary); font-weight: 500; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .rank-btn { font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 12px; border: none; cursor: pointer; font-family: var(--font-family); }
   .rank-btn-done { background: var(--color-gray-200); color: var(--color-gray-500); }
   .rank-btn-new  { background: var(--color-accent); color: var(--color-white); }
 
   /* 온라인 추천과정 (ORC — 단일 카드 캐러셀) */
   .orc-box { width: 280px; border: none; border-radius: var(--radius-sm); background: var(--color-surface); padding: 20px; box-shadow: var(--shadow-card); }
   .orc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .orc-tag { font-size: 12px; font-weight: 700; color: var(--color-text-primary); }
+  .orc-tag { font-size: 14px; font-weight: 700; color: var(--color-text-primary); }
   .orc-nav { display: flex; gap: 4px; }
-  .orc-nav-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
-  .orc-card .orc-thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); margin-bottom: 10px; }
-  .orc-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
-  .orc-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 10px; }
+  .orc-nav-btn { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); font-size: 14px; color: var(--color-text-secondary); cursor: pointer; }
+  .orc-card .orc-thumb { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-gray-400); margin-bottom: 10px; }
+  .orc-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+  .orc-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 10px; }
   .orc-dots { display: flex; gap: 5px; justify-content: center; }
   .orc-dots .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-gray-300); }
   .orc-dots .dot.active { background: var(--color-accent); }

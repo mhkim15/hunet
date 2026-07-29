@@ -35,13 +35,13 @@
   /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  12px;
-  --font-size-sm:  13px;
-  --font-size-md:  15px;
-  --font-size-lg:  17px;
-  --font-size-xl:  20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
+  --font-size-xs:  14px;
+  --font-size-sm:  15px;
+  --font-size-md:  17px;
+  --font-size-lg:  19px;
+  --font-size-xl:  22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 32px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
@@ -92,57 +92,57 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
 </style>
 <style>
   body { padding: 32px; background: var(--color-bg); display: flex; flex-direction: column; gap: 32px; }
-  .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+  .label { font-size: 13px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
   .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
 
   /* 나의 학습현황 */
   .my-status { background: var(--color-surface); border: none; border-radius: var(--radius-sm); width: 340px; padding: 24px; box-shadow: var(--shadow-card); }
   .ms-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .ms-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
-  .ms-more { font-size: 12px; color: var(--color-text-secondary); cursor: pointer; }
+  .ms-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+  .ms-more { font-size: 14px; color: var(--color-text-secondary); cursor: pointer; }
   /* 세그먼트 컨트롤(iOS UISegmentedControl 관례) — 회색 트랙 위에 흰 알약이 얹힌 형태 */
   .tabs { display: flex; gap: 2px; margin-bottom: 18px; background: var(--color-gray-100); border-radius: var(--radius-pill); padding: 3px; }
-  .tab { flex: 1; text-align: center; padding: 6px 14px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); background: transparent; border: none; border-radius: var(--radius-pill); font-family: var(--font-family); transition: background .15s, box-shadow .15s; }
+  .tab { flex: 1; text-align: center; padding: 6px 14px; font-size: 15px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); background: transparent; border: none; border-radius: var(--radius-pill); font-family: var(--font-family); transition: background .15s, box-shadow .15s; }
   .tab.active { background: var(--color-white); color: var(--color-text-primary); font-weight: 600; box-shadow: var(--shadow-sm); }
   .ms-course-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; cursor: pointer; }
-  .ms-course-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .ms-course-arrow { font-size: 15px; color: var(--color-gray-400); flex-shrink: 0; }
-  .ms-progress-info { font-size: 13px; margin-bottom: 10px; }
+  .ms-course-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ms-course-arrow { font-size: 17px; color: var(--color-gray-400); flex-shrink: 0; }
+  .ms-progress-info { font-size: 15px; margin-bottom: 10px; }
   .ms-progress-pct { font-weight: 700; color: var(--color-accent); }
   .ms-progress-days { color: var(--color-text-secondary); margin-left: 2px; }
   .ms-progress-track { width: 100%; height: 6px; background: var(--color-gray-200); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
   .ms-progress-fill { height: 100%; background: var(--color-accent); border-radius: 3px; }
-  .ms-progress-legend { display: flex; justify-content: flex-end; gap: 14px; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 18px; }
+  .ms-progress-legend { display: flex; justify-content: flex-end; gap: 14px; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 18px; }
   .ms-legend-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
   .ms-legend-dot.mine { background: var(--color-accent); }
   .ms-legend-dot.recommend { background: var(--color-gray-300); }
-  .ms-cta-btn { width: 100%; padding: 14px; background: var(--color-accent); color: var(--color-white); border: none; border-radius: var(--radius-pill); font-size: 15px; font-weight: 600; cursor: pointer; font-family: var(--font-family); transition: opacity .15s; }
+  .ms-cta-btn { width: 100%; padding: 14px; background: var(--color-accent); color: var(--color-white); border: none; border-radius: var(--radius-pill); font-size: 17px; font-weight: 600; cursor: pointer; font-family: var(--font-family); transition: opacity .15s; }
   .ms-cta-btn:hover { opacity: .85; }
 
   /* 연간학습현황 */
   .year-status { background: var(--color-surface); border: none; border-radius: var(--radius-sm); width: 200px; padding: 24px; box-shadow: var(--shadow-card); }
-  .year-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+  .year-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
   .year-stat { display: flex; flex-direction: column; gap: 12px; }
   .y-item { display: flex; align-items: center; gap: 10px; }
-  .y-icon { width: 36px; height: 36px; background: var(--color-gray-100); border-radius: var(--radius-sm); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .y-icon { width: 36px; height: 36px; background: var(--color-gray-100); border-radius: var(--radius-sm); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
   .y-info { flex: 1; }
-  .y-name { font-size: 12px; color: var(--color-text-secondary); }
-  .y-val { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+  .y-name { font-size: 14px; color: var(--color-text-secondary); }
+  .y-val { font-size: 17px; font-weight: 700; color: var(--color-text-primary); }
 
   /* 오프라인러닝 캘린더 */
   .calendar { background: var(--color-surface); border: none; border-radius: var(--radius-sm); width: 280px; padding: 20px; box-shadow: var(--shadow-card); }
   .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .cal-title { font-size: 14px; font-weight: 700; }
-  .cal-nav { font-size: 16px; color: var(--color-gray-400); cursor: pointer; border: none; background: none; }
+  .cal-title { font-size: 16px; font-weight: 700; }
+  .cal-nav { font-size: 18px; color: var(--color-gray-400); cursor: pointer; border: none; background: none; }
   .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
-  .cal-day-head { font-size: 11px; color: var(--color-text-secondary); padding: 4px 0; font-weight: 600; }
-  .cal-day { font-size: 12px; color: var(--color-text-primary); padding: 5px 0; border-radius: 50%; cursor: pointer; }
+  .cal-day-head { font-size: 13px; color: var(--color-text-secondary); padding: 4px 0; font-weight: 600; }
+  .cal-day { font-size: 14px; color: var(--color-text-primary); padding: 5px 0; border-radius: 50%; cursor: pointer; }
   .cal-day.today { background: var(--color-accent); color: var(--color-white); border-radius: 50%; }
   .cal-day.marked { background: var(--color-gray-200); border-radius: 50%; }
   .cal-day.dim { color: var(--color-gray-300); }
   .cal-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border); }
-  .cal-section-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-  .cal-list-item { font-size: 12px; color: var(--color-text-secondary); padding: 3px 0; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .cal-section-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+  .cal-list-item { font-size: 14px; color: var(--color-text-secondary); padding: 3px 0; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
 <body>
 

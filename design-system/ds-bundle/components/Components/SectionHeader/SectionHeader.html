@@ -35,13 +35,13 @@
   /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
   --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
 
-  --font-size-xs:  12px;
-  --font-size-sm:  13px;
-  --font-size-md:  15px;
-  --font-size-lg:  17px;
-  --font-size-xl:  20px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 30px;
+  --font-size-xs:  14px;
+  --font-size-sm:  15px;
+  --font-size-md:  17px;
+  --font-size-lg:  19px;
+  --font-size-xl:  22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 32px;
 
   --font-weight-regular: 400;
   --font-weight-medium:  500;
@@ -92,43 +92,43 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
 </style>
 <style>
   body { padding: 32px; background: var(--color-bg); display: flex; flex-direction: column; gap: 32px; }
-  .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+  .label { font-size: 13px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
   .demo { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px 24px; }
 
   /* Section header variants */
   .sh { display: flex; align-items: center; justify-content: space-between; }
-  .sh-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
-  .sh-more { font-size: 13px; color: var(--color-text-secondary); text-decoration: none; display: flex; align-items: center; gap: 3px; }
+  .sh-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+  .sh-more { font-size: 15px; color: var(--color-text-secondary); text-decoration: none; display: flex; align-items: center; gap: 3px; }
   .sh-more:hover { color: var(--color-accent); }
 
   /* With subtitle */
   .sh-group { display: flex; flex-direction: column; gap: 2px; }
-  .sh-subtitle { font-size: 13px; color: var(--color-text-secondary); font-weight: 400; }
+  .sh-subtitle { font-size: 15px; color: var(--color-text-secondary); font-weight: 400; }
 
   /* With category tabs — 필터 칩은 캡슐(pill) 형태, 선택 시 모노톤 블랙 */
   .sh-with-tabs { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .tab-list { display: flex; gap: 8px; }
-  .tab-chip { padding: 6px 16px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: var(--color-gray-100); color: var(--color-text-secondary); font-family: var(--font-family); }
+  .tab-chip { padding: 6px 16px; border-radius: var(--radius-pill); font-size: 15px; font-weight: 500; cursor: pointer; border: none; background: var(--color-gray-100); color: var(--color-text-secondary); font-family: var(--font-family); }
   .tab-chip.active { background: var(--color-accent); color: var(--color-white); }
 
   /* Personalized section (맞춤형 콘텐츠 / AI 맞춤형 콘텐츠) — 좌측 헤더 + 우측 3열 카드 그리드 */
   .personal-section { display: flex; gap: 32px; align-items: flex-start; }
   .ph-left { min-width: 180px; max-width: 180px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
-  .ph-eyebrow { font-size: 14px; color: var(--color-text-primary); }
-  .ph-name { font-size: 20px; font-weight: 700; line-height: 1.3; margin-top: -4px; }
+  .ph-eyebrow { font-size: 16px; color: var(--color-text-primary); }
+  .ph-name { font-size: 22px; font-weight: 700; line-height: 1.3; margin-top: -4px; }
   .ph-name em { font-style: normal; color: var(--color-gray-500); }
-  .ph-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
-  .ph-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--radius-pill); border: none; background: var(--color-accent-subtle); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--color-accent); font-family: var(--font-family); width: fit-content; }
+  .ph-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.5; }
+  .ph-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--radius-pill); border: none; background: var(--color-accent-subtle); font-size: 15px; font-weight: 600; cursor: pointer; color: var(--color-accent); font-family: var(--font-family); width: fit-content; }
   .ph-chips { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
   .ph-arrows { display: flex; gap: 6px; margin-top: 4px; }
-  .ph-arrow-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-family); }
+  .ph-arrow-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-family); }
   .ph-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .ph-card { background: var(--color-surface); border: none; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-card); transition: box-shadow .2s ease, transform .2s ease; }
   .ph-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
-  .ph-card .thumb-ph { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); }
+  .ph-card .thumb-ph { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-gray-400); }
   .ph-card .thumb-img { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-200); }
   .ph-card .body { padding: 14px 14px 16px; }
-  .ph-card .title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ph-card .title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 </style>
 <body>
 
