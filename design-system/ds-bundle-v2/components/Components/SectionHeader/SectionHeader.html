@@ -1,0 +1,252 @@
+<!-- @dsCard group="Components" -->
+<title>SectionHeader — EDU Design System</title>
+<style id="ds-tokens">
+/* EDU Design System — v2 "Apple" Token Sheet (HIG 스타일: SF 시스템 폰트, 큰 radius,
+   옅은 elevation, 시스템 블루 액센트). v1(ds-bundle/)은 그대로 두고 별도 병행 버전. */
+:root {
+  /* ── Colors — Apple 시스템 그레이 스케일 ── */
+  --color-black:    #1c1c1e;
+  --color-gray-900: #3a3a3c;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-400: #aeaeb2;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
+  --color-white:    #FFFFFF;
+
+  /* Semantic */
+  --color-bg:          var(--color-gray-50);
+  --color-surface:     var(--color-white);
+  --color-border:      var(--color-gray-200);
+  --color-border-dark: var(--color-gray-300);
+
+  --color-text-primary:   var(--color-black);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-disabled:  var(--color-gray-400);
+  --color-text-inverse:   var(--color-white);
+
+  /* Accent — 시스템 블루(Apple systemBlue). v1과 달리 v2는 액센트 컬러를 적극 사용한다. */
+  --color-accent:        #007AFF;
+  --color-accent-subtle: #E8F2FF;
+  --color-accent-hover:  #0062CC;
+
+  /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+  --font-size-xs:  12px;
+  --font-size-sm:  13px;
+  --font-size-md:  15px;
+  --font-size-lg:  17px;
+  --font-size-xl:  20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold:600;
+  --font-weight-bold:    700;
+
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.47;
+  --line-height-loose:  1.8;
+
+  /* ── Spacing ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border Radius — Apple의 크고 부드러운 "연속 곡률" 코너 느낌 ── */
+  --radius-none:   0px;
+  --radius-sm:     16px;
+  --radius-md:     24px;
+  --radius-pill:   999px;
+  --radius-circle: 50%;
+
+  /* ── Shadows — 아주 옅고 넓게, 카드는 테두리 없이 그림자만으로 뜬다 ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.03);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.07);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,.14);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,.05), 0 20px 44px rgba(0,0,0,.10);
+
+  /* ── Layout ── */
+  --layout-max-width:   1130px;
+  --layout-gnb-height:  60px;
+  --layout-sidebar-w:   150px;
+  --layout-h-padding:   24px;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); font-size: var(--font-size-md); color: var(--color-text-primary); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+
+</style>
+<style>
+  body { padding: 32px; background: var(--color-bg); display: flex; flex-direction: column; gap: 32px; }
+  .label { font-size: 11px; font-weight: 600; color: var(--color-text-disabled); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+  .demo { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px 24px; }
+
+  /* Section header variants */
+  .sh { display: flex; align-items: center; justify-content: space-between; }
+  .sh-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+  .sh-more { font-size: 13px; color: var(--color-text-secondary); text-decoration: none; display: flex; align-items: center; gap: 3px; }
+  .sh-more:hover { color: var(--color-accent); }
+
+  /* With subtitle */
+  .sh-group { display: flex; flex-direction: column; gap: 2px; }
+  .sh-subtitle { font-size: 13px; color: var(--color-text-secondary); font-weight: 400; }
+
+  /* With category tabs — 필터 칩은 캡슐(pill) 형태, 선택 시 시스템 블루 */
+  .sh-with-tabs { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .tab-list { display: flex; gap: 8px; }
+  .tab-chip { padding: 6px 16px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: var(--color-gray-100); color: var(--color-text-secondary); font-family: var(--font-family); }
+  .tab-chip.active { background: var(--color-accent); color: var(--color-white); }
+
+  /* Personalized section (맞춤형 콘텐츠 / AI 맞춤형 콘텐츠) — 좌측 헤더 + 우측 3열 카드 그리드 */
+  .personal-section { display: flex; gap: 32px; align-items: flex-start; }
+  .ph-left { min-width: 180px; max-width: 180px; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0; }
+  .ph-eyebrow { font-size: 14px; color: var(--color-text-primary); }
+  .ph-name { font-size: 20px; font-weight: 700; line-height: 1.3; margin-top: -4px; }
+  .ph-name em { font-style: normal; color: var(--color-gray-500); }
+  .ph-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+  .ph-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: var(--radius-pill); border: none; background: var(--color-accent-subtle); font-size: 13px; font-weight: 600; cursor: pointer; color: var(--color-accent); font-family: var(--font-family); width: fit-content; }
+  .ph-chips { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .ph-arrows { display: flex; gap: 6px; margin-top: 4px; }
+  .ph-arrow-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-surface); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-family); }
+  .ph-grid { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .ph-card { background: var(--color-surface); border: none; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow-card); transition: box-shadow .2s ease, transform .2s ease; }
+  .ph-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+  .ph-card .thumb-ph { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-gray-400); }
+  .ph-card .thumb-img { width: 100%; aspect-ratio: 16/9; background: var(--color-gray-200); }
+  .ph-card .body { padding: 14px 14px 16px; }
+  .ph-card .title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
+<body>
+
+  <div>
+    <div class="label">Basic — 제목 + 더보기</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.sh -->
+      <div class="sh">
+        <div class="sh-title" data-ds-field="title">직무 추천 콘텐츠 큐레이션</div>
+        <a href="#" class="sh-more">더보기 ›</a>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">With Subtitle</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.sh-subtitle -->
+      <div class="sh">
+        <div class="sh-group">
+          <div class="sh-title" data-ds-field="title">마이크로러닝 추천과정</div>
+          <div class="sh-subtitle" data-ds-field="desc">짧지만 알찬 5분 학습 콘텐츠</div>
+        </div>
+        <a href="#" class="sh-more">더보기 ›</a>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">With Category Tabs</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.tab-standalone -->
+      <div class="sh">
+        <div class="sh-with-tabs">
+          <div class="sh-title" data-ds-field="title">추천과정</div>
+          <div class="tab-list" data-ds-slot="tabs">
+            <!-- ds-template:SectionHeader.tab-btn -->
+            <button class="tab-chip active" data-ds-field="label">IT</button>
+            <!-- /ds-template -->
+            <button class="tab-chip">영어</button>
+            <button class="tab-chip">자기관리</button>
+          </div>
+        </div>
+        <a href="#" class="sh-more">더보기 ›</a>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">Welcome — 로그인 사용자 환영 인사</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.welcome -->
+      <div class="sh">
+        <div class="sh-title">홍길동<em style="font-style:normal;color:var(--color-text-secondary);">님</em> 반갑습니다</div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">AI 맞춤형 콘텐츠 (개인화 추천 — 좌측 헤더 / 우측 3열 카드)</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.personal-ai -->
+      <div class="personal-section">
+        <div class="ph-left">
+          <div class="ph-eyebrow" data-ds-field="eyebrow">홍길동님의</div>
+          <div class="ph-name" data-ds-field="title">AI 맞춤형 콘텐츠</div>
+          <div class="ph-desc" data-ds-field="desc">AI 기반으로 추천해 드리는 개인 맞춤형 콘텐츠 입니다.</div>
+          <div class="ph-arrows"><button class="ph-arrow-btn">‹</button><button class="ph-arrow-btn">›</button></div>
+        </div>
+        <div class="ph-grid" data-ds-slot="cards">
+          <!-- ds-template:SectionHeader.ph-card -->
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title" data-ds-field="title">직무 역량 강화를 위한 리더십 과정</div></div></div>
+          <!-- /ds-template -->
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title">데이터 분석 기초 입문</div></div></div>
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title">업무 생산성을 높이는 AI 활용법</div></div></div>
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title">직무 역량 강화를 위한 리더십 과정</div></div></div>
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title">데이터 분석 기초 입문</div></div></div>
+          <div class="ph-card"><div class="thumb-ph">Thumbnail</div><div class="body"><div class="title">업무 생산성을 높이는 AI 활용법</div></div></div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+  <div>
+    <div class="label">관심분야 추천과정 (개인화 추천 — 좌측 헤더+카테고리 / 우측 3열 카드)</div>
+    <div class="demo">
+      <!-- ds-template:SectionHeader.personal-default -->
+      <div class="personal-section">
+        <div class="ph-left">
+          <div class="ph-eyebrow" data-ds-field="eyebrow">안*태님의</div>
+          <div class="ph-name" data-ds-field="title">관심분야 추천과정</div>
+          <div class="ph-desc" data-ds-field="desc">관심분야 기반으로 추천해 드리는 개인 맞춤형 콘텐츠입니다.</div>
+          <button class="ph-btn">📌 관심분야 설정</button>
+          <div class="ph-chips" data-ds-slot="chips">
+            <!-- ds-template:SectionHeader.chip-item -->
+            <button class="tab-chip active" data-ds-field="label">IT</button>
+            <!-- /ds-template -->
+            <button class="tab-chip">영어</button>
+            <button class="tab-chip">자기관리</button>
+          </div>
+          <div class="ph-arrows"><button class="ph-arrow-btn">‹</button><button class="ph-arrow-btn">›</button></div>
+        </div>
+        <div class="ph-grid" data-ds-slot="cards">
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">[북러닝] 데이터과학자의 사고법 (도서 제공)</div></div></div>
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">[H Pick+셀] EBS 디지털 시대의 숙명, 사이버 보안</div></div></div>
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">ChatGPT로 쉽게 하는 파이썬 업무자동화</div></div></div>
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">비전공자를 위한 웹 개발 스쿨 - HTML5/CSS3</div></div></div>
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">기획자를 위한 챗GPT 활용법</div></div></div>
+          <div class="ph-card"><div class="thumb-img"></div><div class="body"><div class="title">[북러닝] 감으로만 일하던 김 팀장은 어떻게 데이터 좀 아는 팀장이 되었나</div></div></div>
+        </div>
+      </div>
+      <!-- /ds-template -->
+    </div>
+  </div>
+
+</body>

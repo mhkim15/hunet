@@ -1,0 +1,114 @@
+<!-- @dsCard group="Tokens" -->
+<title>Spacing — EDU Design System</title>
+<style id="ds-tokens">
+/* EDU Design System — v2 "Apple" Token Sheet (HIG 스타일: SF 시스템 폰트, 큰 radius,
+   옅은 elevation, 시스템 블루 액센트). v1(ds-bundle/)은 그대로 두고 별도 병행 버전. */
+:root {
+  /* ── Colors — Apple 시스템 그레이 스케일 ── */
+  --color-black:    #1c1c1e;
+  --color-gray-900: #3a3a3c;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-400: #aeaeb2;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
+  --color-white:    #FFFFFF;
+
+  /* Semantic */
+  --color-bg:          var(--color-gray-50);
+  --color-surface:     var(--color-white);
+  --color-border:      var(--color-gray-200);
+  --color-border-dark: var(--color-gray-300);
+
+  --color-text-primary:   var(--color-black);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-disabled:  var(--color-gray-400);
+  --color-text-inverse:   var(--color-white);
+
+  /* Accent — 시스템 블루(Apple systemBlue). v1과 달리 v2는 액센트 컬러를 적극 사용한다. */
+  --color-accent:        #007AFF;
+  --color-accent-subtle: #E8F2FF;
+  --color-accent-hover:  #0062CC;
+
+  /* ── Typography — SF 시스템 폰트 스택(한글은 Noto Sans KR로 폴백) ── */
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+  --font-size-xs:  12px;
+  --font-size-sm:  13px;
+  --font-size-md:  15px;
+  --font-size-lg:  17px;
+  --font-size-xl:  20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 30px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-semibold:600;
+  --font-weight-bold:    700;
+
+  --line-height-tight:  1.2;
+  --line-height-normal: 1.47;
+  --line-height-loose:  1.8;
+
+  /* ── Spacing ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Border Radius — Apple의 크고 부드러운 "연속 곡률" 코너 느낌 ── */
+  --radius-none:   0px;
+  --radius-sm:     16px;
+  --radius-md:     24px;
+  --radius-pill:   999px;
+  --radius-circle: 50%;
+
+  /* ── Shadows — 아주 옅고 넓게, 카드는 테두리 없이 그림자만으로 뜬다 ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.03);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.07);
+  --shadow-lg: 0 24px 56px rgba(0,0,0,.14);
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+  --shadow-card-hover: 0 2px 6px rgba(0,0,0,.05), 0 20px 44px rgba(0,0,0,.10);
+
+  /* ── Layout ── */
+  --layout-max-width:   1130px;
+  --layout-gnb-height:  60px;
+  --layout-sidebar-w:   150px;
+  --layout-h-padding:   24px;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); font-size: var(--font-size-md); color: var(--color-text-primary); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+
+</style>
+<style>
+  body { padding: 32px; background: var(--color-bg); }
+  h2 { font-size: var(--font-size-lg); font-weight: var(--font-weight-bold); margin-bottom: 24px; }
+  .row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .bar-wrap { flex: 1; background: var(--color-gray-100); height: 24px; border-radius: 2px; overflow: hidden; }
+  .bar { height: 100%; background: var(--color-gray-700); }
+  .token { font-size: 12px; font-family: monospace; color: var(--color-text-secondary); width: 80px; }
+  .px { font-size: 12px; color: var(--color-text-disabled); width: 36px; text-align: right; }
+</style>
+<body>
+  <h2>Spacing Scale</h2>
+  <div class="row"><div class="token">--space-1</div><div class="bar-wrap"><div class="bar" style="width:4px"></div></div><div class="px">4px</div></div>
+  <div class="row"><div class="token">--space-2</div><div class="bar-wrap"><div class="bar" style="width:8px"></div></div><div class="px">8px</div></div>
+  <div class="row"><div class="token">--space-3</div><div class="bar-wrap"><div class="bar" style="width:12px"></div></div><div class="px">12px</div></div>
+  <div class="row"><div class="token">--space-4</div><div class="bar-wrap"><div class="bar" style="width:16px"></div></div><div class="px">16px</div></div>
+  <div class="row"><div class="token">--space-5</div><div class="bar-wrap"><div class="bar" style="width:20px"></div></div><div class="px">20px</div></div>
+  <div class="row"><div class="token">--space-6</div><div class="bar-wrap"><div class="bar" style="width:24px"></div></div><div class="px">24px</div></div>
+  <div class="row"><div class="token">--space-8</div><div class="bar-wrap"><div class="bar" style="width:32px"></div></div><div class="px">32px</div></div>
+  <div class="row"><div class="token">--space-10</div><div class="bar-wrap"><div class="bar" style="width:40px"></div></div><div class="px">40px</div></div>
+  <div class="row"><div class="token">--space-12</div><div class="bar-wrap"><div class="bar" style="width:48px"></div></div><div class="px">48px</div></div>
+  <div class="row"><div class="token">--space-16</div><div class="bar-wrap"><div class="bar" style="width:64px"></div></div><div class="px">64px</div></div>
+</body>

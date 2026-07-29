@@ -1,0 +1,99 @@
+<!-- 전체 디자인 시스템 실시간 카탈로그(v2 — Apple 스타일). 로컬 파일 브라우저로 열고, 컴포넌트 .html을 고친 뒤
+     새로고침(F5)만 하면 항상 최신 상태가 보인다 — 각 iframe이 같은 폴더의 실제 컴포넌트 파일을 매번 다시 읽어온다.
+     v1(ds-bundle/)은 이 버전과 무관하게 그대로 유지된다. -->
+<title>EDU Design System v2 (Apple) — 실시간 카탈로그</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Noto Sans KR", sans-serif; background: #f2f2f7; color: #1c1c1e; display: flex; }
+  .sidebar { width: 220px; flex-shrink: 0; background: rgba(255,255,255,.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-right: 1px solid rgba(0,0,0,.06); height: 100vh; overflow-y: auto; position: sticky; top: 0; padding: 20px 0; }
+  .sidebar h1 { font-size: 13px; font-weight: 700; padding: 0 20px 4px; margin: 0; }
+  .sidebar .v2-badge { display: inline-block; margin: 0 20px 8px; padding: 2px 10px; border-radius: 999px; background: #E8F2FF; color: #007AFF; font-size: 10px; font-weight: 700; letter-spacing: .04em; }
+  .sidebar .hint { font-size: 11px; color: #8e8e93; padding: 0 20px 12px; line-height: 1.5; }
+  .sidebar .group-label { font-size: 10px; font-weight: 700; color: #8e8e93; text-transform: uppercase; letter-spacing: .06em; padding: 16px 20px 6px; }
+  .sidebar a { display: block; font-size: 13px; color: #3a3a3c; text-decoration: none; padding: 6px 20px; border-radius: 999px; margin: 0 8px; width: calc(100% - 16px); }
+  .sidebar a:hover { background: #E8F2FF; color: #007AFF; }
+  .reload-btn { display: block; margin: 12px 20px 0; padding: 8px 12px; background: #007AFF; color: #fff; border: none; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; width: calc(100% - 40px); }
+  .reload-btn:hover { opacity: .85; }
+  .main { flex: 1; padding: 32px 40px; max-width: 1100px; }
+  .comp { margin-bottom: 48px; border: none; border-radius: 20px; overflow: hidden; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05); }
+  .comp-header { padding: 14px 18px; border-bottom: 1px solid #f2f2f7; background: #fff; }
+  .comp-name { font-size: 14px; font-weight: 700; }
+  .comp-path { font-size: 11px; color: #8e8e93; font-family: monospace; margin-top: 2px; }
+  .comp iframe { width: 100%; border: none; display: block; }
+  .top-note { font-size: 12px; color: #636366; margin-bottom: 24px; }
+</style>
+<body>
+  <nav class="sidebar">
+    <h1>EDU Design System</h1>
+    <div class="v2-badge">v2 · Apple</div>
+    <div class="hint">각 카드는 iframe으로 실제 컴포넌트 파일을 그대로 불러옵니다. 파일을 고친 뒤 새로고침하면 최신 상태가 보입니다.</div>
+    <button class="reload-btn" onclick="location.reload()">전체 새로고침</button>
+    <div class="group-label">Tokens</div>
+    <a href="#colors">Colors</a>
+    <a href="#typography">Typography</a>
+    <a href="#spacing">Spacing</a>
+    <div class="group-label">Components</div>
+    <a href="#buttons">Buttons</a>
+    <a href="#sectionheader">SectionHeader</a>
+    <a href="#coursecard">CourseCard</a>
+    <a href="#learningstatus">LearningStatus</a>
+    <a href="#dailyinsight">DailyInsight</a>
+    <div class="group-label">Layout</div>
+    <a href="#gnb">GNB</a>
+    <a href="#pagelayout">PageLayout</a>
+  </nav>
+
+  <main class="main">
+    <div class="top-note">이 파일을 브라우저로 직접 열어서(file:// 경로) 사용하세요. 각 iframe은 아래 상대경로의 실제 파일을 매번 새로 불러옵니다. v1(ds-bundle/)은 이 v2와 별개로 그대로 유지됩니다 — 모바일 참고 파일은 아직 v2로 옮기지 않아 이 카탈로그에서는 뺐습니다.</div>
+
+    <div class="comp" id="colors">
+      <div class="comp-header"><div class="comp-name">Colors</div><div class="comp-path">components/Tokens/Colors/Colors.html</div></div>
+      <iframe src="components/Tokens/Colors/Colors.html" height="480"></iframe>
+    </div>
+
+    <div class="comp" id="typography">
+      <div class="comp-header"><div class="comp-name">Typography</div><div class="comp-path">components/Tokens/Typography/Typography.html</div></div>
+      <iframe src="components/Tokens/Typography/Typography.html" height="920"></iframe>
+    </div>
+
+    <div class="comp" id="spacing">
+      <div class="comp-header"><div class="comp-name">Spacing</div><div class="comp-path">components/Tokens/Spacing/Spacing.html</div></div>
+      <iframe src="components/Tokens/Spacing/Spacing.html" height="520"></iframe>
+    </div>
+
+    <div class="comp" id="buttons">
+      <div class="comp-header"><div class="comp-name">Buttons</div><div class="comp-path">components/Components/Buttons/Buttons.html</div></div>
+      <iframe src="components/Components/Buttons/Buttons.html" height="520"></iframe>
+    </div>
+
+    <div class="comp" id="sectionheader">
+      <div class="comp-header"><div class="comp-name">SectionHeader (기본/서브타이틀/탭/Welcome/맞춤형/AI맞춤형)</div><div class="comp-path">components/Components/SectionHeader/SectionHeader.html</div></div>
+      <iframe src="components/Components/SectionHeader/SectionHeader.html" height="1120"></iframe>
+    </div>
+
+    <div class="comp" id="coursecard">
+      <div class="comp-header"><div class="comp-name">CourseCard (Standard / MicroLearning / Ranking / ORC)</div><div class="comp-path">components/Components/CourseCard/CourseCard.html</div></div>
+      <iframe src="components/Components/CourseCard/CourseCard.html" height="1160"></iframe>
+    </div>
+
+    <div class="comp" id="learningstatus">
+      <div class="comp-header"><div class="comp-name">LearningStatus (나의 학습현황)</div><div class="comp-path">components/Components/LearningStatus/LearningStatus.html</div></div>
+      <iframe src="components/Components/LearningStatus/LearningStatus.html" height="700"></iframe>
+    </div>
+
+    <div class="comp" id="dailyinsight">
+      <div class="comp-header"><div class="comp-name">DailyInsight + Bottom3Col (공지/게시판/학습문의/앱설치)</div><div class="comp-path">components/Components/DailyInsight/DailyInsight.html</div></div>
+      <iframe src="components/Components/DailyInsight/DailyInsight.html" height="900"></iframe>
+    </div>
+
+    <div class="comp" id="gnb">
+      <div class="comp-header"><div class="comp-name">GNB / QuickMenu / QuickMenuGrid / FloatingSideNav / Footer</div><div class="comp-path">components/Layout/GNB/GNB.html</div></div>
+      <iframe src="components/Layout/GNB/GNB.html" height="680"></iframe>
+    </div>
+
+    <div class="comp" id="pagelayout">
+      <div class="comp-header"><div class="comp-name">PageLayout (Home 전체 구조)</div><div class="comp-path">components/Layout/PageLayout/PageLayout.html</div></div>
+      <iframe src="components/Layout/PageLayout/PageLayout.html" height="1420"></iframe>
+    </div>
+  </main>
+</body>
