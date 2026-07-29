@@ -123,7 +123,10 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
 
   /* Quick Menu Grid — 메뉴당 개별 카드(elevation)로 각 영역을 구분, 바깥 큰 카드는 없앰 */
   .qm-grid-card { background: transparent; border: none; border-radius: 0; padding: 0; width: 340px; box-shadow: none; }
-  .qm-grid-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 100%; align-content: space-between; }
+  /* align-content:stretch — 행 사이 여백이 아니라 각 행(=메뉴 카드 자체)의 높이를 늘려서
+     학습현황과 같은 높이를 채운다(2026-07-29 피드백 — space-between은 카드 사이 간격만
+     벌렸을 뿐 카드 자체 크기는 그대로였음). */
+  .qm-grid-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 100%; align-content: stretch; }
   .qm-grid-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; background: var(--color-surface); border-radius: var(--radius-sm); box-shadow: var(--shadow-card); padding: 16px 8px; transition: box-shadow .2s ease, transform .2s ease; }
   .qm-grid-item:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
   .qm-grid-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--color-gray-400); }
