@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HRFW-32534 설문 결과보기 팝업 개선 — 화면 기획</title>
+<style>
+  :root{
+    --page-bg:#eef0f3;
+    --gnb-bg:#1c1c1c;
+    --gnb-top:#111111;
+    --sidebar-bg:#ffffff;
+    --sidebar-text:#3d4148;
+    --sidebar-text-muted:#8a8f98;
+    --sidebar-active:#12151a;
+    --accent:#1D6FB8;
+    --accent-soft:#EAF3FC;
+    --surface:#ffffff;
+    --border:#e3e5e9;
+    --border-strong:#c7cbd3;
+    --text:#12151a;
+    --text-muted:#6b7280;
+    --text-faint:#9aa1ab;
+    --radius:6px;
+    --shadow:0 12px 32px rgba(15,17,20,.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--page-bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding:28px;
+    min-height:100vh;
+  }
+  .frame-note{
+    max-width:1710px;margin:0 auto 12px;
+    font-size:12.5px;color:var(--text-muted);
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  }
+  .frame-note b{color:var(--text);}
+  .frame-note .scope-badge{
+    display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;
+    background:#fde8e8;color:#b52f2f;
+  }
+
+  /* 최상단 탭 — 요구사항 / 설문유형별 대시보드 3종. 디자인/개발/퍼블이 팝업 3종을 각각 바로 열어볼 수 있게 함 */
+  .top-tabs{max-width:1400px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;}
+  .top-tab{
+    flex:0 0 auto;padding:11px 18px;border-radius:10px;background:var(--surface);
+    border:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text-muted);
+    cursor:pointer;font-family:inherit;
+  }
+  .top-tab:hover{border-color:var(--border-strong);color:var(--text);}
+  .top-tab.active{background:var(--text);color:#fff;border-color:var(--text);}
+
+  /* 기획 영역(app-shell)과 디스크립션 패널을 나란히 배치하는 바깥 레인 */
+  .stage{max-width:1710px;margin:0 auto;display:flex;align-items:flex-start;gap:20px;}
+  .app-shell{
+    width:1400px;max-width:1400px;flex:0 0 1400px;
+    display:flex;flex-direction:column;
+    border-radius:10px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(10,12,16,.28);
+    border:1px solid rgba(0,0,0,.06);
+    position:relative;background:#fff;
+  }
+  .app-shell[hidden]{display:none;}
+
+  /* 상단 GNB — 실제 에듀매니저 색상(검정)으로, 기존 메뉴 구성/타이포는 그대로 유지 */
+  .gnb{
+    flex:0 0 auto;height:56px;background:var(--gnb-bg);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;color:#fff;
+  }
+  .gnb .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;}
+  .gnb .brand .logo-dot{width:22px;height:22px;border-radius:5px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .gnb .right{display:flex;align-items:center;gap:10px;font-size:12.5px;}
+  .gnb .company-pill{font-weight:700;}
+  .gnb .badge-platinum{background:#2455e6;color:#fff;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;}
+  .gnb .gnb-btn{background:rgba(255,255,255,.12);border:none;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;}
+
+  .body-row{flex:1 1 auto;display:flex;min-height:0;height:820px;}
+
+  /* 좌측 사이드바 */
+  .sidebar{
+    width:212px;flex:0 0 212px;background:var(--sidebar-bg);
+    border-right:1px solid var(--border);overflow-y:auto;
+    display:flex;flex-direction:column;
+  }
+  .sidebar-nav{padding:6px 10px;flex:1 1 auto;}
+  .sidebar-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:9px 10px;border-radius:6px;font-size:12.5px;color:var(--sidebar-text);cursor:default;
+  }
+  .sidebar-item.active{background:#f0f1f3;color:var(--sidebar-active);font-weight:700;}
+  .sidebar-item .car{color:var(--text-faint);font-size:10px;}
+  .sidebar-divider{margin:8px 10px;border-top:1px solid var(--border);}
+  .sidebar-support{padding:10px 10px 16px;font-size:12px;color:var(--sidebar-text-muted);}
+  .sidebar-support div{padding:7px 4px;}
+
+  /* 메인 */
+  .main{flex:1 1 auto;display:flex;flex-direction:column;background:var(--page-bg);min-width:0;}
+  .view-head{
+    flex:0 0 auto;padding:16px 24px 8px;display:flex;align-items:center;justify-content:space-between;
+  }
+  .view-head h1{margin:0;font-size:18px;font-weight:700;}
+  .view-head .head-actions{display:flex;gap:8px;}
+  .view-body{flex:1 1 auto;overflow-y:auto;padding:6px 24px 24px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;}
+  .card-pad{padding:16px 18px;}
+
+  /* 요구사항 개요 문서 — 에듀매니저 화면 목업이 아니라 순수 개요/스펙 문서 형태 */
+  .req-doc{
+    width:1400px;max-width:1400px;flex:0 0 1400px;
+    background:#fff;border-radius:10px;overflow-y:auto;
+    box-shadow:0 20px 60px rgba(10,12,16,.28);border:1px solid rgba(0,0,0,.06);
+    padding:48px 64px 56px;height:820px;
+  }
+  .req-doc[hidden]{display:none;}
+  .req-doc .req-doc-eyebrow{font-size:11px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+  .req-doc h2{margin:0 0 8px;font-size:22px;}
+  .req-doc .req-doc-sub{margin:0 0 28px;font-size:13px;color:var(--text-muted);line-height:1.7;}
+  .req-doc h3{font-size:14.5px;margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+  .req-doc h3:first-of-type{margin-top:0;}
+  .req-doc p{margin:0 0 14px;font-size:13.5px;line-height:1.85;color:var(--text);}
+  .req-doc ol, .req-doc ul.req-doc-list{margin:0;padding-left:20px;font-size:13.5px;line-height:2;}
+  .req-doc ol li b, .req-doc ul.req-doc-list li b{color:var(--text);}
+  .req-doc ul.req-doc-list ul{margin:4px 0 4px;padding-left:20px;line-height:1.9;}
+  .req-doc table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  .req-doc table th{text-align:left;font-weight:700;background:#f7f8fa;border:1px solid var(--border);padding:8px 10px;}
+  .req-doc table td{border:1px solid var(--border);padding:8px 10px;}
+  .req-tag{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:9px;margin-right:6px;}
+  .req-tag.change{background:#fdeaea;color:#b52f2f;}
+  .req-tag.new{background:#e9f4ea;color:#1c7a34;}
+  .req-tag.important{background:#b52f2f;color:#fff;}
+  .req-doc-nav{
+    margin-top:28px;padding:14px 16px;background:var(--accent-soft);border-radius:10px;
+    font-size:13px;color:#0B3B66;
+  }
+
+  .filter-grid{display:flex;flex-direction:column;gap:10px;}
+  .filter-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .filter-line label{width:150px;flex:0 0 auto;font-size:12.5px;font-weight:700;color:var(--text);}
+  select, input[type=text]{
+    font:inherit;font-size:12.5px;padding:7px 10px;border:1px solid var(--border-strong);
+    border-radius:5px;background:#fff;color:var(--text);
+  }
+  .btn{
+    font:inherit;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:5px;
+    border:1px solid var(--border-strong);cursor:pointer;background:#fff;color:var(--text);
+    display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .btn-primary{background:var(--text);color:#fff;border-color:var(--text);}
+  .btn-primary:hover{background:#000;}
+  .btn:hover{background:#f4f5f7;}
+  .btn-sm{padding:5px 10px;font-size:11.5px;}
+
+  .list-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .list-toolbar .left{display:flex;gap:8px;}
+  .list-toolbar .right{display:flex;gap:8px;}
+
+  table{width:100%;border-collapse:collapse;font-size:12px;}
+  .table-wrap{overflow-x:auto;}
+  thead th{
+    text-align:center;font-weight:700;color:var(--text);background:#f7f8fa;
+    border-bottom:1px solid var(--border);padding:9px 8px;white-space:nowrap;
+  }
+  tbody td{padding:10px 8px;border-bottom:1px solid var(--border);vertical-align:middle;text-align:center;}
+  tbody tr:last-child td{border-bottom:none;}
+  td.tleft{text-align:left;}
+  .result-col{display:flex;flex-direction:column;gap:4px;align-items:center;}
+  .link-btn{
+    border:1px solid var(--border-strong);background:#fff;color:var(--text);
+    font-size:11.5px;padding:4px 9px;border-radius:4px;cursor:pointer;font-family:inherit;
+  }
+  .link-btn.result{color:var(--accent);border-color:#bcd7ef;font-weight:700;}
+  .link-btn.result:hover{background:var(--accent-soft);}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .pill-on{background:#e9f9ef;color:#0f7a3d;}
+
+  .focusable{border-radius:8px;cursor:pointer;transition:box-shadow .12s;}
+  .focusable:hover{box-shadow:0 0 0 2px rgba(29,111,184,.28);}
+  .focusable.focused{box-shadow:0 0 0 2px var(--accent);}
+  /* rmodal-header는 모달 상단에 폭 전체로 붙어있어 링(box-shadow)의 아래쪽 변만 잘리지 않고
+     그대로 노출되어 "가로줄"처럼 보인다 — 이 영역만 링 대신 배경색 강조로 대체 */
+  .rmodal-header.focusable.focused{box-shadow:none;background:var(--accent-soft);}
+
+  /* 결과보기 팝업 오버레이 */
+  .overlay{
+    position:absolute;inset:0;background:rgba(10,12,16,.5);
+    display:flex;align-items:flex-start;justify-content:center;padding:40px 0;
+    z-index:40;overflow-y:auto;
+  }
+  .overlay[hidden]{display:none;}
+
+  /* --- 결과 대시보드 모달 스타일 (첨부 목업 3종 기반) --- */
+  /* 테두리는 box-shadow만으로 표현 — border를 두면 라운드 코너 상/하단에 얇은 직선이 그대로 남아 보임(피드백 반영, 테두리선 제거) */
+  .rmodal{
+    background:#fff;width:100%;max-width:660px;border:none;border-radius:20px;
+    box-shadow:0 8px 32px rgba(0,0,0,.22);overflow:hidden;flex:0 0 auto;
+  }
+  .rmodal-header{
+    padding:22px 26px 18px;border-bottom:none;
+    display:flex;justify-content:space-between;align-items:flex-start;
+  }
+  .rmodal-title{font-weight:700;font-size:16px;margin:0 0 8px;color:#0f1720;}
+  .rmodal-meta{font-size:12.5px;color:#6b7280;margin:0;line-height:1.75;}
+  .rmodal-close{
+    width:34px;height:34px;border-radius:50%;border:1px solid #d9dee5;background:#fff;
+    display:inline-flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex-shrink:0;
+  }
+  .rmodal-close:hover{background:#f4f5f7;}
+  .rsection{padding:6px 26px 0;}
+  .rsection-label{font-size:12.5px;color:#6b7280;margin:0 0 10px;}
+  .rtype-grid{display:grid;gap:8px;margin-bottom:22px;}
+  .rtype-card{background:#EAF3FC;border-radius:14px;padding:11px 9px;}
+  .rtype-card .rlabel{font-size:11px;color:#1D6FB8;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .rtype-card .rvalue{font-size:17px;font-weight:700;margin:0;color:#0B3B66;}
+  .rdetail-wrap{padding:0 26px 24px;}
+  .rq-list{display:flex;flex-direction:column;gap:10px;}
+  .rq-row{padding:14px 18px;border:1px solid #e5e7eb;border-radius:14px;}
+  .rq-row .rq-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;gap:12px;flex-wrap:wrap;}
+  .rq-row .rq-text{font-size:13px;margin:0;color:#1a1a1a;}
+  .rq-row .rq-score{font-size:14px;font-weight:700;color:#1D6FB8;flex-shrink:0;}
+  .rdist-bar{display:flex;height:16px;border-radius:999px;overflow:hidden;margin-bottom:7px;gap:2px;}
+  .rdist-labels{display:flex;gap:12px;font-size:11.5px;color:#6b7280;flex-wrap:wrap;}
+  .rdist-labels.grouped span{display:inline-flex;align-items:center;gap:5px;}
+  .rdist-labels.grouped .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .rsubj-toggle{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:11px;padding-top:11px;
+    border-top:1px dashed #e5e7eb;background:none;border-left:none;border-right:none;border-bottom:none;
+    width:100%;cursor:pointer;font-size:12.5px;color:#1D6FB8;font-weight:500;font-family:inherit;
+    min-height:40px;
+  }
+  .rsubj-toggle .rchev{
+    display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;
+    background:#EAF3FC;color:#1D6FB8;font-size:10px;flex-shrink:0;transition:transform .15s ease;
+  }
+  .rsubj-toggle[aria-expanded="true"] .rchev{transform:rotate(180deg);}
+  .rsubj-panel{display:none;margin-top:9px;padding:11px 13px;background:#f8f9fb;border-radius:12px;max-height:200px;overflow-y:auto;}
+  .rsubj-panel.open{display:block;}
+  .rsubj-item{padding:8px 0;font-size:12.5px;line-height:1.6;color:#374151;}
+  .rsubj-item + .rsubj-item{border-top:1px solid #eef0f2;}
+
+  /* 태블릿 반응형 — 700px 이하에서 요약 카드 2열 전환 + 문항 상단 줄바꿈 허용 */
+  @media (max-width:700px){
+    .rtype-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+    .rq-row .rq-top{flex-direction:column;align-items:flex-start;gap:4px;}
+  }
+
+  /* 디스크립션 패널 */
+  .desc-panel{
+    position:sticky;top:28px;flex:0 0 320px;width:320px;max-height:calc(820px + 56px);
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    box-shadow:0 16px 40px rgba(15,17,20,.16);padding:16px 18px 18px;overflow-y:auto;
+    font-size:12.5px;color:var(--text);
+  }
+  .desc-panel .desc-eyebrow{font-size:10px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;font-weight:700;}
+  .desc-panel h3{margin:0 0 10px;font-size:13.5px;font-weight:700;}
+  .desc-panel .desc-empty{color:var(--text-faint);font-size:12px;line-height:1.65;}
+  .desc-panel .desc-body{white-space:pre-wrap;line-height:1.7;color:var(--text);}
+  .desc-panel .desc-list{margin:0;padding-left:18px;}
+  .desc-panel .desc-list li{margin-bottom:10px;line-height:1.65;}
+  .desc-panel .desc-list li::marker{color:var(--accent);font-weight:700;}
+  .desc-panel .desc-tag{
+    display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:10px;
+  }
+  .desc-tag.change{background:#fdeaea;color:#b52f2f;}
+  .desc-tag.new{background:#e9f4ea;color:#1c7a34;}
+
+  @media (max-width: 1480px){
+    .stage{flex-direction:column;align-items:center;}
+    .desc-panel{position:relative;top:0;width:1400px;max-width:100%;max-height:none;}
+  }
+  @media (max-width: 1440px){
+    .app-shell, .desc-panel{width:100%;max-width:100%;flex:1 1 auto;}
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-note">
+  <span><b>HRFW-32534</b> 설문 결과보기 팝업 개선 — 화면 기획 + 디스크립션 (실제 데이터 없이 동작 확인용 목업)</span>
+  <span class="scope-badge">스코프: 에듀매니저 &gt; 설문 &gt; 결과보기 팝업 교체</span>
+</div>
+
+<div class="top-tabs" id="topTabs"></div>
+
+<div class="stage">
+<div class="req-doc" id="reqDoc">
+  <div class="req-doc-eyebrow">Requirements</div>
+  <h2>설문 결과보기 팝업 개선 — 요구사항 개요</h2>
+  <p class="req-doc-sub">HRFW-32534 · 새마을금고중앙회(MG인재개발원) · 에듀매니저 &gt; 설문 &gt; 결과보기 팝업 교체</p>
+
+  <h3>요구사항</h3>
+  <p>기존 에듀매니저 설문 메뉴에서 <b>[결과보기]</b>를 눌렀을 때 뜨는 팝업을, 이번에 새로 디자인되는 팝업으로 교체하는 작업입니다. <b>디자인 · UI퍼블리싱 · 개발</b>이 모두 필요합니다. 설문유형에 따라 다른 내용의 팝업이 뜨며, 유형별 실제 화면과 상세 스펙(데이터 항목·계산식 등)은 상단 탭에서 각각 확인할 수 있습니다.</p>
+
+  <h3>작업 내용</h3>
+  <ul class="req-doc-list">
+    <li><b>기업코드</b>: 12837</li>
+    <li><b>작업 위치</b>: 에듀매니저 &gt; 설문 &gt; 설문등록/관리</li>
+    <li><b>작업 범위</b>: 결과보기 클릭 시 노출되는 팝업(대시보드) 제작 및 적용
+      <ul>
+        <li>교육과정 만족도 대시보드</li>
+        <li>교과목 및 강사 만족도 대시보드</li>
+        <li>교육환경만족도 대시보드</li>
+      </ul>
+    </li>
+    <li><span class="req-tag important">중요</span> 태블릿 대응 필요</li>
+  </ul>
+
+  <div class="req-doc-nav">상단 탭에서 <b>교육과정 만족도 / 교과목 및 강사 만족도 / 교육환경만족도</b> 대시보드를 클릭하면, 실제 에듀매니저 화면에서 이 요구사항이 어떻게 구현되는지(화면 기획 + 상세 디스크립션)를 바로 확인할 수 있습니다.</div>
+</div>
+
+<div class="app-shell" id="app" hidden>
+
+  <div class="gnb">
+    <div class="brand"><span class="logo-dot">M</span>교육운영관리시스템</div>
+    <div class="right">
+      <span class="company-pill">새마을금고중앙회(MG인재개발원) (12837)</span>
+      <span class="badge-platinum">Platinum</span>
+      <button class="gnb-btn">기업변경 ↻</button>
+      <button class="gnb-btn">로그아웃 ⏻</button>
+    </div>
+  </div>
+
+  <div class="body-row">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <div class="sidebar-item">수강생 <span class="car">▾</span></div>
+        <div class="sidebar-item">온라인과정 <span class="car">▾</span></div>
+        <div class="sidebar-item">오프라인과정 <span class="car">▾</span></div>
+        <div class="sidebar-item">마이크로러닝 <span class="car">▾</span></div>
+        <div class="sidebar-item">게시글관리 <span class="car">▾</span></div>
+        <div class="sidebar-item">학습설정 <span class="car">▾</span></div>
+        <div class="sidebar-item">학점관리 <span class="car">▾</span></div>
+        <div class="sidebar-item">사이트설정 <span class="car">▾</span></div>
+        <div class="sidebar-item">대시보드 <span class="car">▾</span></div>
+        <div class="sidebar-item">라이브 스트리밍 <span class="car">▾</span></div>
+        <div class="sidebar-item active">설문 <span class="car">▴</span></div>
+        <div class="sidebar-item">게시판관리 <span class="car">▾</span></div>
+        <div class="sidebar-item">서약서작성 <span class="car">▾</span></div>
+      </nav>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-support">
+        <div>대용량 파일 다운로드</div>
+        <div>휴넷 담당자에게 문의 답변</div>
+        <div>수강신청제한설정</div>
+        <div>휴넷 담당자에게 문의</div>
+        <div>에듀매니저 매뉴얼</div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="view-head">
+        <h1>설문등록/관리</h1>
+        <div class="head-actions">
+          <button class="btn btn-sm">즐겨찾기 추가</button>
+          <button class="btn btn-sm">도움말</button>
+        </div>
+      </div>
+
+      <div class="view-body">
+
+        <div class="card card-pad focusable" data-desc-key="filter">
+          <div class="filter-grid">
+            <div class="filter-line"><label>설문유형</label><select><option>전체</option></select></div>
+            <div class="filter-line"><label>운영주차</label><select><option>전체</option></select></div>
+            <div class="filter-line"><label>설문기간</label><select><option>전체</option></select><select><option>전체</option></select></div>
+            <div class="filter-line"><label>설문기간 내 노출여부</label><select><option>전체</option></select></div>
+            <div class="filter-line">
+              <label>검색</label>
+              <select><option>과정명</option></select>
+              <input type="text" style="width:220px" placeholder="">
+              <button class="btn btn-primary btn-sm">검색</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-toolbar">
+          <div class="left">
+            <select class="btn-sm"><option>20개씩</option></select>
+            <select class="btn-sm"><option>사용</option></select>
+            <button class="btn btn-sm">노출변경</button>
+          </div>
+          <div class="right focusable" data-desc-key="actions">
+            <button class="btn btn-sm">통합 설문보고서 다운로드</button>
+            <button class="btn btn-sm">설문등록</button>
+            <button class="btn btn-sm">설문 일괄등록</button>
+            <button class="btn btn-sm">대상자 일괄등록</button>
+          </div>
+        </div>
+
+        <div class="card table-wrap focusable" data-desc-key="list">
+          <table>
+            <thead>
+              <tr>
+                <th><input type="checkbox"></th>
+                <th>번호</th><th>설문유형</th><th>과정명</th><th>과목명</th><th>운영주차</th>
+                <th>등록일</th><th>설문기간</th><th>노출여부</th><th>대상자</th><th>참여자</th>
+                <th>설문결과</th><th>삭제</th>
+              </tr>
+            </thead>
+            <tbody id="surveyRows"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="resultOverlay" hidden></div>
+</div>
+
+<aside class="desc-panel" id="descPanel">
+  <div class="desc-eyebrow">Description</div>
+  <div class="desc-empty">화면에서 영역(리스트·결과보기 버튼 등)이나 팝업 안쪽을 클릭하면 상세 설명이 여기에 표시됩니다.</div>
+</aside>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  /* ---------- 설문 리스트 mock 데이터 (3개 설문유형을 모두 보여주기 위한 예시 행 구성) ---------- */
+  var SURVEYS = [
+    {no:1, type:"교육과정 만족도", course:"MG여신심사역_2주차", subject:"채권보전 과정 전체", week:"18주차",
+     reg:"2026-07-24", period:"2026-07-24 ~ 2026-08-07", expose:true, target:32, respond:26, dashType:"course"},
+    {no:2, type:"교과목 및 강사 만족도", course:"MG여신심사역_2주차", subject:"채권보전", week:"18주차",
+     reg:"2026-07-24", period:"2026-07-29 ~ 2026-08-05", expose:true, target:32, respond:28, dashType:"teacher"},
+    {no:3, type:"교과목 및 강사 만족도", course:"MG여신심사역_2주차", subject:"파산및개인회생", week:"18주차",
+     reg:"2026-07-24", period:"2026-07-28 ~ 2026-08-04", expose:true, target:32, respond:24, dashType:"teacher"},
+    {no:4, type:"교육환경만족도", course:"MG여신심사역_2주차", subject:"생활관·연수시설 전체", week:"18주차",
+     reg:"2026-07-24", period:"2026-07-24 ~ 2026-08-07", expose:true, target:32, respond:22, dashType:"env"}
+  ];
+
+  var rowsHtml = SURVEYS.map(function(s){
+    return '<tr>' +
+      '<td><input type="checkbox"></td>' +
+      '<td>'+s.no+'</td>' +
+      '<td>'+esc(s.type)+'</td>' +
+      '<td class="tleft">'+esc(s.course)+'</td>' +
+      '<td class="tleft">'+esc(s.subject)+'</td>' +
+      '<td>'+esc(s.week)+'</td>' +
+      '<td>'+esc(s.reg)+'</td>' +
+      '<td>'+esc(s.period)+'</td>' +
+      '<td><span class="pill pill-on">'+(s.expose?"노출":"미노출")+'</span></td>' +
+      '<td>'+s.target+'</td>' +
+      '<td>'+s.respond+'</td>' +
+      '<td><div class="result-col">' +
+        '<button class="link-btn result focusable" data-desc-key="btn-result" data-idx="'+s.no+'">결과보기</button>' +
+        '<button class="link-btn">설문보고서</button>' +
+      '</div></td>' +
+      '<td><button class="link-btn">삭제</button></td>' +
+    '</tr>';
+  }).join("");
+  document.getElementById("surveyRows").innerHTML = rowsHtml;
+
+  /* ---------- 설문유형별 결과 대시보드 콘텐츠 (첨부 목업 3종을 그대로 반영) ---------- */
+  var DASHBOARDS = {
+    course: {
+      title: "2026년 신입직원 공채교육",
+      meta: "설문기간 2026.06.01 ~ 06.15<br>설문대상자수 120명 · 응답자수 98명 · 응답률 81.7%",
+      summary: [
+        {label:"교육효과", value:"4.33", suffix:"/5"},
+        {label:"교과편성", value:"4.07", suffix:"/5"},
+        {label:"교육운영", value:"4.24", suffix:"/5"}
+      ],
+      questions: [
+        {q:"Q1. 본 교육과정이 현재나 향후의 업무수행 또는 자기계발에 도움이 되었다고 생각하십니까?", score:"4.33",
+          dist:[1,3,9,36,51], distLabels:["매우미흡 1명","미흡 3명","보통 9명","만족 35명","매우만족 50명"],
+          subj:["실제 업무에 바로 적용해볼 수 있는 내용이 많아서 도움이 되었습니다.","전반적인 직무 이해도를 높이는 데 유익했습니다.","일부 내용은 실무보다 이론에 치우친 느낌이었습니다."]},
+        {q:"Q2. 본 교육과정의 교과목 편성은 적절하였습니까?", score:"4.07",
+          dist:[2,5,14,41,38], distLabels:["매우미흡 2명","미흡 5명","보통 14명","만족 40명","매우만족 37명"],
+          subj:["과목 간 순서 배치가 자연스러워서 이해하기 좋았습니다.","일부 과목은 시간이 짧아 아쉬웠습니다."]},
+        {q:"Q3. 본 교육과정 담당자의 교육운영(지원)에 대한 만족도는 어떠하였습니까?", score:"4.24",
+          dist:[1,4,10,39,46], distLabels:["매우미흡 1명","미흡 4명","보통 10명","만족 38명","매우만족 45명"],
+          subj:["문의사항에 빠르고 친절하게 대응해주셔서 좋았습니다.","일정 안내가 조금 더 일찍 공지되면 좋겠습니다."]}
+      ]
+    },
+    teacher: {
+      title: "2026년 신입직원 공채교육",
+      meta: "강사명 : 홍길동<br>과목명 : 여신관리기본<br>설문기간 : 2026.06.01 ~ 06.15<br>설문대상자수 120명 · 응답자수 98명 · 응답률 81.7%",
+      summary: [
+        {label:"강의효과", value:"4.40", suffix:"/5"},
+        {label:"강의전문성", value:"4.20", suffix:"/5"},
+        {label:"강의기술", value:"4.10", suffix:"/5"},
+        {label:"강의만족도", value:"4.13", suffix:"/5"},
+        {label:"강사추천(NPS)", value:"40.82", suffix:""}
+      ],
+      questions: [
+        {q:"Q1. 해당 교과목은 업무능력 향상이나 자기계발에 도움이 되었다.", score:"4.4",
+          dist:[2,3,10,35,50], distLabels:["매우미흡 2명","미흡 3명","보통 9명","만족 33명","매우만족 48명"],
+          subj:["강의 진행 속도가 적절하고 실습 시간이 충분해서 좋았습니다.","다음에도 같은 강사님으로 진행되었으면 좋겠습니다."]},
+        {q:"Q2. 강사는 해당과목과 관련된 분야의 전문지식이 풍부하였다.", score:"4.2",
+          dist:[1,4,15,38,42], distLabels:["매우미흡 1명","미흡 4명","보통 15명","만족 37명","매우만족 40명"],
+          subj:["실무 사례 중심의 설명이 이해하기 쉬웠습니다.","이론 설명이 다소 빠르게 진행된 부분이 있었습니다."]},
+        {q:"Q5. 본 강의 시간은 적절했다고 생각하십니까?", score:null,
+          dist3:[80,12,8], dist3Labels:["적절하다 78명","길다 12명","짧다 8명"],
+          subj:["시간 배분이 적절해서 집중하기 좋았습니다.","실습까지 하기엔 시간이 조금 부족했습니다."]},
+        {q:"Q6. 본 강사를 다른 동료들에게 추천하시겠습니까?", score:"8.37/10", grouped:true,
+          dist:[4,8,14,20,27,27],
+          distLabels:[
+            {c:"#B5D4F4", t:"비추천 1~6점 12명"},
+            {c:"#85B7EB", t:"중립 7~8점 34명"},
+            {c:"#0C447C", t:"추천 9~10점 52명"}
+          ],
+          subj:["실무에 바로 적용할 수 있는 내용이 많아 추천하고 싶습니다.","난이도가 다소 높아 대상자를 가려서 추천할 것 같습니다."]}
+      ]
+    },
+    env: {
+      title: "2026년 신입직원 공채교육",
+      meta: "설문기간 2026.06.01 ~ 06.15<br>설문대상자수 120명 · 응답자수 98명 · 응답률 81.7%",
+      summary: [
+        {label:"연수관", value:"4.18", suffix:"/5"},
+        {label:"식사 및 식당", value:"3.92", suffix:"/5"},
+        {label:"생활관", value:"4.05", suffix:"/5"},
+        {label:"기타 편의 및 부대시설", value:"3.98", suffix:"/5"}
+      ],
+      questions: [
+        {q:"Q1. 연수관", score:"4.18", dist:[1,4,15,42,38],
+          distLabels:["매우미흡 1명","미흡 4명","보통 15명","만족 41명","매우만족 37명"],
+          subj:["강의실 시설이 깔끔하고 쾌적했습니다.","일부 강의실의 좌석 간격이 조금 좁게 느껴졌습니다."]},
+        {q:"Q2. 식사 및 식당", score:"3.92", dist:[3,7,21,39,30],
+          distLabels:["매우미흡 3명","미흡 7명","보통 20명","만족 38명","매우만족 30명"],
+          subj:["메뉴 구성이 다양해서 좋았습니다.","식사 시간대에 대기줄이 길어 불편했습니다."]},
+        {q:"Q3. 생활관", score:"4.05", dist:[2,5,17,40,36],
+          distLabels:["매우미흡 2명","미흡 5명","보통 17명","만족 39명","매우만족 35명"],
+          subj:["객실이 깨끗하고 편안했습니다.","방음이 잘 되지 않아 다소 시끄러웠습니다."]},
+        {q:"Q4. 기타 편의 및 부대시설", score:"3.98", dist:[2,6,20,40,32],
+          distLabels:["매우미흡 2명","미흡 6명","보통 20명","만족 39명","매우만족 31명"],
+          subj:["휴게 공간이 잘 마련되어 있어 좋았습니다.","주차 공간이 부족해서 불편함이 있었습니다."]}
+      ]
+    }
+  };
+  var DIST_COLORS_5 = ["#E6F1FB","#B5D4F4","#85B7EB","#378ADD","#0C447C"];
+  var DIST_COLORS_3 = ["#0C447C","#85B7EB","#B5D4F4"];
+
+  function renderDistBar(dist, colors){
+    var total = dist.reduce(function(a,b){return a+b;},0) || 1;
+    return dist.map(function(v,i){
+      return '<div style="width:'+(v/total*100)+'%; background:'+colors[i%colors.length]+';"></div>';
+    }).join("");
+  }
+
+  function renderQuestion(q, idx){
+    var distBarHtml, distLabelsHtml;
+    if (q.grouped){
+      distBarHtml = renderDistBar(q.dist, DIST_COLORS_3.concat(["#9AC5EF","#6AA3E4","#378ADD","#0C447C"]).slice(0,q.dist.length));
+      distLabelsHtml = '<div class="rdist-labels grouped">' + q.distLabels.map(function(l){
+        return '<span><span class="dot" style="background:'+l.c+';"></span>'+esc(l.t)+'</span>';
+      }).join("") + '</div>';
+    } else if (q.dist3){
+      distBarHtml = renderDistBar(q.dist3, DIST_COLORS_3);
+      distLabelsHtml = '<div class="rdist-labels">' + q.dist3Labels.map(function(l){ return '<span>'+esc(l)+'</span>'; }).join("") + '</div>';
+    } else {
+      distBarHtml = renderDistBar(q.dist, DIST_COLORS_5);
+      distLabelsHtml = '<div class="rdist-labels">' + q.distLabels.map(function(l){ return '<span>'+esc(l)+'</span>'; }).join("") + '</div>';
+    }
+    var subjHtml = q.subj && q.subj.length
+      ? q.subj.map(function(s){ return '<div class="rsubj-item">'+esc(s)+'</div>'; }).join("")
+      : '<div class="rsubj-item" style="color:#9ca3af;">주관식 응답이 없는 문항입니다.</div>';
+
+    return '<div class="rq-row">' +
+      '<div class="rq-top"><p class="rq-text">'+esc(q.q)+'</p>' + (q.score ? '<span class="rq-score">'+esc(q.score)+'</span>' : '') + '</div>' +
+      '<div class="rdist-bar">'+distBarHtml+'</div>' +
+      distLabelsHtml +
+      '<button class="rsubj-toggle" aria-expanded="false" onclick="window.__toggleSubj(this)">' +
+        '<span>주관식 응답 보기</span><span class="rchev">▾</span>' +
+      '</button>' +
+      '<div class="rsubj-panel">'+subjHtml+'</div>' +
+    '</div>';
+  }
+
+  function renderDashboard(key){
+    var d = DASHBOARDS[key];
+    var summaryHtml = '<div class="rtype-grid focusable" data-desc-key="rsummary" style="grid-template-columns:repeat('+d.summary.length+', minmax(0,1fr));">' +
+      d.summary.map(function(c){
+        return '<div class="rtype-card"><p class="rlabel">'+esc(c.label)+'</p>' +
+          '<p class="rvalue">'+esc(c.value)+'<span style="font-size:11px;font-weight:400;color:#1D6FB8;">'+esc(c.suffix)+'</span></p></div>';
+      }).join("") + '</div>';
+
+    var questionsHtml = d.questions.map(renderQuestion).join("");
+
+    return '<div class="rmodal">' +
+      '<div class="rmodal-header focusable" data-desc-key="rheader">' +
+        '<div><p class="rmodal-title">'+esc(d.title)+'</p><p class="rmodal-meta">'+d.meta+'</p></div>' +
+        '<button class="rmodal-close" onclick="window.__closeResult()">✕</button>' +
+      '</div>' +
+      '<div class="rsection"><p class="rsection-label">문항별 평균점수</p>'+summaryHtml+'</div>' +
+      '<div class="rdetail-wrap focusable" data-desc-key="rdetail"><p class="rsection-label">문항별 상세결과</p><div class="rq-list">'+questionsHtml+'</div></div>' +
+    '</div>';
+  }
+
+  /* ---------- 상단 탭: 요구사항 / 설문유형별 대시보드 3종 ---------- */
+  var TOP_TABS = [
+    {key:"req", label:"요구사항"},
+    {key:"course", label:"교육과정 만족도 대시보드"},
+    {key:"teacher", label:"교과목 및 강사 만족도 대시보드"},
+    {key:"env", label:"교육환경만족도 대시보드"}
+  ];
+  var overlay = document.getElementById("resultOverlay");
+  var reqDoc = document.getElementById("reqDoc");
+  var appShell = document.getElementById("app");
+
+  function renderTopTabs(activeKey){
+    document.getElementById("topTabs").innerHTML = TOP_TABS.map(function(t){
+      return '<button class="top-tab'+(activeKey===t.key?" active":"")+'" data-tab="'+t.key+'">'+esc(t.label)+'</button>';
+    }).join("");
+    document.querySelectorAll(".top-tab").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var key = btn.dataset.tab;
+        if (key === "req"){
+          window.__closeResult();
+        } else {
+          renderTopTabs(key);
+          showAppShell();
+          openDashboard(key);
+        }
+      });
+    });
+  }
+
+  /* 요구사항 탭 = 순수 개요 문서만 노출(에듀매니저 화면 목업 숨김) */
+  function showReqDoc(){
+    reqDoc.hidden = false;
+    appShell.hidden = true;
+    resetDescPanel();
+  }
+  /* 대시보드 탭/리스트 버튼 = 실제 에듀매니저 화면 목업 노출 */
+  function showAppShell(){
+    reqDoc.hidden = true;
+    appShell.hidden = false;
+  }
+
+  function openDashboard(key){
+    overlay.innerHTML = renderDashboard(key);
+    overlay.hidden = false;
+    wireFocusable(overlay, SECTION_DESC_POPUP);
+    /* 열자마자 헤더를 자동으로 focused 처리하면 .focusable.focused 링(box-shadow)의
+       아래쪽 변이 모달 overflow:hidden에 안 잘리고 그대로 노출되어 "파란 줄"처럼 보였다
+       (설문대상자수 영역과 문항별 평균점수 영역 사이) — 기본값은 아무것도 포커스하지 않는다. */
+    resetDescPanel();
+  }
+
+  window.__closeResult = function(){
+    overlay.hidden = true;
+    overlay.innerHTML = "";
+    renderTopTabs("req");
+    showReqDoc();
+  };
+  overlay.addEventListener("click", function(e){
+    if (e.target === overlay) window.__closeResult();
+  });
+  window.__toggleSubj = function(btn){
+    var panel = btn.nextElementSibling;
+    var open = panel.classList.contains("open");
+    panel.classList.toggle("open", !open);
+    btn.setAttribute("aria-expanded", String(!open));
+  };
+
+  /* 리스트의 [결과보기] 버튼 — 기존 동작(행별 설문유형에 맞는 팝업을 그 행에서 직접 열기) 그대로 유지 */
+  document.querySelectorAll('[data-desc-key="btn-result"]').forEach(function(btn){
+    btn.addEventListener("click", function(e){
+      e.stopPropagation();
+      var idx = btn.dataset.idx;
+      var survey = SURVEYS.filter(function(s){ return String(s.no) === idx; })[0];
+      renderTopTabs(survey.dashType);
+      openDashboard(survey.dashType);
+    });
+  });
+
+  /* ---------- 디스크립션 패널 ---------- */
+  var els = { descPanel: document.getElementById("descPanel") };
+
+  function resetDescPanel(){
+    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div>' +
+      '<div class="desc-empty">화면에서 영역(리스트·결과보기 버튼 등)이나 팝업 안쪽을 클릭하면 상세 설명이 여기에 표시됩니다.</div>';
+  }
+  function renderDescBody(text){
+    var lines = text.split("\n").map(function(l){ return l.trim(); }).filter(function(l){ return l.length>0; });
+    if (!lines.length) return '<div class="desc-body">'+esc(text)+'</div>';
+    return '<ol class="desc-list">' + lines.map(function(l){ return '<li>'+esc(l)+'</li>'; }).join("") + '</ol>';
+  }
+  function focusIn(container, key, descMap){
+    container.querySelectorAll(".focusable.focused").forEach(function(el){ el.classList.remove("focused"); });
+    var target = container.querySelector('.focusable[data-desc-key="'+key+'"]');
+    if (target) target.classList.add("focused");
+    var d = descMap[key];
+    if (!d){ resetDescPanel(); return; }
+    var tagHtml = d.tag ? '<span class="desc-tag '+d.tag+'">'+(d.tag==="new"?"신규-추가":"기존-수정")+'</span><br>' : "";
+    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div>' + tagHtml + '<h3>'+esc(d.title)+'</h3>' + renderDescBody(d.body);
+  }
+  function wireFocusable(container, descMap){
+    container.querySelectorAll(".focusable").forEach(function(el){
+      el.addEventListener("click", function(e){
+        e.stopPropagation();
+        focusIn(container, el.dataset.descKey, descMap);
+      });
+    });
+  }
+
+  /* 리스트 화면(요구사항 탭) 설명 맵 — 여기는 "어떤 버튼을 눌러야 팝업이 뜨는지"만 짧게 안내 */
+  var SECTION_DESC_MAIN = {
+    "filter": {title:"검색 필터 영역", body:"기존 화면 그대로 유지, 이번 수정 대상 아님."},
+    "actions": {title:"액션 영역", body:"기존 화면 그대로 유지, 이번 수정 대상 아님."},
+    "list": {title:"리스트 영역", body:"각 행의 \"설문결과\" 컬럼에서 [결과보기] 버튼을 클릭하면, 그 행의 설문유형에 맞는 대시보드 팝업이 뜹니다.\n[설문보고서] 버튼은 이번 수정 범위 밖입니다."},
+    "btn-result": {title:"[결과보기] 버튼", tag:"change", body:"이 버튼을 클릭하면 팝업이 뜹니다.\n같은 팝업을 상단 탭(교육과정 만족도 대시보드 / 교과목 및 강사 만족도 대시보드 / 교육환경만족도 대시보드)에서도 바로 열어볼 수 있습니다 — 상단 탭은 리스트에서 해당 유형 데이터를 찾지 않고도 3종을 빠르게 비교하기 위한 바로가기입니다."}
+  };
+
+  /* 결과보기 팝업 내부 설명 맵 — 개발/디자인/퍼블이 그대로 구현할 수 있는 수준으로 데이터 출처·계산식·엣지케이스까지 기술 */
+  var SECTION_DESC_POPUP = {
+    "rheader": {title:"상단 영역", tag:"new", body:
+      "[기본 동작] 팝업 상단에 고정 노출되는 영역으로, 이 결과가 어떤 설문의 결과인지(과정명·설문기간)와 응답 신뢰도(대상자수/응답자수/응답률)를 문항 상세를 보기 전에 먼저 파악하게 합니다. 별도 클릭 동작은 없고 닫기 버튼만 있습니다.\n" +
+      "제목(과정명) — 이 설문이 연결된 과정명을 그대로 노출합니다.\n" +
+      "메타 정보 둘째 줄부터: 설문유형이 \"교과목 및 강사 만족도\"인 경우에만 강사명·과목명을 추가로 표시하고, 나머지 유형(교육과정 만족도/교육환경만족도)은 바로 설문기간부터 시작합니다.\n" +
+      "설문기간 = 설문 등록 시 입력한 시작일~종료일을 그대로 표기(운영주차 정보는 이 팝업엔 노출하지 않음).\n" +
+      "대상자수 = 이 설문에 대상자로 지정된 인원수(설문 등록 화면의 대상자 지정 값 그대로).\n" +
+      "응답자수 = 이 설문에 1개 이상 문항을 제출한 고유 참여자 수.\n" +
+      "응답률 = 응답자수 ÷ 대상자수 × 100, 소수 첫째 자리에서 반올림해 \"%\" 단위로 표기 — 예: 98÷120×100=81.67 → \"81.7%\".\n" +
+      "닫기(✕) 또는 팝업 바깥(어두운 배경) 클릭 시 닫히며, 닫히면 상단 탭도 \"요구사항\" 탭으로 돌아갑니다.\n" +
+      "[반응형] 팝업 최대폭은 660px, 화면이 좁아지면 폭 100%까지 축소됩니다. 700px 이하(태블릿 세로 등)에서는 아래 요약 카드 그리드가 자동 2열로 전환되고, 문항 텍스트+점수 줄은 필요 시 두 줄로 줄바꿈됩니다. 닫기 버튼·주관식 토글 등 터치 대상은 최소 34~40px 터치 영역을 확보합니다."
+    },
+    "rsummary": {title:"평균점수 영역", tag:"new", body:
+      "[기본 동작] 문항별 상세결과를 보기 전에, 카테고리별 평균점수를 카드 그리드로 먼저 요약해 보여주는 영역입니다(기존 팝업엔 없던 신규 영역). 클릭/토글 등 인터랙션은 없고 단순 정보 표시입니다.\n" +
+      "카테고리 구성은 설문유형마다 다릅니다 — 교육과정 만족도(교육효과/교과편성/교육운영 3개), 교과목 및 강사 만족도(강의효과/강의전문성/강의기술/강의만족도 4개 + 강사추천 NPS 1개), 교육환경만족도(연수관/식사 및 식당/생활관/기타 편의 및 부대시설 4개).\n" +
+      "일반 카테고리 점수 계산 = 그 카테고리로 태깅된 문항들의 \"문항별 평균점수\"를 문항 개수로 산술평균한 값(응답 인원수로 가중하지 않음), 소수 둘째 자리까지 표기, 5점 만점이므로 \"/5\" 접미사를 붙입니다.\n" +
+      "강사추천(NPS)은 5점 만점 지표가 아니라 별도 계산이므로 접미사를 붙이지 않습니다.\n" +
+      "NPS 계산식 = (추천 응답 비율 − 비추천 응답 비율) × 100. 추천=9~10점 응답, 중립=7~8점 응답(계산식에서는 제외하되 응답률 모수에는 포함), 비추천=1~6점 응답.\n" +
+      "실제 검산 예시(이 목업 데이터 기준): 응답 98명 중 추천 52명(53.06%), 비추천 12명(12.24%) → 53.06−12.24=40.82 → 카드에 \"40.82\"로 표기."
+    },
+    "rdetail": {title:"문항별 상세결과 영역", tag:"change", body:
+      "[기본 동작] 문항 구분(객관식/객관식(복수응답)/기타의견/주관식) 탭을 없애고, 설문 등록 시 선택된 문항 순서 그대로 위에서 아래로 모든 문항을 한 페이지에 나열합니다 — 이 설문에 존재하지 않는 문항 구분은 아예 렌더링하지 않아 빈 탭/빈 섹션이 생기지 않습니다.\n" +
+      "[문항 1개의 구조] 문항 텍스트+점수(1줄) → 응답분포 바(1줄) → 분포 라벨(1줄) → 주관식 응답 보기 토글(주관식이 달린 문항만) 순서의 압축된 카드 1개로 표시합니다 — 기존처럼 응답분포를 6줄로 풀어서 보여주지 않습니다.\n" +
+      "[점수 계산] 문항 우측 점수는 문항 유형에 따라 계산 방식이 다릅니다: (1) 5점 단일선택(가장 일반적) — 평균점수 = Σ(선택지 점수 × 응답인원수) ÷ 총 응답인원수, 소수 둘째 자리 반올림. (2) 3지선다처럼 척도가 아닌 문항(예: \"본 강의 시간은 적절했다고 생각하십니까?\")은 점수 자체를 표시하지 않고 분포만 보여줍니다. (3) 추천여부(NPS) 문항은 점수 자리에 \"X.XX/10\" 형태로 카테고리 카드와 동일한 NPS 값을 표시합니다.\n" +
+      "[응답분포 바 계산] 각 선택지 폭(%) = 그 선택지 응답인원수 ÷ 총 응답인원수 × 100 으로 계산한 가로 스택 바이며, 선택지 폭 합계는 항상 100%가 되어야 합니다. 5단계 색상은 미흡→만족 방향으로 연한색→진한색 고정 팔레트를 사용합니다: #E6F1FB, #B5D4F4, #85B7EB, #378ADD, #0C447C (순서 고정, 모든 5점 척도 문항에 재사용).\n" +
+      "[NPS 문항 예외] 막대는 실제로는 1~10점 각각의 응답 인원수로 세분화해 그리고(팔레트는 같은 계열의 그라데이션으로 확장), 하단 범례만 비추천(1~6점)/중립(7~8점)/추천(9~10점) 3그룹으로 묶어 표기합니다 — 개발 시 원 데이터는 세분화된 채로 유지하고, 범례 그룹핑과 색상 매핑만 UI 레이어에서 처리해야 합니다.\n" +
+      "[복수응답 엣지케이스] ⚠ 복수응답(체크박스) 문항은 이번 목업에 예시가 없지만, 한 응답자가 여러 선택지를 고를 수 있어 선택지 비율의 합이 100%를 넘을 수 있습니다 — 이런 문항은 이어붙는 스택 바 대신 선택지별로 독립된 바(각각 0~100% 폭)로 표현해야 합니다. 실 데이터 연동 시 문항 kind가 복수응답인지 먼저 분기해 렌더링 컴포넌트를 달리 적용할 것.\n" +
+      "[주관식 응답 토글 — 데이터] 데이터 소스 = 같은 문항에 달린 주관식(kind=text) 응답의 원문 텍스트 목록입니다. 객관식 선택지의 보기글이 아니라, 참여자가 직접 입력한 문장 그대로 노출합니다. 정렬 기준은 제출 시각 오름차순(먼저 제출한 응답이 위)으로 가정했습니다 — 실제 정렬 기준(최신순 등)은 개발 확정 필요.\n" +
+      "[주관식 응답 토글 — 빈 상태] 주관식 응답이 0건인 문항도 토글 자체는 항상 노출하고, 펼쳤을 때 \"주관식 응답이 없는 문항입니다.\" 안내 문구만 보여줍니다 — 토글을 숨기면 응답이 원래 없었는지 로딩이 안 된 것인지 구분이 안 되므로 항상 유지합니다.\n" +
+      "[주관식 응답 토글 — 동작] 기본 상태는 접힘(collapsed)이며 문항마다 독립적으로 동작합니다 — 한 문항을 펼쳐도 다른 문항은 그대로 접힌 상태를 유지합니다. 응답이 많아 목록이 길어지면 패널 내부에서만 스크롤(max-height 200px, overflow-y auto)되고 팝업 전체 스크롤과는 분리됩니다."
+    }
+  };
+
+  wireFocusable(document.querySelector(".view-body"), SECTION_DESC_MAIN);
+
+  /* 초기 진입 화면 = 요구사항 개요. resetDescPanel 등 디스크립션 패널 관련 함수·데이터에
+     의존하므로 반드시 그것들이 전부 정의된 뒤(스크립트 맨 마지막)에 호출해야 한다 —
+     예전에 이 호출이 var els 선언보다 앞에 있어서 렌더 자체가 조용히 실패했었다. */
+  renderTopTabs("req");
+  showReqDoc();
+})();
+</script>
+
+</body>
+</html>
