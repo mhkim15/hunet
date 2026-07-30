@@ -251,6 +251,28 @@
     font-size:13px;color:#0B3B66;
   }
 
+  /* 요구사항 문서 내 전체 흐름 도식 — 등록→노출→응답→결과 4단계를 카드+화살표로 시각화 */
+  .req-flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-bottom:8px;}
+  .req-flow-step{
+    flex:1 1 220px;background:#f7f8fa;border:1px solid var(--border);border-radius:10px;
+    padding:16px 16px 14px;
+  }
+  .req-flow-num{
+    width:26px;height:26px;border-radius:50%;background:var(--text);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;
+    margin-bottom:10px;
+  }
+  .req-flow-title{font-weight:700;font-size:13.5px;margin-bottom:6px;color:var(--text);}
+  .req-flow-desc{font-size:12px;line-height:1.6;color:var(--text-muted);}
+  .req-flow-arrow{
+    flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    padding:0 12px;color:var(--text-faint);font-size:18px;
+  }
+  @media (max-width:900px){
+    .req-flow{flex-direction:column;}
+    .req-flow-arrow{transform:rotate(90deg);padding:6px 0;align-self:center;}
+  }
+
   .filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;}
   .filter-row label{font-size:12.5px;font-weight:700;color:var(--text);}
   input[type=text], input[type=date], input[type=datetime-local], select{
@@ -432,8 +454,8 @@
 <div class="frame-note">
   <span><b>HRFW-27113</b> 교육 담당자 설문 기능 — 정책서·기획서 기반 동작 프로토타입 (임시 데이터, 실제 서버 연동 없음)</span>
   <div class="mode-toggle" id="modeToggle">
-    <button class="mode-btn" data-mode="proto">프로토타입</button>
-    <button class="mode-btn active" data-mode="dev">개발모드</button>
+    <button class="mode-btn active" data-mode="proto">프로토타입</button>
+    <button class="mode-btn" data-mode="dev">개발모드</button>
   </div>
 </div>
 
@@ -449,12 +471,31 @@
   <p>교육 담당자(에듀매니저 운영자)가 소속 학습자를 대상으로 만족도 설문을 등록하고, 학습자가 특정 메뉴에 진입했을 때 팝업으로 설문에 참여하게 한 뒤, 그 결과를 확인할 수 있게 하는 기능입니다. 개별 기업 운영자가 등록하는 설문과, <b>0번 기업(전체관리용)</b> 운영자가 전체 기업 대상으로 등록하는 설문 두 종류가 있으며, 등록부터 노출·응답·결과 확인까지 전 과정이 정책서 기준으로 동작합니다.</p>
 
   <h3>전체 흐름</h3>
-  <ol>
-    <li><b>설문 등록</b> — 개별 기업 운영자는 자기 기업 설문만, 0번 기업 운영자는 전체 기업 대상 설문만 등록합니다. 두 유형 모두 문항 풀에서 사용할 문항을 선택해 구성합니다.</li>
-    <li><b>노출 판단</b> — 학습자가 노출 메뉴 URL에 진입하면, 개별 기업 설문이 노출 중이면 그것만 뜨고, 없거나 미노출이면 그 메뉴에 걸린 전체 기업 대상 설문이 뜹니다. 같은 방문에서 두 유형이 동시에 노출되지는 않습니다.</li>
-    <li><b>참여자 응답</b> — 만족도 선택(도움됨/아쉬움) → 사유 선택(주관식 포함 가능) → 완료 3단계 팝업으로 진행됩니다. "오늘 하루 보지 않기"는 그 설문에만 적용됩니다.</li>
-    <li><b>결과 확인</b> — 개별 기업은 자기 기업이 등록한 설문 결과만, 0번 기업은 자신이 등록한 전체 기업 대상 설문 결과만 각자 화면에서 다운로드합니다. 두 관리 화면은 서로의 데이터를 참조하지 않습니다.</li>
-  </ol>
+  <div class="req-flow">
+    <div class="req-flow-step">
+      <div class="req-flow-num">1</div>
+      <div class="req-flow-title">설문 등록</div>
+      <div class="req-flow-desc">개별 기업 운영자는 자기 기업 설문만, 0번 기업 운영자는 전체 기업 대상 설문만 등록. 두 유형 모두 문항 풀에서 사용할 문항을 선택해 구성</div>
+    </div>
+    <div class="req-flow-arrow">→</div>
+    <div class="req-flow-step">
+      <div class="req-flow-num">2</div>
+      <div class="req-flow-title">노출 판단</div>
+      <div class="req-flow-desc">학습자가 노출 메뉴 URL에 진입하면, 개별 기업 설문이 노출 중이면 그것만 노출. 없거나 미노출이면 전체 기업 대상 설문이 노출(동시 노출 없음)</div>
+    </div>
+    <div class="req-flow-arrow">→</div>
+    <div class="req-flow-step">
+      <div class="req-flow-num">3</div>
+      <div class="req-flow-title">참여자 응답</div>
+      <div class="req-flow-desc">만족도 선택(도움됨/아쉬움) → 사유 선택(주관식 포함 가능) → 완료, 3단계 팝업. "오늘 하루 보지 않기"는 그 설문에만 적용</div>
+    </div>
+    <div class="req-flow-arrow">→</div>
+    <div class="req-flow-step">
+      <div class="req-flow-num">4</div>
+      <div class="req-flow-title">결과 확인</div>
+      <div class="req-flow-desc">개별 기업은 자기 기업 설문 결과만, 0번 기업은 자신이 등록한 전체 기업 대상 설문 결과만 각자 화면에서 다운로드. 서로의 데이터는 참조하지 않음</div>
+    </div>
+  </div>
 
   <h3>작업 내용</h3>
   <ul class="req-doc-list">
@@ -631,7 +672,7 @@
 
   /* ---------- app state ---------- */
   var state = {
-    mode: "dev", // "proto" | "dev" — 프로토타입 모드는 디스크립션 클릭 반응을 끄고 기획 영역을 중앙 정렬
+    mode: "proto", // "proto" | "dev" — 프로토타입 모드는 디스크립션 클릭 반응을 끄고 기획 영역을 중앙 정렬
     topTab: "req",  // "req" | "learner" | "tenant" | "root" — 최상단 탭
     company: "tenant", // "tenant" | "root"
     view: "s-list",    // s-list, s-register, s-edit, s-view, q-list, q-register, q-edit, q-view, all-list
@@ -1875,6 +1916,7 @@
   });
 
   /* ---------- boot ---------- */
+  document.body.dataset.mode = state.mode;
   renderTopTabs();
   showReqDoc();
   resetDescPanel();
