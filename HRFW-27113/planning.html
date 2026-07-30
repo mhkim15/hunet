@@ -1,8 +1,3 @@
-<!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>교육 담당자 설문 프로토타입</title>
 <style>
   :root{
@@ -56,9 +51,18 @@
     gap:8px;
   }
   .frame-note b{color:var(--text);}
-  .app-shell{
-    max-width:1400px;
+  /* 기획 영역(app-shell)과 디스크립션 패널을 나란히 배치하는 바깥 레인 — 패널이 기획 내용과 겹치지 않도록 분리 */
+  .stage{
+    max-width:1710px;
     margin:0 auto;
+    display:flex;
+    align-items:flex-start;
+    gap:20px;
+  }
+  .app-shell{
+    width:1400px;
+    max-width:1400px;
+    flex:0 0 1400px;
     display:flex;
     height:840px;
     border-radius:10px;
@@ -126,6 +130,35 @@
     font-weight:700;
   }
   .sidebar-item .ic{width:16px;text-align:center;flex:0 0 auto;font-size:13px;}
+  .tag{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10.5px;font-weight:700;background:#eef1fb;color:#3450b8;margin-left:6px;}
+
+  /* 최상단 탭 — 사용 흐름 / 설문 참여 팝업 / 설문 관리(개별 기업) / 전체 기업 대상 설문 관리(0번 기업) */
+  .top-tabs{
+    max-width:1400px;margin:0 auto 14px;
+    display:flex;gap:8px;justify-content:flex-start;
+  }
+  .top-tab{
+    flex:0 0 auto;text-align:center;padding:12px 18px;border-radius:10px;
+    background:var(--surface);border:1px solid var(--border);
+    font-size:13px;font-weight:700;color:var(--text-muted);cursor:pointer;font-family:inherit;
+  }
+  .top-tab:hover{border-color:var(--border-strong);color:var(--text);}
+  .top-tab.active{background:var(--text);color:#fff;border-color:var(--text);}
+
+  /* 사용 흐름 다이어그램 */
+  .flow-row{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;}
+  .flow-step{
+    flex:1 1 200px;background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:18px 16px;text-align:center;
+  }
+  .flow-num{
+    width:28px;height:28px;border-radius:50%;background:var(--text);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+    margin:0 auto 10px;
+  }
+  .flow-title{font-weight:700;font-size:13.5px;margin-bottom:4px;}
+  .flow-sub{font-size:11.5px;color:var(--text-muted);}
+  .flow-arrow{display:flex;align-items:center;justify-content:center;padding:0 10px;color:var(--text-faint);font-size:18px;}
   .sidebar-foot{
     margin-top:auto;
     padding:14px 16px;
@@ -340,6 +373,26 @@
   }
   @keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
+  /* 디스크립션(어노테이션) 플로팅 패널 — 기획 영역(app-shell) 밖, 오른쪽 별도 레인에 배치되어 내용과 겹치지 않는다.
+     position:sticky로 스크롤 중에도 화면에 붙어있는 "떠 있는" 느낌은 유지한다. */
+  .desc-panel{
+    position:sticky;top:28px;
+    flex:0 0 290px;width:290px;max-height:calc(840px - 56px);
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    box-shadow:0 16px 40px rgba(15,17,20,.16);
+    padding:14px 16px 16px;overflow-y:auto;font-size:12.5px;color:var(--text);
+  }
+  .desc-panel .desc-eyebrow{font-size:10px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px;font-weight:700;}
+  .desc-panel h3{margin:0 0 10px;font-size:13.5px;font-weight:700;}
+  .desc-panel .desc-empty{color:var(--text-faint);font-size:12px;line-height:1.6;}
+  .desc-panel .desc-body{white-space:pre-wrap;line-height:1.7;color:var(--text);}
+  .desc-panel .desc-list{margin:0;padding-left:18px;}
+  .desc-panel .desc-list li{margin-bottom:8px;line-height:1.55;}
+  .desc-panel .desc-list li::marker{color:var(--accent);font-weight:700;}
+  .focusable{border-radius:8px;cursor:pointer;transition:box-shadow .12s;}
+  .focusable:hover{box-shadow:0 0 0 2px rgba(36,85,230,.28);}
+  .focusable.focused{box-shadow:0 0 0 2px var(--accent);}
+
   .learner-page{
     background:#fff;border:1px solid var(--border);border-radius:8px;
     padding:32px;min-height:420px;
@@ -358,21 +411,20 @@
   <span><b>HRFW-27113</b> 교육 담당자 설문 기능 — 정책서·기획서 기반 동작 프로토타입 (임시 데이터, 실제 서버 연동 없음)</span>
 </div>
 
+<div class="top-tabs" id="topTabs"></div>
+
+<div class="stage">
 <div class="app-shell" id="app">
 
   <aside class="sidebar">
     <div class="sidebar-brand"><span class="dot"></span>교육운영관리시스템</div>
-    <div class="sidebar-scope">개별 기업 에듀매니저</div>
-    <nav class="sidebar-nav" id="sidebarNavTenant"></nav>
-    <div class="sidebar-scope">0번 기업 에듀매니저</div>
-    <nav class="sidebar-nav" id="sidebarNavRoot"></nav>
-    <div class="sidebar-foot">메뉴 클릭 시 해당 기업 컨텍스트로 자동 전환됩니다.</div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-foot" id="sidebarFoot"></div>
   </aside>
 
   <div class="main">
     <div class="topbar">
       <span id="companyLabel" class="company-pill">UX레벨업 (개발용) · 21320</span>
-      <button class="link" id="btnSwitchCompany">기업변경</button>
       <button class="link">로그아웃</button>
     </div>
 
@@ -388,6 +440,13 @@
   <div class="overlay" id="overlayQuestion" hidden></div>
   <div class="overlay" id="overlayBulk" hidden></div>
   <div class="toast-wrap" id="toastWrap"></div>
+</div>
+
+<aside class="desc-panel" id="descPanel">
+  <div class="desc-eyebrow">Description</div>
+  <div class="desc-empty">화면에서 영역(검색/리스트/폼 등)을 클릭하면 상세 설명이 여기에 표시됩니다.</div>
+</aside>
+
 </div>
 
 <script>
@@ -416,14 +475,16 @@
      각 설문은 이 풀에서 문항을 "선택"해서 붙여쓴다 (문항 자체를 새로 만드는 게 아니라 재사용). */
   function seedQuestionPool(){
     return [
-      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 콘텐츠를 쉽게 찾을 수 있었어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"good", content:"메뉴 구성이 편리했어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"good", content:"UI가 보기 쉬워졌어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 기능을 빠르게 찾을 수 있었어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 메뉴를 찾기 어려웠어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"bad", content:"메뉴 구성이 복잡했어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 기능이 없었어요.", active:true},
-      {id: nextId(), code: nextQCode(), category:"bad", content:"오류가 발생했어요.", active:true}
+      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 콘텐츠를 쉽게 찾을 수 있었어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"메뉴 구성이 편리했어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"UI가 보기 쉬워졌어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"원하는 기능을 빠르게 찾을 수 있었어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 메뉴를 찾기 어려웠어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"메뉴 구성이 복잡했어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"원하는 기능이 없었어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"오류가 발생했어요.", kind:"choice", active:true},
+      {id: nextId(), code: nextQCode(), category:"good", content:"기타", kind:"text", active:true},
+      {id: nextId(), code: nextQCode(), category:"bad", content:"기타", kind:"text", active:true}
     ];
   }
   var QUESTION_POOL = seedQuestionPool();
@@ -469,29 +530,50 @@
   var surveys = seedSurveys();
   var currentSurveyId = surveys[0].id;
 
-  /* 0번 기업 "교육 담당자 전체 설문 결과" — 설문 단위가 아니라 응답 단위로 전 기업 결과를 모아 다운로드 */
-  var allCompanyResults = [
-    {company:"SPC GFS (66911)", title:"2026년 하반기 커스텀 개선 만족도 조사", managerName:"홍길동", managerId:"hong01", respondedAt:"2026-07-03 10:12", summary:"도움됨 — 메뉴 구성이 편리했어요."},
-    {company:"SPC GFS (66911)", title:"2026년 하반기 커스텀 개선 만족도 조사", managerName:"김담당", managerId:"kim22", respondedAt:"2026-07-05 15:41", summary:"아쉬움 — 원하는 기능이 없었어요."},
-    {company:"UX레벨업 (21320)", title:"신규 UI 개편 만족도 조사", managerName:"김담당", managerId:"kim07", respondedAt:"2026-06-20 09:03", summary:"도움됨 — UI가 보기 쉬워졌어요."}
-  ];
+  /* 전체 기업 대상 설문 — 0번 기업만 등록 가능. 대상자는 전체 기업의 전체 교육담당자로 고정되며
+     별도 검색/제외 기능 없음(선택 UI를 두면 오히려 고르기 어려워짐) — 0번 기업은 이 설문의 결과만
+     관리/다운로드하며, 개별 기업이 진행한 설문 결과는 여기서 다루지 않는다. */
+  function seedRootSurveys(){
+    return [
+      {
+        id: nextId(),
+        title: "2026년 3분기 전사 서비스 만족도 조사",
+        desc: "에듀매니저 개편에 대한 전체 기업 공통 만족도 조사",
+        startAt: "2026-08-01T09:00", endAt: "2026-08-31T18:00",
+        menuUrl: "/Manage/Home",
+        expose: true,
+        participants: 0,
+        questionIds: QUESTION_POOL.map(function(q){ return q.id; })
+      }
+    ];
+  }
+  var rootSurveys = seedRootSurveys();
+  function findRootSurvey(id){
+    for (var i=0;i<rootSurveys.length;i++) if (rootSurveys[i].id === id) return rootSurveys[i];
+    return null;
+  }
 
   /* ---------- app state ---------- */
   var state = {
+    topTab: "tenant",  // "flow" | "learner" | "tenant" | "root" — 최상단 탭
     company: "tenant", // "tenant" | "root"
     view: "s-list",    // s-list, s-register, s-edit, s-view, q-list, q-register, q-edit, q-view, all-list
     editingSurveyId: null,
     viewingSurveyId: null,
     editingQuestionId: null,
     viewingQuestionId: null,
+    editingRootSurveyId: null,
+    viewingRootSurveyId: null,
     targetDraft: [],       // chips being edited in a survey form
     questionDraft: [],     // question ids selected in a survey form
+    rootQuestionDraft: [], // 전체 기업 대상 설문 — 문항 chips
     personSearchOpenFor: null // "register" | "edit"
   };
 
   var els = {
-    sidebarNavTenant: document.getElementById("sidebarNavTenant"),
-    sidebarNavRoot: document.getElementById("sidebarNavRoot"),
+    topTabs: document.getElementById("topTabs"),
+    sidebarNav: document.getElementById("sidebarNav"),
+    sidebarFoot: document.getElementById("sidebarFoot"),
     companyLabel: document.getElementById("companyLabel"),
     viewEyebrow: document.getElementById("viewEyebrow"),
     viewTitle: document.getElementById("viewTitle"),
@@ -500,7 +582,8 @@
     overlayPerson: document.getElementById("overlayPerson"),
     overlayQuestion: document.getElementById("overlayQuestion"),
     overlayBulk: document.getElementById("overlayBulk"),
-    toastWrap: document.getElementById("toastWrap")
+    toastWrap: document.getElementById("toastWrap"),
+    descPanel: document.getElementById("descPanel")
   };
 
   function toast(msg){
@@ -517,41 +600,72 @@
     });
   }
 
-  /* ---------- sidebar ---------- */
+  /* ---------- 최상단 탭 + 사이드바 ---------- */
+  var TOP_TABS = [
+    {key:"flow", label:"사용 흐름"},
+    {key:"learner", label:"설문 참여 팝업"},
+    {key:"tenant", label:"설문 관리 (개별 기업 에듀매니저)"},
+    {key:"root", label:"전체 기업 대상 설문 관리 (0번 기업 에듀매니저)"}
+  ];
+  var TOP_TAB_ENTRY = {
+    flow: {view:"flow-diagram"},
+    learner: {view:"learner-view", company:"tenant"},
+    tenant: {view:"s-list", company:"tenant"},
+    root: {view:"r-survey-list", company:"root"}
+  };
   var MENUS = {
+    flow: [
+      {key:"flow-diagram", label:"전체 사용 흐름", group:"flow"}
+    ],
+    learner: [
+      {key:"learner-view", label:"설문 참여 팝업", group:"learner"}
+    ],
     tenant: [
       {key:"s-list", label:"교육 담당자 설문 관리", group:"survey"},
-      {key:"q-list", label:"교육 담당자 설문 문항 관리", group:"question"},
-      {key:"learner-view", label:"설문 참여 화면", group:"learner"}
+      {key:"q-list", label:"교육 담당자 설문 문항 관리", group:"question"}
     ],
     root: [
-      {key:"all-results", label:"교육 담당자 전체 설문 결과", group:"all-results"}
+      {key:"r-survey-list", label:"전체 기업 대상 설문 관리", group:"r-survey"},
+      {key:"q-list", label:"교육 담당자 설문 문항 관리", group:"question"}
     ]
   };
 
+  function renderTopTabs(){
+    els.topTabs.innerHTML = TOP_TABS.map(function(t){
+      return '<button class="top-tab'+(state.topTab===t.key?" active":"")+'" data-tab="'+t.key+'">'+esc(t.label)+'</button>';
+    }).join("");
+    els.topTabs.querySelectorAll(".top-tab").forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var key = btn.dataset.tab;
+        var wasOther = state.topTab !== key;
+        var entry = TOP_TAB_ENTRY[key];
+        go(entry.view, {topTab:key}, entry.company);
+        if (wasOther) toast('"'+TOP_TABS.filter(function(t){return t.key===key;})[0].label+'" 탭으로 전환했습니다.');
+      });
+    });
+  }
+
   function renderSidebar(){
-    els.sidebarNavTenant.innerHTML = "";
-    MENUS.tenant.forEach(function(m){
+    var menus = MENUS[state.topTab] || [];
+    els.sidebarNav.innerHTML = "";
+    menus.forEach(function(m){
       var btn = document.createElement("button");
       btn.className = "sidebar-item" + (isActiveGroup(m) ? " active" : "");
       btn.textContent = m.label;
-      btn.addEventListener("click", function(){ go(m.key, {}, "tenant"); });
-      els.sidebarNavTenant.appendChild(btn);
+      btn.addEventListener("click", function(){ go(m.key, {}, state.company); });
+      els.sidebarNav.appendChild(btn);
     });
-    els.sidebarNavRoot.innerHTML = "";
-    MENUS.root.forEach(function(m){
-      var btn = document.createElement("button");
-      btn.className = "sidebar-item" + (isActiveGroup(m) ? " active" : "");
-      btn.textContent = m.label;
-      btn.addEventListener("click", function(){ go(m.key, {}, "root"); });
-      els.sidebarNavRoot.appendChild(btn);
-    });
+
+    els.sidebarFoot.textContent = state.topTab === "root"
+      ? "전체 기업 대상 설문은 0번 기업에서만 등록/수정할 수 있습니다."
+      : (state.topTab === "tenant" ? "이 화면들은 개별 기업이 등록한 것만 관리합니다." : "");
   }
   function isActiveGroup(m){
     if (m.group === "survey") return state.view.indexOf("s-") === 0;
     if (m.group === "question") return state.view.indexOf("q-") === 0;
-    if (m.group === "all-results") return state.view === "all-results";
+    if (m.group === "r-survey") return state.view.indexOf("r-") === 0;
     if (m.group === "learner") return state.view === "learner-view";
+    if (m.group === "flow") return state.view === "flow-diagram";
     return false;
   }
 
@@ -561,22 +675,23 @@
       ? "0번 기업 (전체관리용) · 00000"
       : "UX레벨업 (개발용) · 21320";
   }
-  function switchCompany(){
-    setCompany(state.company === "tenant" ? "root" : "tenant");
-    go(state.company === "root" ? "all-results" : "s-list");
-    toast(state.company === "root"
-      ? "0번 기업으로 전환 — 전체 기업 통합 조회 전용 메뉴로 바뀝니다."
-      : "개별 기업(UX레벨업)으로 전환 — 자기 기업 설문 관리 메뉴로 바뀝니다.");
-  }
-  document.getElementById("btnSwitchCompany").addEventListener("click", switchCompany);
 
   /* ---------- routing ---------- */
   function go(view, opts, company){
     opts = opts || {};
+    if (opts.topTab && opts.topTab !== state.topTab) state.topTab = opts.topTab;
     if (company && company !== state.company) setCompany(company);
     state.view = view;
     if (opts.surveyId !== undefined) state.viewingSurveyId = state.editingSurveyId = opts.surveyId;
     if (opts.questionId !== undefined) state.viewingQuestionId = state.editingQuestionId = opts.questionId;
+    if (opts.rootSurveyId !== undefined) state.viewingRootSurveyId = state.editingRootSurveyId = opts.rootSurveyId;
+    /* 다른 화면/탭으로 이동하면 열려 있던 설문 참여 팝업은 닫는다 — "설문 참여 팝업" 탭에 들어올 때만
+       renderLearnerView()이 새로 연다. 안 닫으면 팝업이 다른 탭 화면 위에 그대로 남아있게 된다. */
+    if (!els.overlaySurvey.hidden){
+      els.overlaySurvey.hidden = true;
+      els.overlaySurvey.innerHTML = "";
+    }
+    renderTopTabs();
     renderSidebar();
     renderView();
   }
@@ -587,7 +702,100 @@
   }
 
   /* ---------- view rendering ---------- */
+  /* ---------- 우측 디스크립션 패널 ----------
+     화면의 큰 영역(검색/리스트/폼/액션 등)에 .focusable + data-desc-key를 달아두면,
+     클릭 시 이 맵에서 정책서 기반 설명을 찾아 우측 패널에 보여준다. */
+  var SECTION_DESC = {
+    "flow-diagram": {
+      reg: {title:"1. 설문 등록", body:"개별 기업 운영자는 s-register 화면에서 등록 — surveys 배열에 push되고 menuUrl(노출 메뉴)과 targets(EduRoleV2 검색 결과)를 갖습니다.\n0번 기업 운영자는 r-survey-register 화면에서 등록 — rootSurveys 배열에 push되며 대상자 선택 UI 자체가 없어 항상 전체 교육담당자가 대상입니다.\n두 유형 모두 questionIds로 문항 풀(QUESTION_POOL)에서 사용할 문항을 선택해 저장합니다."},
+      expose: {title:"2. 노출 판단", body:"학습자가 menuUrl에 해당하는 화면에 들어오면 renderLearnerView()의 openSurveyQueue()가 실행됩니다.\ncurrentSurveyId로 찾은 개별 설문이 있고 expose===true면 그 설문만 큐에 넣고 종료합니다.\n개별 설문이 없거나 미노출이면, rootSurveys 중 menuUrl이 같고 expose===true인 설문들을 큐에 넣습니다 — 개별 설문이 있으면 전체 기업 대상 설문은 큐에 아예 들어가지 않습니다."},
+      respond: {title:"3. 참여자 응답", body:"openSurveyPopup(survey, kind, onDone)이 1→2→3단계 모달을 순서대로 렌더링합니다.\n\"오늘 하루 보지 않기\" 체크 시 localStorage에 hrfw27113_dontShow_{kind}_{surveyId} 키로 오늘 날짜를 저장 — 이 설문에만 적용되고 다른 설문에는 영향이 없습니다.\n제출 시 survey.participants가 1 증가합니다."},
+      result: {title:"4. 결과 확인", body:"개별 기업은 s-view/s-list의 \"결과 다운로드\"로 downloadSurveyResult(s)를 호출 — surveys 배열, 즉 자기 기업이 등록한 설문만 대상입니다.\n0번 기업은 r-survey-list/r-survey-view의 \"결과 다운로드\"로 downloadRootSurveyResult(s)를 호출 — rootSurveys 중 자신이 등록한 설문만 대상이며, 개별 기업의 surveys 배열은 참조하지 않습니다."}
+    },
+    "s-list": {
+      search: {title:"검색 영역", body:"검색 기간(시작~종료) + 제목/교육담당자 검색을 지원합니다.\n검색 기준은 \"제목\" 또는 \"교육담당자\"(이름/ID) 중 선택합니다.\n\n정책서 6번: 대상자(교육담당자)는 /Student/EduRoleV2 등록자만 검색 가능하므로, 여기서의 \"교육담당자\" 검색도 동일 목록을 기준으로 매칭됩니다."},
+      actions: {title:"액션 영역", body:"설문등록: 개별 기업 설문을 신규 등록합니다.\n설문 일괄등록(엑셀): 문항 코드/교육담당자ID를 콤마 구분으로 입력해 여러 설문을 한 번에 등록합니다.\n\n정책서 3·5번: 개별 기업 운영자는 자기 기업 설문만 등록할 수 있습니다. 0번 기업이 등록한 전체 기업 대상 설문은 이 화면에 노출되지 않습니다 — 관리 화면이 완전히 분리되어 각자 자기가 등록한 것만 관리합니다."},
+      list: {title:"리스트 영역", body:"이 기업이 등록한 설문만 표시됩니다.\n노출메뉴URL: 설문 1건당 1개 메뉴만 지정합니다(정책서 7번).\n\n정책서 9번: 결과 다운로드는 자기 기업이 등록한 설문 결과만 가능합니다 — 전체 기업 대상 설문 데이터는 이 화면에서 접근할 수 없습니다.\n행을 클릭하면 보기 화면으로 이동합니다."}
+    },
+    "s-register": {
+      "form-basic": {title:"기본정보 · 문항 영역", body:"제목/설명은 자유 입력입니다.\n문항등록: 교육 담당자 설문 문항 관리에 등록된 문항 중 이 설문에서 쓸 항목을 선택합니다(문항 자체를 새로 만드는 게 아니라 재사용).\n\n\"기타(직접입력)\" 유형으로 등록된 문항을 포함하면, 설문 참여 화면에서 해당 항목 선택 시 주관식 입력란이 함께 노출됩니다.\n정책서 8번: 문항을 설문마다 자유롭게 구성할지(자율 등록) 모든 설문에 동일 문항을 쓸지(고정 문항)는 아직 미확정입니다."},
+      "form-expose": {title:"노출·대상 설정 영역", body:"설문기간: 시작~종료 또는 \"응답 완료 시까지\".\n노출 메뉴 URL: 설문 1건당 1개 메뉴만 지정합니다(정책서 7번).\n노출여부: 미노출 시 팝업이 뜨지 않습니다.\n\n대상지정(정책서 6번): /Student/EduRoleV2 등록자 중 검색·선택만 가능하며, 자유 입력·엑셀 업로드는 불가합니다.\n노출 우선순위(정책서 7번): 같은 메뉴에 0번 기업의 전체 기업 대상 설문이 겹쳐도, 이 개별 기업 설문이 노출 중이면 그 설문만 노출되고 전체 기업 대상 설문은 노출되지 않습니다 — 개별 기업 설문이 우선입니다."}
+    },
+    "s-view": {
+      detail: {title:"상세정보 영역", body:"등록된 제목/설명/문항/기간/노출설정/대상자/참여현황을 조회 전용으로 보여줍니다."},
+      actions: {title:"액션 영역", body:"결과 다운로드: 이 설문 결과만 즉시 CSV로 다운로드합니다(정책서 9번).\n수정: 등록 화면과 동일한 폼으로 이동합니다.\n교육담당자 화면에서 보기: 실제 노출 메뉴에 접속했을 때 뜨는 팝업을 미리봅니다."}
+    },
+    "q-list": {
+      search: {title:"검색 영역", body:"구분(도움됨/아쉬움), 사용여부, 문항 내용으로 필터링합니다."},
+      actions: {title:"액션 영역", body:"문항추가 / 문항 일괄등록(엑셀) / 선택 삭제를 지원합니다.\n\n이 목록은 개별 기업·0번 기업이 동일하게 공유하는 전역 문항 풀입니다 — 설문 등록 시 \"문항 선택\" 팝업에서 이 목록을 그대로 사용합니다."},
+      list: {title:"리스트 영역", body:"유형 컬럼: \"일반 항목\"은 객관식 선택지, \"기타(직접입력)\"은 설문 참여 화면에서 선택 시 주관식 입력란이 함께 노출되는 특수 항목입니다.\n삭제 시 해당 문항을 사용 중인 설문에서도 함께 제거됩니다."}
+    },
+    "q-register": {
+      form: {title:"문항 등록 영역", body:"구분(도움됨/아쉬움): 교육담당자가 \"도움이 되었어요\" / \"아쉬워요\"를 고를 때 각각 노출됩니다.\n\n\"기타(직접입력)\" 체크: 켜면 문항내용이 \"기타\"로 고정되고, 설문 참여 화면에서 이 항목 선택 시 주관식 입력란이 함께 노출됩니다. 문항 내용을 직접 지어내지 않는 이유는, \"기타\" 라벨이 임의로 여러 버전 생기면 참여자 입장에서 혼란스럽기 때문입니다 (Google Forms 등 일반적인 설문 툴의 \"다른 항목 추가\"와 동일한 방식).\n사용여부: 미사용으로 바꾸면 문항 선택 팝업과 설문 참여 화면에서 더 이상 보이지 않습니다."}
+    },
+    "r-survey-list": {
+      actions: {title:"액션 영역", body:"전체 기업 대상 설문 등록: 0번 기업 운영자만 등록할 수 있습니다(정책서 3·5번). 개별 기업 운영자는 등록할 수 없습니다."},
+      list: {title:"리스트 영역", body:"0번 기업이 등록한 전체 기업 대상 설문만 표시됩니다.\n\n정책서 9번: 결과 다운로드는 0번 기업이 등록한 설문 결과만 가능합니다 — 개별 기업이 진행한 설문 결과는 여기서 다루지 않습니다.\n개별 기업 관리 화면에는 이 목록이 노출되지 않습니다(관리 화면 완전 분리)."}
+    },
+    "r-survey-register": {
+      "form-basic": {title:"기본정보 · 문항 영역", body:"제목/설명을 입력합니다.\n문항등록: 개별 기업 설문과 동일한 전역 문항 풀에서 선택합니다."},
+      "form-expose": {title:"노출·대상 설정 영역", body:"노출 대상: 전체 기업 — 기업 선택 불가(정책서 3·9번). \"0번 기업에서도 전체 기업 대상 설문이 가능해야 한다\"는 원 요구사항을 반영한 항목입니다.\n\n대상자(담당자, 정책서 6번): 별도 검색/제외 기능이 없습니다 — 전체 기업에 등록된 전체 교육담당자가 자동 적용됩니다. 검색·제외 UI를 두면 오히려 특정 담당자만 고르기 쉬워져 \"전체 대상\"이라는 취지에 맞지 않아 제외했습니다.\n노출 메뉴명(기준): 기업마다 실제 URL이 다를 수 있어 메뉴명을 기준으로 개별 기업 URL에 매핑됩니다(정책서 7번).\n노출 우선순위(정책서 7번): 같은 메뉴에 개별 기업 설문이 노출 중이면 이 전체 기업 대상 설문은 노출되지 않고, 개별 기업 설문이 없거나 미노출일 때만 노출됩니다 — 같은 방문에서 중복 노출을 방지하기 위함입니다."}
+    },
+    "r-survey-view": {
+      detail: {title:"상세정보 영역", body:"노출 대상은 항상 \"전체 기업의 전체 교육담당자\"로 고정 표시됩니다(기업/담당자 선택 기능이 없음)."},
+      actions: {title:"액션 영역", body:"결과 다운로드: 이 전체 기업 대상 설문 결과만 기업명 컬럼을 포함해 CSV로 다운로드합니다(정책서 9번).\n수정: 0번 기업 운영자만 가능합니다."}
+    },
+  };
+  SECTION_DESC["s-edit"] = SECTION_DESC["s-register"];
+  SECTION_DESC["q-edit"] = SECTION_DESC["q-register"];
+  SECTION_DESC["r-survey-edit"] = SECTION_DESC["r-survey-register"];
+
+  function resetDescPanel(){
+    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div>' +
+      '<div class="desc-empty">화면에서 영역(검색/리스트/폼 등)을 클릭하면 상세 설명이 여기에 표시됩니다.</div>';
+  }
+  /* 설명 본문을 줄바꿈 기준으로 쪼개 번호 매긴 목록(ol)으로 렌더링 */
+  function renderDescBody(text){
+    var lines = text.split("\n").map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; });
+    if (!lines.length) return '<div class="desc-body">'+esc(text)+'</div>';
+    return '<ol class="desc-list">' + lines.map(function(l){ return '<li>'+esc(l)+'</li>'; }).join("") + '</ol>';
+  }
+  /* container 안의 .focusable 중 key와 일치하는 것을 하이라이트하고, descMap에서 찾은 설명을 우측 패널에 띄운다.
+     viewBody(페이지 영역)와 팝업 오버레이(설문 참여 팝업) 양쪽에서 공용으로 쓴다. */
+  function focusIn(container, key, descMap){
+    container.querySelectorAll(".focusable.focused").forEach(function(el){ el.classList.remove("focused"); });
+    var target = container.querySelector('.focusable[data-desc-key="'+key+'"]');
+    if (target) target.classList.add("focused");
+    var d = descMap[key];
+    if (!d){ resetDescPanel(); return; }
+    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div><h3>'+esc(d.title)+'</h3>' + renderDescBody(d.body);
+  }
+  function focusSection(key){ focusIn(els.viewBody, key, SECTION_DESC[state.view] || {}); }
+  function wireFocusable(){
+    els.viewBody.querySelectorAll(".focusable").forEach(function(el){
+      el.addEventListener("click", function(e){
+        e.stopPropagation();
+        focusSection(el.dataset.descKey);
+      });
+    });
+  }
+  /* 설문 참여 팝업(1~3단계) 전용 설명 맵 — 페이지가 아니라 팝업 단계별로 고정되어 있어 SECTION_DESC와 분리 관리 */
+  var POPUP_DESC = {
+    step1: {title:"1단계 · 만족도 선택", body:"\"도움이 되었어요\"를 고르면 문항 풀에서 category=\"good\"인 항목만 2단계 목록에 노출됩니다.\n\"아쉬워요\"를 고르면 category=\"bad\" 항목만 노출됩니다.\n\"이 설문 오늘 하루 보지 않기\" 체크는 이 설문 유형+ID로 만든 키에 오늘 날짜를 저장합니다 — 같은 메뉴의 다른 설문에는 영향을 주지 않습니다.\n닫기(✕)를 눌러도 체크 상태는 그대로 저장됩니다."},
+    step2: {title:"2단계 · 사유 선택", body:"1단계에서 고른 카테고리에 속한 문항만 체크리스트로 보여줍니다.\n문항 관리에서 \"기타(직접입력)\"으로 등록된 항목을 체크하면 그 순간 아래 텍스트 입력란이 나타납니다.\n\"기타\" 항목을 체크한 채 텍스트를 비워두고 제출하면 토스트로 막고 제출을 진행하지 않습니다.\n제출을 누르면 참여자 수가 1 증가하고 3단계로 넘어갑니다."},
+    step3: {title:"3단계 · 완료", body:"응답 반영 후 감사 메시지를 보여줍니다.\n닫기를 누르면 오버레이가 사라지고, 대기 중인 다음 설문(개별 기업 우선순위)이 있으면 이어서 노출됩니다.\n대기 중인 설문이 없으면 그대로 종료됩니다."}
+  };
+  function wirePopupFocusable(overlay){
+    overlay.querySelectorAll(".focusable").forEach(function(el){
+      el.addEventListener("click", function(e){
+        e.stopPropagation();
+        focusIn(overlay, el.dataset.descKey, POPUP_DESC);
+      });
+    });
+  }
+
   function renderView(){
+    resetDescPanel();
     var v = state.view;
     if (v === "s-list") return renderSurveyList();
     if (v === "s-register") return renderSurveyForm(null);
@@ -596,14 +804,47 @@
     if (v === "q-list") return renderQuestionList();
     if (v === "q-register") return renderQuestionForm(null);
     if (v === "q-edit") return renderQuestionForm(findQuestion(state.editingQuestionId));
-    if (v === "all-results") return renderAllResults();
     if (v === "learner-view") return renderLearnerView();
+    if (v === "r-survey-list") return renderRootSurveyList();
+    if (v === "r-survey-register") return renderRootSurveyForm(null);
+    if (v === "r-survey-edit") return renderRootSurveyForm(findRootSurvey(state.editingRootSurveyId));
+    if (v === "r-survey-view") return renderRootSurveyView(findRootSurvey(state.viewingRootSurveyId));
+    if (v === "flow-diagram") return renderFlowView();
   }
 
   /* menuLabel = 실제 메뉴명(항상 고정), action = 목록/등록/수정/보기 같은 하위 화면일 때만 "메뉴명 / 액션" 형태로 붙인다 */
   function setHead(menuLabel, action){
-    els.viewEyebrow.textContent = state.company === "root" ? "0번 기업 에듀매니저" : "개별 기업 에듀매니저";
+    var eyebrow = "개별 기업 에듀매니저";
+    if (state.topTab === "flow") eyebrow = "사용 흐름";
+    else if (state.topTab === "learner") eyebrow = "설문 참여 팝업";
+    else if (state.topTab === "root") eyebrow = "0번 기업 에듀매니저";
+    els.viewEyebrow.textContent = eyebrow;
     els.viewTitle.textContent = action ? (menuLabel + " / " + action) : menuLabel;
+  }
+
+  /* ---- 사용 흐름 다이어그램 ---- */
+  function flowStep(num, title, key, sub){
+    return '<div class="flow-step focusable" data-desc-key="'+key+'">' +
+      '<div class="flow-num">'+num+'</div>' +
+      '<div class="flow-title">'+esc(title)+'</div>' +
+      '<div class="flow-sub">'+esc(sub)+'</div>' +
+    '</div>';
+  }
+  function flowArrow(){ return '<div class="flow-arrow">→</div>'; }
+  function renderFlowView(){
+    setHead("전체 사용 흐름");
+    els.viewBody.innerHTML =
+      '<p class="hint" style="margin-bottom:16px;">개별 기업 설문과 전체 기업 대상 설문이 등록부터 결과 확인까지 어떻게 흘러가는지 보여줍니다. 각 단계를 클릭하면 우측에 실제 동작 방식이 뜹니다.</p>' +
+      '<div class="flow-row">' +
+        flowStep("1","설문 등록","reg","개별 기업 운영자 또는 0번 기업 운영자") +
+        flowArrow() +
+        flowStep("2","노출 판단","expose","개별 기업 설문 우선, 하나만 노출") +
+        flowArrow() +
+        flowStep("3","참여자 응답","respond","만족도 → 사유 선택 → 완료") +
+        flowArrow() +
+        flowStep("4","결과 확인","result","각자 등록한 것만 다운로드") +
+      '</div>';
+    wireFocusable();
   }
 
   /* ---- 교육 담당자 설문 관리 : 목록 ---- */
@@ -623,7 +864,7 @@
     }).join("");
 
     els.viewBody.innerHTML =
-      '<div class="card card-pad">' +
+      '<div class="card card-pad focusable" data-desc-key="search">' +
         '<div class="filter-row" style="margin-bottom:10px;">' +
           '<label>검색 기간</label>' +
           '<input type="date" id="fFrom" value="2026-06-22"> <span>~</span> ' +
@@ -635,11 +876,11 @@
           '<button class="btn btn-primary btn-sm" id="btnSearch">검색</button>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">' +
+      '<div class="focusable" data-desc-key="actions" style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">' +
         '<button class="btn btn-ghost" id="btnBulkSurvey">설문 일괄등록 (엑셀)</button>' +
         '<button class="btn btn-primary" id="btnNewSurvey">설문등록</button>' +
       '</div>' +
-      '<div class="card table-wrap">' +
+      '<div class="card table-wrap focusable" data-desc-key="list">' +
         '<table><thead><tr>' +
           '<th>번호</th><th>제목</th><th>교육담당자</th><th>설문기간</th><th>노출메뉴URL</th><th>노출여부</th><th>참여자</th><th>결과다운로드</th>' +
         '</tr></thead><tbody id="surveyRows">' + (rows || '') + '</tbody></table>' +
@@ -680,6 +921,7 @@
     els.viewBody.querySelectorAll(".act-dl").forEach(function(btn){
       btn.addEventListener("click", function(){ downloadSurveyResult(findSurvey(Number(btn.dataset.id))); });
     });
+    wireFocusable();
   }
 
   function applySurveyFilter(){
@@ -739,13 +981,15 @@
     state.questionDraft = isEdit ? existing.questionIds.slice() : QUESTION_POOL.map(function(q){return q.id;});
 
     els.viewBody.innerHTML =
-      '<div class="card">' +
+      '<div class="card focusable" data-desc-key="form-basic">' +
         row("제목", '<input type="text" class="wide" id="fTitle" value="'+(isEdit?esc(existing.title):"")+'" placeholder="설문 타이틀 입력">') +
         row("설명", '<input type="text" class="wide" id="fDesc" value="'+(isEdit?esc(existing.desc):"")+'" placeholder="설문 설명 입력">') +
         row("문항등록",
           '<div class="row-inline"><button class="btn btn-ghost btn-sm" id="btnPickQuestions">문항 선택</button>' +
           '<span class="hint">팝업에서 등록된 문항 중 이 설문에 사용할 항목을 고릅니다</span></div>' +
           '<div class="chip-row" id="questionChips"></div>') +
+      '</div>' +
+      '<div class="card focusable" data-desc-key="form-expose">' +
         row("설문기간", '<div class="row-inline">' +
             '<input type="datetime-local" id="fStart" value="'+(isEdit?existing.startAt:"2026-07-01T09:00")+'" style="width:190px">' +
             '<span>~</span>' +
@@ -776,10 +1020,21 @@
     }
     syncPeriodInputs();
     fUntilResponded.addEventListener("change", syncPeriodInputs);
-    document.getElementById("btnPersonSearch").addEventListener("click", function(){ openPersonSearch(); });
-    document.getElementById("btnPickQuestions").addEventListener("click", function(){ openQuestionPicker(); });
+    document.getElementById("btnPersonSearch").addEventListener("click", function(){
+      openPersonSearch({
+        selected: state.targetDraft,
+        onConfirm: function(people){ state.targetDraft = people; renderTargetChips(); toast(people.length + "명 선택되었습니다."); }
+      });
+    });
+    document.getElementById("btnPickQuestions").addEventListener("click", function(){
+      openQuestionPicker({
+        selected: state.questionDraft,
+        onConfirm: function(ids){ state.questionDraft = ids; renderQuestionChips(); toast(ids.length + "개 문항이 선택되었습니다."); }
+      });
+    });
     document.getElementById("btnCancel").addEventListener("click", function(){ go("s-list"); });
     document.getElementById("btnSave").addEventListener("click", function(){ saveSurvey(existing); });
+    wireFocusable();
   }
 
   function row(label, contentHtml){
@@ -791,43 +1046,45 @@
       '<label class="radio"><input type="radio" name="'+name+'" value="off" '+(!onDefault?"checked":"")+'>'+offLabel+'</label>' +
     '</div>';
   }
-  function renderTargetChips(){
-    var wrap = document.getElementById("targetChips");
+  function renderPersonChipsInto(wrapId, list, emptyText, onRemove){
+    var wrap = document.getElementById(wrapId);
     if (!wrap) return;
-    if (!state.targetDraft.length){
-      wrap.innerHTML = '<span class="empty-chip">선택된 교육담당자가 없습니다</span>';
+    if (!list.length){
+      wrap.innerHTML = '<span class="empty-chip">'+esc(emptyText)+'</span>';
       return;
     }
-    wrap.innerHTML = state.targetDraft.map(function(p,idx){
+    wrap.innerHTML = list.map(function(p,idx){
       return '<span class="chip">'+esc(p.name)+'('+esc(p.id)+') <button data-idx="'+idx+'" title="제거">✕</button></span>';
     }).join("");
     wrap.querySelectorAll("button").forEach(function(b){
       b.addEventListener("click", function(){
-        state.targetDraft.splice(Number(b.dataset.idx),1);
-        renderTargetChips();
+        list.splice(Number(b.dataset.idx),1);
+        onRemove();
       });
     });
   }
-
-  function renderQuestionChips(){
-    var wrap = document.getElementById("questionChips");
+  function renderQuestionChipsInto(wrapId, ids, onRemove){
+    var wrap = document.getElementById(wrapId);
     if (!wrap) return;
-    if (!state.questionDraft.length){
+    if (!ids.length){
       wrap.innerHTML = '<span class="empty-chip">선택된 문항이 없습니다</span>';
       return;
     }
-    wrap.innerHTML = state.questionDraft.map(function(qid, idx){
+    wrap.innerHTML = ids.map(function(qid, idx){
       var q = findQuestion(qid);
       if (!q) return "";
       return '<span class="chip">['+catLabel(q.category)+'] '+esc(q.code)+' '+esc(q.content)+' <button data-idx="'+idx+'" title="제거">✕</button></span>';
     }).join("");
     wrap.querySelectorAll("button").forEach(function(b){
       b.addEventListener("click", function(){
-        state.questionDraft.splice(Number(b.dataset.idx),1);
-        renderQuestionChips();
+        ids.splice(Number(b.dataset.idx),1);
+        onRemove();
       });
     });
   }
+  function renderTargetChips(){ renderPersonChipsInto("targetChips", state.targetDraft, "선택된 교육담당자가 없습니다", renderTargetChips); }
+  function renderQuestionChips(){ renderQuestionChipsInto("questionChips", state.questionDraft, renderQuestionChips); }
+  function renderRootQuestionChips(){ renderQuestionChipsInto("rootQuestionChips", state.rootQuestionDraft, renderRootQuestionChips); }
 
   function saveSurvey(existing){
     var title = document.getElementById("fTitle").value.trim();
@@ -871,7 +1128,7 @@
     if (!s){ go("s-list"); return; }
     setHead("교육 담당자 설문 관리", "보기");
     els.viewBody.innerHTML =
-      '<div class="card">' +
+      '<div class="card focusable" data-desc-key="detail">' +
         row("제목", '<div class="readonly-value">'+esc(s.title)+'</div>') +
         row("설명", '<div class="readonly-value">'+esc(s.desc||"-")+'</div>') +
         row("문항", '<div class="readonly-value">'+s.questionIds.length+'개 선택됨 — '+
@@ -885,7 +1142,7 @@
         row("대상지정", '<div class="readonly-value">'+(s.targets.map(function(p){return p.name+'('+p.id+')';}).join(", ") || "-")+'</div>') +
         row("참여 현황", '<div class="readonly-value">'+s.participants+'명 참여 / 대상 '+s.targets.length+'명</div>') +
       '</div>' +
-      '<div class="btn-row">' +
+      '<div class="btn-row focusable" data-desc-key="actions">' +
         '<button class="btn btn-ghost" id="btnDl">결과 다운로드</button>' +
         '<button class="btn btn-ghost" id="btnEdit">수정</button>' +
         '<button class="btn btn-ghost" id="btnBack">목록</button>' +
@@ -894,15 +1151,19 @@
     document.getElementById("btnDl").addEventListener("click", function(){ downloadSurveyResult(s); });
     document.getElementById("btnEdit").addEventListener("click", function(){ go("s-edit", {surveyId:s.id}); });
     document.getElementById("btnBack").addEventListener("click", function(){ go("s-list"); });
-    document.getElementById("btnPreview").addEventListener("click", function(){ currentSurveyId = s.id; go("learner-view"); });
+    document.getElementById("btnPreview").addEventListener("click", function(){ currentSurveyId = s.id; go("learner-view", {topTab:"learner"}); });
+    wireFocusable();
   }
 
-  /* ---- 교육담당자 화면 (설문 참여 화면) ---- */
+  /* ---- 교육담당자 화면 (설문 참여 화면) ----
+     노출 우선순위(정책서 10번 A): 같은 메뉴에 개별 기업 설문과 전체 기업 대상 설문이 겹치면
+     같은 설문을 두 번 보여주지 않도록 개별 기업 설문만 노출하고, 전체 기업 대상 설문은 건너뛴다. */
   function renderLearnerView(){
     setHead("설문 참여 화면");
     var s = findSurvey(currentSurveyId);
+    var menuUrl = s ? s.menuUrl : "/Manage/Home";
     els.viewBody.innerHTML =
-      '<p class="hint" style="margin-bottom:10px;">교육담당자가 노출 메뉴 URL('+ (s?esc(s.menuUrl):"/Manage/Home") +')에 접속했을 때 실제로 보게 되는 화면입니다.</p>' +
+      '<p class="hint" style="margin-bottom:10px;">교육담당자가 노출 메뉴 URL('+esc(menuUrl)+')에 접속했을 때 실제로 보게 되는 화면입니다. 개별 기업 설문과 전체 기업 대상 설문이 같은 메뉴에 겹치면 같은 방문에서 둘 다 뜨지 않고 개별 기업 설문이 우선 노출되며, 개별 기업 설문이 없을 때만 전체 기업 대상 설문이 노출됩니다.</p>' +
       '<div class="learner-page">' +
         '<h2>메인 홈</h2>' +
         '<p class="hint" style="margin-bottom:20px;">환영합니다. 오늘의 학습 현황을 확인해보세요.</p>' +
@@ -910,23 +1171,50 @@
       '</div>' +
       '<div class="btn-row">' +
         '<button class="btn btn-primary" id="btnOpenPopup">설문 팝업 열기</button>' +
-        '<button class="btn btn-ghost" id="btnResetDismiss">"오늘 하루 보지 않기" 초기화</button>' +
+        '<button class="btn btn-ghost" id="btnResetDismiss">모든 "오늘 하루 보지 않기" 초기화</button>' +
       '</div>';
-    document.getElementById("btnOpenPopup").addEventListener("click", function(){
-      if (s) openSurveyPopup(s);
-    });
+    document.getElementById("btnOpenPopup").addEventListener("click", openSurveyQueue);
     document.getElementById("btnResetDismiss").addEventListener("click", function(){
-      localStorage.removeItem(DISMISS_KEY);
+      Object.keys(localStorage).forEach(function(k){
+        if (k.indexOf("hrfw27113_dontShow_") === 0) localStorage.removeItem(k);
+      });
       toast('초기화되었습니다. 팝업이 다시 노출됩니다.');
     });
-    if (s) openSurveyPopup(s);
+    /* 배경 화면 자체는 클릭 → Description 대상이 아니다. 실제 설명은 팝업(설문 참여 화면) 안의
+       각 단계를 클릭했을 때 뜬다 — 팝업은 이 화면 진입 시 자동으로 노출된다(openSurveyQueue). */
+    openSurveyQueue();
+
+    function openSurveyQueue(){
+      /* 팝업 중복 노출 정책(정책서 10번 A) — 같은 메뉴에 개별 기업 설문과 전체 기업 대상 설문이
+         겹치면 같은 방문에서 둘 다 보여주지 않고 개별 기업 설문을 우선 노출한다. 개별 기업 설문이
+         없거나 미노출 상태일 때만 전체 기업 대상 설문을 노출한다. */
+      var queue = [];
+      if (s && s.expose){
+        queue.push({kind:"tenant", survey:s});
+      } else {
+        rootSurveys.filter(function(rs){
+          return rs.expose && rs.menuUrl === menuUrl;
+        }).forEach(function(rs){ queue.push({kind:"root", survey:rs}); });
+      }
+
+      function next(){
+        var item = queue.shift();
+        if (!item) return;
+        openSurveyPopup(item.survey, item.kind, function(){
+          if (state.view === "s-list") renderSurveyList();
+          if (state.view === "s-view") renderSurveyView(findSurvey(state.viewingSurveyId));
+          next();
+        });
+      }
+      next();
+    }
   }
 
   /* ---- 교육 담당자 설문 문항 관리 : 목록 (문항 = 긍정/부정 이유 풀, 설문과 별개로 전역 관리) ---- */
   function renderQuestionList(){
     setHead("교육 담당자 설문 문항 관리");
     els.viewBody.innerHTML =
-      '<div class="card card-pad">' +
+      '<div class="card card-pad focusable" data-desc-key="search">' +
         '<div class="filter-row">' +
           '<select id="qfCat"><option value="">전체 구분</option><option value="good">도움됨</option><option value="bad">아쉬움</option></select>' +
           '<select id="qfActive"><option value="">전체 사용여부</option><option value="on">사용</option><option value="off">미사용</option></select>' +
@@ -934,7 +1222,7 @@
           '<button class="btn btn-primary btn-sm" id="btnQSearch">검색</button>' +
         '</div>' +
       '</div>' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+      '<div class="focusable" data-desc-key="actions" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
         '<p class="hint" style="margin:0;">설문 등록/수정 화면의 "문항 선택" 팝업에서 이 목록을 그대로 사용합니다.</p>' +
         '<div style="display:flex;gap:8px;">' +
           '<button class="btn btn-ghost btn-sm" id="btnBulk">문항 일괄등록 (엑셀)</button>' +
@@ -942,8 +1230,8 @@
           '<button class="btn btn-primary btn-sm" id="btnAddQ">문항추가</button>' +
         '</div>' +
       '</div>' +
-      '<div class="card table-wrap">' +
-        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>번호</th><th>구분</th><th>문항내용</th><th>사용여부</th><th>관리</th></tr></thead>' +
+      '<div class="card table-wrap focusable" data-desc-key="list">' +
+        '<table><thead><tr><th style="width:32px;"><input type="checkbox" id="qSelectAll"></th><th>번호</th><th>구분</th><th>문항내용</th><th>유형</th><th>사용여부</th><th>관리</th></tr></thead>' +
         '<tbody id="qRows"></tbody></table>' +
       '</div>';
 
@@ -966,10 +1254,11 @@
           '<td class="num">'+item.id+'</td>' +
           '<td>'+catLabel(item.category)+'</td>' +
           '<td>'+esc(item.content)+'</td>' +
+          '<td>'+(item.kind==="text"?"기타(직접입력)":"일반 항목")+'</td>' +
           '<td>'+(item.active?"사용":"미사용")+'</td>' +
           '<td><a href="#" class="act-edit" data-id="'+item.id+'">수정</a></td>' +
         '</tr>';
-      }).join("") || '<tr><td colspan="6"><div class="muted-note">조건에 맞는 문항이 없습니다.</div></td></tr>';
+      }).join("") || '<tr><td colspan="7"><div class="muted-note">조건에 맞는 문항이 없습니다.</div></td></tr>';
       document.getElementById("qSelectAll").checked = false;
       document.querySelectorAll(".qRowCheck").forEach(function(cb){
         cb.addEventListener("change", function(){ checked[Number(cb.dataset.id)] = cb.checked; });
@@ -1005,14 +1294,15 @@
         hint: "엑셀 양식으로 여러 문항(도움됨/아쉬움)을 한 번에 등록합니다.",
         onConfirm: function(fileName){
           QUESTION_POOL.push(
-            {id:nextId(), code:nextQCode(), category:"good", content:"[일괄등록] 응대 속도가 빨라졌어요.", active:true},
-            {id:nextId(), code:nextQCode(), category:"bad", content:"[일괄등록] 이전보다 더 불편해졌어요.", active:true}
+            {id:nextId(), code:nextQCode(), category:"good", content:"[일괄등록] 응대 속도가 빨라졌어요.", kind:"choice", active:true},
+            {id:nextId(), code:nextQCode(), category:"bad", content:"[일괄등록] 이전보다 더 불편해졌어요.", kind:"choice", active:true}
           );
           toast('"'+fileName+'" 업로드 완료 — 문항 2개가 일괄 등록되었습니다.');
           draw();
         }
       });
     });
+    wireFocusable();
   }
 
   function renderQuestionForm(existing){
@@ -1020,9 +1310,10 @@
     setHead("교육 담당자 설문 문항 관리", isEdit ? "수정" : "등록");
     var category = isEdit ? existing.category : "good";
     var active = isEdit ? existing.active : true;
+    var kind = isEdit ? (existing.kind || "choice") : "choice";
 
     els.viewBody.innerHTML =
-      '<div class="card">' +
+      '<div class="card focusable" data-desc-key="form">' +
         (isEdit ? row("문항코드", '<div class="readonly-value">'+esc(existing.code)+'</div>') : '') +
         row("구분",
           '<div class="row-inline">' +
@@ -1030,7 +1321,12 @@
             '<label class="radio"><input type="radio" name="qcat" value="bad" '+(category==="bad"?"checked":"")+'>아쉬움</label>' +
           '</div>' +
           '<p class="hint">교육담당자가 "도움이 되었어요"를 고르면 도움됨 문항이, "아쉬워요"를 고르면 아쉬움 문항이 노출됩니다.</p>') +
-        row("문항내용", '<input type="text" class="wide" id="qContent" value="'+(isEdit?esc(existing.content):"")+'" placeholder="예: 메뉴 구성이 편리했어요.">') +
+        row("문항내용",
+          '<div class="row-inline">' +
+            '<input type="text" class="wide" id="qContent" value="'+(isEdit?esc(existing.content):"")+'" placeholder="예: 메뉴 구성이 편리했어요." '+(kind==="text"?"disabled":"")+' style="max-width:420px">' +
+            '<label class="radio"><input type="checkbox" id="qEtc" '+(kind==="text"?"checked":"")+'>기타(직접입력) 항목</label>' +
+          '</div>' +
+          '<p class="hint">"기타(직접입력)"을 체크하면 문항 내용은 항상 "기타"로 고정되고, 설문 참여 화면에서 이 항목을 선택했을 때 직접 의견을 적는 입력란이 함께 노출됩니다.</p>') +
         row("사용여부",
           '<div class="row-inline">' +
             '<label class="radio"><input type="radio" name="qactive" value="on" '+(active?"checked":"")+'>사용</label>' +
@@ -1044,16 +1340,24 @@
         (isEdit ? '<button class="btn btn-danger-ghost" id="btnDeleteQ" style="margin-left:auto;">삭제</button>' : '') +
       '</div>';
 
+    var qContent = document.getElementById("qContent");
+    var qEtc = document.getElementById("qEtc");
+    qEtc.addEventListener("change", function(){
+      qContent.disabled = qEtc.checked;
+      qContent.value = qEtc.checked ? "기타" : (isEdit && existing.kind !== "text" ? existing.content : "");
+    });
     document.getElementById("btnCancelQ").addEventListener("click", function(){ go("q-list"); });
     document.getElementById("btnSaveQ").addEventListener("click", function(){
-      var content = document.getElementById("qContent").value.trim() || "새 문항";
+      var isEtc = qEtc.checked;
+      var content = isEtc ? "기타" : (qContent.value.trim() || "새 문항");
       var cat = document.querySelector('input[name=qcat]:checked').value;
+      var qkind = isEtc ? "text" : "choice";
       var isActive = document.querySelector('input[name=qactive]:checked').value === "on";
       if (isEdit){
-        existing.category = cat; existing.content = content; existing.active = isActive;
+        existing.category = cat; existing.content = content; existing.kind = qkind; existing.active = isActive;
         toast("문항이 저장되었습니다.");
       } else {
-        QUESTION_POOL.push({id:nextId(), code:nextQCode(), category:cat, content:content, active:isActive});
+        QUESTION_POOL.push({id:nextId(), code:nextQCode(), category:cat, content:content, kind:qkind, active:isActive});
         toast("문항이 등록되었습니다.");
       }
       go("q-list");
@@ -1067,87 +1371,170 @@
       toast("문항이 삭제되었습니다.");
       go("q-list");
     });
+    wireFocusable();
   }
 
-  /* ---- 교육 담당자 전체 설문 결과 (0번 기업) — 기간만 선택해서 바로 다운로드 (목록 렌더링 없음) ----
-     화면에 전체 데이터를 리스트로 그리면 기업 수가 많아질수록 조회 자체가 느려지고 부하가 커진다.
-     그래서 조건만 고르고 바로 다운로드하는 방식으로 처리 — 미리보기 테이블 없음(단, 몇 건이 잡히는지는
-     가벼운 카운트만 미리 보여준다 — 조건에 맞는 게 0건인지도 모른 채 다운로드 버튼을 누르게 하지 않기 위함).
-     기업 선택은 넣지 않음: 다운로드 후 엑셀에서 기업명 컬럼으로 얼마든지 걸러낼 수 있어 화면에 선택 UI를
-     따로 둘 실익이 없음. 담당자도 필터로 넣지 않음: 전사 통계가 목적이라 "누가"가 아니라 "무슨 응답이
-     얼마나"가 중요하고, 특정 담당자 응답이 궁금한 경우는 개별 기업의 "교육 담당자 설문 관리 > 보기"에서
-     확인하는 영역이라 제외. */
-  function filterAllResultsByDate(from, to){
-    return allCompanyResults.filter(function(r){
-      var d = r.respondedAt.slice(0,10);
-      if (from && d < from) return false;
-      if (to && d > to) return false;
-      return true;
-    });
+  /* ---- 전체 기업 대상 설문 관리 (0번 기업 전용) ---- */
+  function downloadRootSurveyResult(s){
+    var lines = ["기업명,교육담당자ID,교육담당자명,설문제목,응답일시,문항별응답"];
+    lines.push(["SPC GFS (66911)","hong01","홍길동",'"'+s.title+'"',s.endAt.replace("T"," "),'"만족도: 도움됨"'].join(","));
+    lines.push(["UX레벨업 (21320)","kim22","김담당",'"'+s.title+'"',s.endAt.replace("T"," "),'"만족도: 아쉬움"'].join(","));
+    var blob = new Blob(["﻿" + lines.join("\n")], {type:"text/csv;charset=utf-8;"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = s.title.replace(/[^\w가-힣]+/g,"_") + "_전체기업_결과.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    toast('"' + s.title + '" 전체 기업 결과를 다운로드했습니다.');
   }
 
-  function renderAllResults(){
-    setHead("교육 담당자 전체 설문 결과");
+  function renderRootSurveyList(){
+    setHead("전체 기업 대상 설문 관리");
+    var rows = rootSurveys.map(function(s){
+      return '<tr class="clickable" data-id="'+s.id+'">' +
+        '<td class="num">'+s.id+'</td>' +
+        '<td>'+esc(s.title)+'</td>' +
+        '<td>전체 기업 (전체 교육담당자)</td>' +
+        '<td>'+fmtRange(s.startAt,s.endAt)+'</td>' +
+        '<td>'+esc(s.menuUrl)+'</td>' +
+        '<td>'+(s.expose ? "노출" : "미노출")+'</td>' +
+        '<td class="num">'+s.participants+'</td>' +
+        '<td><button class="btn btn-ghost btn-sm act-dl" data-id="'+s.id+'">결과 다운로드</button></td>' +
+      '</tr>';
+    }).join("");
+
     els.viewBody.innerHTML =
-      '<div class="card card-pad">' +
-        '<div class="filter-row">' +
-          '<label>응답 기간</label>' +
-          '<input type="date" id="arFrom" value="2026-06-01"> <span>~</span> ' +
-          '<input type="date" id="arTo" value="2026-07-22">' +
-        '</div>' +
+      '<p class="hint" style="margin-bottom:10px;">여기서 등록한 설문은 전체 기업 에듀매니저 메뉴에 공통으로 노출됩니다. 등록/수정/결과 다운로드는 0번 기업만 가능하며, 개별 기업이 진행한 설문은 이 화면에서 다루지 않습니다.</p>' +
+      '<div class="focusable" data-desc-key="actions" style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;">' +
+        '<button class="btn btn-primary" id="btnNewRootSurvey">전체 기업 대상 설문 등록</button>' +
       '</div>' +
-      '<div class="card card-pad" style="display:flex;align-items:center;justify-content:space-between;">' +
-        '<div>' +
-          '<div style="font-weight:700;font-size:13px;margin-bottom:4px;">선택한 기간으로 바로 다운로드</div>' +
-          '<p class="hint" id="arCount" style="margin:0;">건수 확인 중…</p>' +
-        '</div>' +
-        '<button class="btn btn-primary" id="btnResultsDl" style="flex:0 0 auto;">엑셀 다운로드</button>' +
+      '<div class="card table-wrap focusable" data-desc-key="list">' +
+        '<table><thead><tr>' +
+          '<th>번호</th><th>제목</th><th>노출 대상</th><th>설문기간</th><th>노출메뉴(메뉴명 기준)</th><th>노출여부</th><th>참여자</th><th>결과다운로드</th>' +
+        '</tr></thead><tbody>' + (rows || '') + '</tbody></table>' +
+        (rows ? '' : '<div class="muted-note">등록된 전체 기업 대상 설문이 없습니다.</div>') +
       '</div>';
 
-    var elFrom = document.getElementById("arFrom");
-    var elTo = document.getElementById("arTo");
-    var elCount = document.getElementById("arCount");
-
-    function updateCount(){
-      var from = elFrom.value, to = elTo.value;
-      if (from && to && from > to){
-        elCount.textContent = "시작일이 종료일보다 늦습니다. 기간을 다시 확인하세요.";
-        elCount.classList.add("warn");
-        return null;
-      }
-      elCount.classList.remove("warn");
-      var n = filterAllResultsByDate(from, to).length;
-      elCount.textContent = "현재 조건으로 " + n + "건이 다운로드됩니다. (화면에 목록을 띄우지 않아 조회 부하는 없습니다)";
-      return n;
-    }
-    updateCount();
-    elFrom.addEventListener("change", updateCount);
-    elTo.addEventListener("change", updateCount);
-
-    document.getElementById("btnResultsDl").addEventListener("click", function(){
-      var from = elFrom.value, to = elTo.value;
-      if (from && to && from > to){ toast("시작일이 종료일보다 늦습니다. 기간을 다시 확인하세요."); return; }
-      var filtered = filterAllResultsByDate(from, to);
-      if (!filtered.length){ toast("조건에 맞는 응답이 없습니다."); return; }
-      var lines = ["기업명,설문제목,교육담당자명,교육담당자ID,응답일시,응답요약"];
-      filtered.forEach(function(r){ lines.push([r.company,'"'+r.title+'"',r.managerName,r.managerId,r.respondedAt,'"'+r.summary+'"'].join(",")); });
-      var blob = new Blob(["﻿"+lines.join("\n")], {type:"text/csv;charset=utf-8;"});
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = "교육담당자_전체설문결과.csv";
-      document.body.appendChild(a); a.click(); a.remove();
-      toast(filtered.length + "건 다운로드했습니다. (모의 데이터)");
+    document.getElementById("btnNewRootSurvey").addEventListener("click", function(){ go("r-survey-register", {}, "root"); });
+    els.viewBody.querySelectorAll("tr.clickable").forEach(function(tr){
+      tr.addEventListener("click", function(e){
+        if (e.target.closest(".act-dl")) return;
+        go("r-survey-view", {rootSurveyId: Number(tr.dataset.id)}, "root");
+      });
     });
+    els.viewBody.querySelectorAll(".act-dl").forEach(function(btn){
+      btn.addEventListener("click", function(){ downloadRootSurveyResult(findRootSurvey(Number(btn.dataset.id))); });
+    });
+    wireFocusable();
+  }
+
+  function renderRootSurveyForm(existing){
+    var isEdit = !!existing;
+    setHead("전체 기업 대상 설문 관리", isEdit ? "수정" : "등록");
+    state.rootQuestionDraft = isEdit ? existing.questionIds.slice() : QUESTION_POOL.map(function(q){return q.id;});
+
+    els.viewBody.innerHTML =
+      '<div class="card focusable" data-desc-key="form-basic">' +
+        row("제목", '<input type="text" class="wide" id="rTitle" value="'+(isEdit?esc(existing.title):"")+'" placeholder="설문 타이틀 입력">') +
+        row("설명", '<input type="text" class="wide" id="rDesc" value="'+(isEdit?esc(existing.desc):"")+'" placeholder="설문 설명 입력">') +
+        row("문항등록",
+          '<div class="row-inline"><button class="btn btn-ghost btn-sm" id="btnRootPickQuestions">문항 선택</button>' +
+          '<span class="hint">팝업에서 등록된 문항 중 이 설문에 사용할 항목을 고릅니다</span></div>' +
+          '<div class="chip-row" id="rootQuestionChips"></div>') +
+      '</div>' +
+      '<div class="card focusable" data-desc-key="form-expose">' +
+        row("설문기간", '<div class="row-inline">' +
+            '<input type="datetime-local" id="rStart" value="'+(isEdit?existing.startAt:"2026-08-01T09:00")+'" style="width:190px">' +
+            '<span>~</span>' +
+            '<input type="datetime-local" id="rEnd" value="'+(isEdit?existing.endAt:"2026-08-31T18:00")+'" style="width:190px">' +
+          '</div>') +
+        row("노출 메뉴명 (기준)", '<input type="text" id="rUrl" class="wide" value="'+(isEdit?esc(existing.menuUrl):"/Manage/Home")+'" style="max-width:340px">' +
+          '<p class="hint">설문 1건당 1개 메뉴만 지정. 기업마다 실제 URL이 다를 수 있어 이 메뉴명을 기준으로 개별 기업 URL에 매핑됩니다.</p>') +
+        row("노출여부", radioPair("rexpose","노출","미노출", isEdit ? existing.expose : true)) +
+        row("노출 대상", '<div class="readonly-value">전체 기업 — 기업 선택 불가</div>' +
+          '<p class="hint">전체 기업 대상 설문은 항상 전체 기업에 노출됩니다. 개별 기업을 골라서 등록할 수 없습니다.</p>') +
+        row("대상자 (담당자)", '<div class="readonly-value">전체 기업에 등록된 전체 교육담당자 — 별도 검색/제외 기능 없음</div>' +
+          '<p class="hint">검색·제외 UI를 두면 오히려 특정 담당자만 고르기 쉬워져 취지에 맞지 않아, 항상 전체 교육담당자를 대상으로 합니다.</p>') +
+      '</div>' +
+      '<div class="btn-row">' +
+        '<button class="btn btn-primary" id="btnRootSave">'+(isEdit?"저장":"등록완료")+'</button>' +
+        '<button class="btn btn-ghost" id="btnRootCancel">목록</button>' +
+      '</div>';
+
+    renderRootQuestionChips();
+    document.getElementById("btnRootPickQuestions").addEventListener("click", function(){
+      openQuestionPicker({
+        selected: state.rootQuestionDraft,
+        onConfirm: function(ids){ state.rootQuestionDraft = ids; renderRootQuestionChips(); toast(ids.length + "개 문항이 선택되었습니다."); }
+      });
+    });
+    document.getElementById("btnRootCancel").addEventListener("click", function(){ go("r-survey-list", {}, "root"); });
+    document.getElementById("btnRootSave").addEventListener("click", function(){ saveRootSurvey(existing); });
+    wireFocusable();
+  }
+
+  function saveRootSurvey(existing){
+    var title = document.getElementById("rTitle").value.trim();
+    if (!title){ toast("제목을 입력하세요."); return; }
+    if (!state.rootQuestionDraft.length){ toast("문항을 1개 이상 선택하세요."); return; }
+    var desc = document.getElementById("rDesc").value.trim();
+    var url = document.getElementById("rUrl").value.trim() || "/Manage/Home";
+    var start = document.getElementById("rStart").value.trim();
+    var end = document.getElementById("rEnd").value.trim();
+    var expose = document.querySelector('input[name=rexpose]:checked').value === "on";
+
+    if (existing){
+      existing.title = title; existing.desc = desc; existing.menuUrl = url;
+      existing.startAt = start; existing.endAt = end; existing.expose = expose;
+      existing.questionIds = state.rootQuestionDraft.slice();
+      toast('"'+title+'" 저장되었습니다.');
+    } else {
+      rootSurveys.push({
+        id: nextId(), title:title, desc:desc, menuUrl:url, startAt:start, endAt:end,
+        expose:expose, questionIds: state.rootQuestionDraft.slice(), participants: 0
+      });
+      toast('"'+title+'" 등록되었습니다. (전체 기업에 노출)');
+    }
+    go("r-survey-list", {}, "root");
+  }
+
+  function renderRootSurveyView(s){
+    if (!s){ go("r-survey-list", {}, "root"); return; }
+    setHead("전체 기업 대상 설문 관리", "보기");
+    els.viewBody.innerHTML =
+      '<div class="card focusable" data-desc-key="detail">' +
+        row("제목", '<div class="readonly-value">'+esc(s.title)+'<span class="tag">전체 기업 대상</span></div>') +
+        row("설명", '<div class="readonly-value">'+esc(s.desc||"-")+'</div>') +
+        row("문항", '<div class="readonly-value">'+s.questionIds.length+'개 선택됨 — '+
+          s.questionIds.map(function(qid){
+            var q = findQuestion(qid);
+            return q ? "["+catLabel(q.category)+"] "+esc(q.code)+" "+esc(q.content) : "";
+          }).filter(Boolean).join("<br>")+'</div>') +
+        row("설문기간", '<div class="readonly-value">'+fmtRange(s.startAt,s.endAt)+'</div>') +
+        row("노출 메뉴명 (기준)", '<div class="readonly-value">'+esc(s.menuUrl)+'</div>') +
+        row("노출여부", '<div class="readonly-value">'+(s.expose?"노출":"미노출")+'</div>') +
+        row("노출 대상", '<div class="readonly-value">전체 기업의 전체 교육담당자 — 기업/담당자 선택 불가</div>') +
+        row("참여 현황", '<div class="readonly-value">'+s.participants+'명 참여</div>') +
+      '</div>' +
+      '<div class="btn-row focusable" data-desc-key="actions">' +
+        '<button class="btn btn-ghost" id="btnRDl">결과 다운로드</button>' +
+        '<button class="btn btn-ghost" id="btnREdit">수정</button>' +
+        '<button class="btn btn-ghost" id="btnRBack">목록</button>' +
+      '</div>';
+    document.getElementById("btnRDl").addEventListener("click", function(){ downloadRootSurveyResult(s); });
+    document.getElementById("btnREdit").addEventListener("click", function(){ go("r-survey-edit", {rootSurveyId:s.id}, "root"); });
+    document.getElementById("btnRBack").addEventListener("click", function(){ go("r-survey-list", {}, "root"); });
+    wireFocusable();
   }
 
   /* ---------- 팝업: 교육담당자 검색 ---------- */
-  function openPersonSearch(){
+  function openPersonSearch(opts){
     var overlay = els.overlayPerson;
-    var picked = state.targetDraft.map(function(p){return p.id;});
+    var picked = opts.selected.map(function(p){return p.id;});
     overlay.innerHTML =
       '<div class="modal wide">' +
         '<button class="modal-close" id="pClose">✕</button>' +
-        '<h2>교육담당자 검색</h2>' +
-        '<p class="desc">/Student/EduRoleV2 (교육담당자 관리) 등록 목록에서 선택</p>' +
+        '<h2>'+esc(opts.title || "교육담당자 검색")+'</h2>' +
+        '<p class="desc">'+esc(opts.desc || "/Student/EduRoleV2 (교육담당자 관리) 등록 목록에서 선택")+'</p>' +
         '<div class="modal-search"><input type="text" id="pSearch" placeholder="이름 또는 아이디 검색"><button class="btn btn-primary btn-sm">검색</button></div>' +
         '<div class="person-list" id="pList"></div>' +
         '<div class="btn-row" style="padding-top:4px;">' +
@@ -1186,19 +1573,18 @@
     document.getElementById("pClose").addEventListener("click", closePersonSearch);
     document.getElementById("pCancel").addEventListener("click", closePersonSearch);
     document.getElementById("pConfirm").addEventListener("click", function(){
-      state.targetDraft = EDU_ROLE_LIST.filter(function(p){ return selection[p.id]; });
-      renderTargetChips();
+      var chosen = EDU_ROLE_LIST.filter(function(p){ return selection[p.id]; });
       closePersonSearch();
-      toast(state.targetDraft.length + "명 선택되었습니다.");
+      opts.onConfirm(chosen);
     });
   }
   function closePersonSearch(){ els.overlayPerson.hidden = true; els.overlayPerson.innerHTML=""; }
 
   /* ---------- 팝업: 문항 선택 (설문 등록/수정에서 문항 풀 중 선택) ---------- */
-  function openQuestionPicker(){
+  function openQuestionPicker(opts){
     var overlay = els.overlayQuestion;
     var selection = {};
-    state.questionDraft.forEach(function(id){ selection[id] = true; });
+    opts.selected.forEach(function(id){ selection[id] = true; });
 
     overlay.innerHTML =
       '<div class="modal wide">' +
@@ -1227,7 +1613,7 @@
         return '<div style="padding:8px 12px;background:#f7f8fa;font-size:11px;font-weight:700;color:var(--text-muted);">'+label+'</div>' +
           items.map(function(q){
             return '<div class="person-row"><input type="checkbox" data-id="'+q.id+'" '+(selection[q.id]?"checked":"")+'>' +
-              '<span>'+esc(q.code)+' '+esc(q.content)+'</span></div>';
+              '<span>'+esc(q.code)+' '+esc(q.content)+(q.kind==="text"?' <span class="tag">직접입력</span>':'')+'</span></div>';
           }).join("");
       }
       var html = group("good","도움됨") + group("bad","아쉬움");
@@ -1252,10 +1638,9 @@
       go("q-register");
     });
     document.getElementById("qpConfirm").addEventListener("click", function(){
-      state.questionDraft = QUESTION_POOL.filter(function(q){ return selection[q.id]; }).map(function(q){ return q.id; });
-      renderQuestionChips();
+      var ids = QUESTION_POOL.filter(function(q){ return selection[q.id]; }).map(function(q){ return q.id; });
       closeQuestionPicker();
-      toast(state.questionDraft.length + "개 문항이 선택되었습니다.");
+      opts.onConfirm(ids);
     });
   }
   function closeQuestionPicker(){ els.overlayQuestion.hidden = true; els.overlayQuestion.innerHTML = ""; }
@@ -1313,8 +1698,9 @@
   }
   function closeBulkUploadModal(){ els.overlayBulk.hidden = true; els.overlayBulk.innerHTML = ""; }
 
-  /* ---------- 팝업: 설문 참여 팝업 (딤드 오버레이) ---------- */
-  var DISMISS_KEY = "hrfw27113_dontShowToday";
+  /* ---------- 팝업: 설문 참여 팝업 (딤드 오버레이) ----------
+     재노출 방지는 설문 단위로 관리한다 (정책서 10번 C-1) — 개별 설문과 전체 기업 대상 설문이
+     같은 메뉴에 함께 걸려도 서로 독립적으로 "오늘 하루 보지 않기"가 적용된다. */
   var lastDontShowAgain = false;
   function todayStr(){
     var d = new Date();
@@ -1322,9 +1708,11 @@
     var day = String(d.getDate()).padStart(2,"0");
     return d.getFullYear() + "-" + m + "-" + day;
   }
-  function openSurveyPopup(survey, force){
-    if (!force && localStorage.getItem(DISMISS_KEY) === todayStr()){
-      toast('오늘 "오늘 하루 보지 않기"를 선택해 팝업이 노출되지 않습니다. (자정 이후 다시 노출)');
+  function dismissKeyFor(kind, id){ return "hrfw27113_dontShow_" + kind + "_" + id; }
+  function openSurveyPopup(survey, kind, onDone){
+    var dismissKey = dismissKeyFor(kind, survey.id);
+    if (localStorage.getItem(dismissKey) === todayStr()){
+      if (onDone) onDone();
       return;
     }
     var overlay = els.overlaySurvey;
@@ -1332,24 +1720,27 @@
     lastDontShowAgain = false;
 
     var poolItems = survey.questionIds.map(findQuestion).filter(Boolean).filter(function(q){ return q.active; });
-    var GOOD = poolItems.filter(function(q){ return q.category === "good"; }).map(function(q){ return q.content; }).concat(["기타"]);
-    var BAD = poolItems.filter(function(q){ return q.category === "bad"; }).map(function(q){ return q.content; }).concat(["기타"]);
+    function toOpt(q){ return {content:q.content, isText:q.kind === "text"}; }
+    var GOOD = poolItems.filter(function(q){ return q.category === "good"; }).map(toOpt);
+    var BAD = poolItems.filter(function(q){ return q.category === "bad"; }).map(toOpt);
 
     function step1(){
       overlay.innerHTML =
-        '<div class="modal">' +
+        '<div class="modal focusable" data-desc-key="step1">' +
           '<button class="modal-close" id="sClose">✕</button>' +
+          (kind === "root" ? '<div class="tag" style="display:inline-block;margin-bottom:6px;">전사 공통 설문</div>' : '') +
           '<div class="survey-emoji">🎉</div>' +
           '<h2>기능이 개선되었어요!</h2>' +
           '<p class="desc">이번 개선 기능은 어떠셨나요?<br>더 나은 서비스를 위해 의견을 들려주세요.</p>' +
           '<button class="choice-btn choice-good" id="sGood">😊 도움이 되었어요</button>' +
           '<button class="choice-btn choice-bad" id="sBad">😥 아쉬워요</button>' +
-          '<label class="dont-show"><input type="checkbox" id="sDont"> 오늘 하루 보지 않기</label>' +
+          '<label class="dont-show"><input type="checkbox" id="sDont"> 이 설문 오늘 하루 보지 않기</label>' +
         '</div>';
       overlay.hidden = false;
-      document.getElementById("sClose").addEventListener("click", function(){ captureDont(); closeSurveyPopup(); });
+      document.getElementById("sClose").addEventListener("click", function(){ captureDont(); finish(); });
       document.getElementById("sGood").addEventListener("click", function(){ chosen="good"; captureDont(); step2(); });
       document.getElementById("sBad").addEventListener("click", function(){ chosen="bad"; captureDont(); step2(); });
+      wirePopupFocusable(overlay);
     }
     function captureDont(){
       var el = document.getElementById("sDont");
@@ -1358,48 +1749,58 @@
     function step2(){
       var list = chosen === "good" ? GOOD : BAD;
       overlay.innerHTML =
-        '<div class="modal">' +
+        '<div class="modal focusable" data-desc-key="step2">' +
           '<button class="modal-close" id="sClose2">✕</button>' +
           '<h2 style="font-size:15px;">'+(chosen==="good"?"어떤 점이 가장 도움이 되었나요?":"어떤 점이 가장 아쉬우셨나요?")+'</h2>' +
           '<div class="opt-list" id="optList">' + list.map(function(o,i){
-            return '<label class="opt-item"><input type="checkbox" data-o="'+i+'">'+esc(o)+'</label>';
+            return '<label class="opt-item"><input type="checkbox" data-o="'+i+'" '+(o.isText?'data-etc="1"':'')+'>'+esc(o.content)+'</label>';
           }).join("") + '</div>' +
-          '<textarea placeholder="기타 의견을 입력해주세요. (선택)"></textarea>' +
+          '<textarea id="etcText" placeholder="기타 의견을 입력해주세요." style="display:none;"></textarea>' +
           '<button class="choice-btn choice-next" id="sSubmit">제출</button>' +
         '</div>';
-      document.getElementById("sClose2").addEventListener("click", closeSurveyPopup);
+      var etcText = document.getElementById("etcText");
+      var etcBoxes = Array.prototype.slice.call(document.querySelectorAll('#optList input[data-etc="1"]'));
+      function syncEtcVisibility(){
+        var anyChecked = etcBoxes.some(function(cb){ return cb.checked; });
+        etcText.style.display = anyChecked ? "" : "none";
+        if (!anyChecked) etcText.value = "";
+      }
+      etcBoxes.forEach(function(cb){ cb.addEventListener("change", syncEtcVisibility); });
+      document.getElementById("sClose2").addEventListener("click", finish);
       document.getElementById("sSubmit").addEventListener("click", function(){
-        step3();
+        var anyEtcChecked = etcBoxes.some(function(cb){ return cb.checked; });
+        if (anyEtcChecked && !etcText.value.trim()){ toast("기타 의견을 입력해주세요."); return; }
         survey.participants += 1;
+        step3();
       });
+      wirePopupFocusable(overlay);
     }
     function step3(){
       overlay.innerHTML =
-        '<div class="modal">' +
+        '<div class="modal focusable" data-desc-key="step3">' +
           '<div class="survey-emoji" style="color:#17c964;">✔</div>' +
           '<h2>소중한 의견 감사합니다.</h2>' +
           '<p class="desc">고객님의 의견을 반영하여 더 나은 서비스를 제공하겠습니다.</p>' +
           '<button class="choice-btn choice-next" id="sDone">닫기</button>' +
         '</div>';
-      document.getElementById("sDone").addEventListener("click", closeSurveyPopup);
+      document.getElementById("sDone").addEventListener("click", finish);
+      wirePopupFocusable(overlay);
+    }
+    function finish(){
+      if (lastDontShowAgain){
+        localStorage.setItem(dismissKey, todayStr());
+        toast('"이 설문 오늘 하루 보지 않기"가 저장되었습니다. 자정이 지나면 다시 노출됩니다.');
+      }
+      overlay.hidden = true;
+      overlay.innerHTML = "";
+      if (onDone) onDone();
     }
     step1();
   }
-  function closeSurveyPopup(){
-    if (lastDontShowAgain){
-      localStorage.setItem(DISMISS_KEY, todayStr());
-      toast('"오늘 하루 보지 않기"가 저장되었습니다. 자정이 지나면 다시 노출됩니다.');
-    }
-    els.overlaySurvey.hidden = true;
-    els.overlaySurvey.innerHTML = "";
-    if (state.view === "s-list") renderSurveyList();
-    if (state.view === "s-view") renderSurveyView(findSurvey(state.viewingSurveyId));
-  }
 
   /* ---------- boot ---------- */
+  renderTopTabs();
   renderSidebar();
   renderView();
 })();
 </script>
-
-</html>
