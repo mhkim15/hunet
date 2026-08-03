@@ -976,7 +976,19 @@
     });
   }
 
+  /* 편집모드 비밀번호 게이트 — 세션당 한 번만 물어보고(sessionStorage), 저장은 여전히
+     127.0.0.1 저장 서버 도달 여부로 최종 제한된다. 이 비밀번호는 그 앞단에서
+     "아무나 편집 버튼을 눌러 들어오는 것"만 막는 가벼운 확인 게이트다. */
+  var EDIT_PASSWORD = "audgk1";
   document.getElementById("editToggleBtn").addEventListener("click", function(){
+    if (!editMode) {
+      if (sessionStorage.getItem("hrfw32534EditUnlocked") !== "1") {
+        var pw = prompt("편집모드 비밀번호를 입력하세요:");
+        if (pw === null) return;
+        if (pw !== EDIT_PASSWORD) { alert("비밀번호가 일치하지 않습니다."); return; }
+        sessionStorage.setItem("hrfw32534EditUnlocked", "1");
+      }
+    }
     editMode = !editMode;
     this.classList.toggle("active", editMode);
     if (editMode && !originalSnapshot) originalSnapshot = snapshotData();
