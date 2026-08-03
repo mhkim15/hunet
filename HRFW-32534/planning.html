@@ -200,7 +200,7 @@
     /* 좌우는 padding이 아니라 margin으로 인셋(평균점수 영역과 같은 폭). 위쪽도 margin-top을
        살짝 둬야 한다 — 헤더 박스 상단이 모달 최상단(둥근 모서리 시작점)에 그대로 붙어 있으면
        포커스 링의 위쪽 변이 overflow:hidden에 가려 사라져 "위가 잘린" 것처럼 보인다. */
-    margin:10px 26px 0;padding:16px 0 18px;border-bottom:none;
+    margin:10px 26px 0;padding:16px 14px 18px;border-bottom:none;
     display:flex;justify-content:space-between;align-items:flex-start;
   }
   .rmodal-title{font-weight:700;font-size:16px;margin:0 0 8px;color:#0f1720;}
@@ -212,13 +212,13 @@
   .rmodal-close:hover{background:#f4f5f7;}
   .rsection{padding:6px 26px 0;}
   .rsection-label{font-size:12.5px;color:#6b7280;margin:0 0 10px;}
-  .rtype-grid{display:grid;gap:8px;margin-bottom:22px;}
+  .rtype-grid{display:grid;gap:8px;margin-bottom:22px;padding:14px;}
   .rtype-card{background:#EAF3FC;border-radius:14px;padding:11px 9px;}
   .rtype-card .rlabel{font-size:11px;color:#1D6FB8;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .rtype-card .rvalue{font-size:17px;font-weight:700;margin:0;color:#0B3B66;}
   /* 아래쪽도 margin-bottom을 둬야 한다 — 박스 하단이 모달 최하단(둥근 모서리)에 그대로 붙어
      있으면 포커스 링의 아래쪽 변이 잘려 사라진다(위 헤더와 같은 이유, 대칭 처리). */
-  .rdetail-wrap{margin:0 26px 10px;padding:0 0 14px;}
+  .rdetail-wrap{margin:0 26px 10px;padding:14px;}
   .rq-list{display:flex;flex-direction:column;gap:10px;}
   .rq-row{padding:14px 18px;border:1px solid #e5e7eb;border-radius:14px;}
   .rq-row .rq-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;gap:12px;flex-wrap:wrap;}
