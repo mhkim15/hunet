@@ -268,6 +268,52 @@
   .desc-panel .desc-sublist li{margin-bottom:6px;line-height:1.55;font-size:12px;color:var(--text);}
   .desc-panel .desc-sublist li::marker{color:var(--text-faint);font-weight:400;}
   .desc-panel .desc-sublist li b{color:var(--text);}
+
+  /* 편집 모드 */
+  .edit-toggle-btn{
+    flex:0 0 auto;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;
+    border:1px solid var(--border-strong);background:#fff;color:var(--text-muted);cursor:pointer;font-family:inherit;
+  }
+  .edit-toggle-btn.active{background:#12151a;color:#fff;border-color:#12151a;}
+  .desc-edit-btn{
+    display:inline-flex;align-items:center;gap:4px;margin-bottom:10px;padding:4px 10px;border-radius:14px;
+    border:1px solid var(--border-strong);background:#fff;font-size:11px;font-weight:700;color:var(--text);
+    cursor:pointer;font-family:inherit;
+  }
+  .desc-edit-btn:hover{background:#f4f5f7;}
+  .desc-editor-row{display:flex;align-items:center;gap:4px;margin-bottom:6px;}
+  .desc-editor-row.indent{margin-left:18px;}
+  .desc-editor-row input[type=text]{
+    flex:1;min-width:0;font:inherit;font-size:11.5px;padding:5px 7px;border:1px solid var(--border-strong);
+    border-radius:5px;background:#fff;color:var(--text);
+  }
+  .desc-editor-row button{
+    flex:0 0 auto;font-size:10.5px;padding:4px 6px;border-radius:4px;border:1px solid var(--border-strong);
+    background:#fff;cursor:pointer;font-family:inherit;line-height:1;
+  }
+  .desc-editor-row button:hover{background:#f4f5f7;}
+  .desc-editor-toolbar{display:flex;gap:6px;margin:12px 0 4px;}
+  .desc-editor-toolbar button{
+    font:inherit;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:6px;
+    border:1px solid var(--border-strong);background:#fff;cursor:pointer;font-family:inherit;
+  }
+  .desc-editor-toolbar button.primary{background:#12151a;color:#fff;border-color:#12151a;}
+  .desc-editor-hint{font-size:10.5px;color:var(--text-faint);margin:8px 0 12px;line-height:1.6;}
+
+  .desc-save-bar{
+    position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:100;
+    display:none;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;
+    background:#12151a;color:#fff;box-shadow:0 12px 32px rgba(0,0,0,.3);font-size:12.5px;
+  }
+  .desc-save-bar.show{display:flex;}
+  .desc-save-bar button{
+    font:inherit;font-size:12px;font-weight:700;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;
+  }
+  .desc-save-bar .btn-save{background:#2455e6;color:#fff;}
+  .desc-save-bar .btn-push{background:#1c7a34;color:#fff;}
+  .desc-save-bar .btn-cancel{background:transparent;color:#c7c9cd;text-decoration:underline;padding:7px 4px;}
+  .desc-save-bar .save-status{font-size:11.5px;color:#9aa1ab;}
+
   @media (max-width: 1480px){
     .stage{flex-direction:column;align-items:center;}
     .desc-panel{position:relative;top:0;width:1400px;max-width:100%;max-height:none;}
@@ -282,9 +328,18 @@
 <div class="frame-note">
   <span><b>HRFW-32534</b> 설문 결과보기 팝업 개선</span>
   <span class="scope-badge">스코프: 에듀매니저 &gt; 설문 &gt; 결과보기 팝업 교체</span>
+  <button class="edit-toggle-btn" id="editToggleBtn" type="button">✏️ 편집 모드</button>
 </div>
 
 <div class="top-tabs" id="topTabs"></div>
+
+<div class="desc-save-bar" id="descSaveBar">
+  <span>디스크립션 수정사항이 있습니다</span>
+  <span class="save-status" id="saveStatus"></span>
+  <button class="btn-save" id="btnSaveLocal" type="button">저장</button>
+  <button class="btn-push" id="btnSavePush" type="button">저장 후 푸시</button>
+  <button class="btn-cancel" id="btnDiscard" type="button">되돌리기</button>
+</div>
 
 <div class="stage">
 <div class="req-doc" id="reqDoc">
@@ -697,11 +752,18 @@
     els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div>' +
       '<div class="desc-empty">화면에서 영역(리스트·결과보기 버튼 등)이나 팝업 안쪽을 클릭하면 상세 설명이 여기에 표시됩니다.</div>';
   }
-  /* "라벨: 설명" 형식이면 라벨만 굵게 — 항목명을 먼저 지정하고 설명을 붙이는 포맷 */
+  /* **텍스트**로 감싼 부분을 굵게 — 편집모드에서 사용자가 직접 볼드 처리한 부분 */
+  function mdBold(s){
+    var parts = String(s).split(/\*\*(.+?)\*\*/);
+    return parts.map(function(p, i){ return i % 2 === 1 ? '<b>'+esc(p)+'</b>' : esc(p); }).join("");
+  }
+  /* "라벨: 설명" 형식이면 라벨만 굵게 — 항목명을 먼저 지정하고 설명을 붙이는 포맷. **표시**는 추가로 볼드 처리 */
   function renderLabelLine(l){
-    var m = l.match(/^([^:：]{1,16})[:：]\s*(.+)$/);
-    if (m) return '<b>'+esc(m[1])+':</b> '+esc(m[2]);
-    return esc(l);
+    /* 라벨 부분에 괄호가 있으면(예: "교육효과(분류코드: 102)") 그 안의 콜론을 라벨 구분자로
+       오인하지 않도록 라벨 후보에서 괄호 포함 문자열은 제외한다 */
+    var m = l.match(/^([^:：()]{1,16})[:：]\s*(.+)$/);
+    if (m) return '<b>'+esc(m[1])+':</b> '+mdBold(m[2]);
+    return mdBold(l);
   }
   /* 같은 항목의 하위 설명(예: 점수 → 응답점수 평균/척도/NPS표기)을 한 항목 아래 중첩 리스트로 묶어서
      넘버링이 갈라져 서로 다른 항목처럼 보이는 문제를 없앤다. body가 배열이면 문자열(단일 항목) 또는
@@ -720,14 +782,187 @@
       return '<li><b>'+esc(entry.group)+'</b>'+subHtml+'</li>';
     }).join("") + '</ol>';
   }
+  /* 편집모드에서 "적용/취소" 후 같은 설명으로 되돌아오기 위해 마지막으로 focusIn한 대상을 기억해둔다.
+     d는 SECTION_DESC_MAIN/DESC_BY_TYPE 안의 실제 객체 참조라서, d.body를 바로 고치면 그게 곧 원본 데이터 수정이다. */
+  var lastFocus = null;
   function focusIn(container, key, descMap){
     container.querySelectorAll(".focusable.focused").forEach(function(el){ el.classList.remove("focused"); });
     var target = container.querySelector('.focusable[data-desc-key="'+key+'"]');
     if (target) target.classList.add("focused");
     var d = descMap[key];
-    if (!d){ resetDescPanel(); return; }
-    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div><h3>'+esc(d.title)+'</h3>' + renderDescBody(d.body);
+    if (!d){ resetDescPanel(); lastFocus = null; return; }
+    lastFocus = { container: container, key: key, descMap: descMap, d: d };
+    var editBtnHtml = editMode ? '<button class="desc-edit-btn" id="descEditBtn" type="button">✏️ 이 설명 편집</button>' : "";
+    els.descPanel.innerHTML = '<div class="desc-eyebrow">Description</div>' + editBtnHtml + '<h3>'+esc(d.title)+'</h3>' + renderDescBody(d.body);
+    if (editMode){
+      document.getElementById("descEditBtn").addEventListener("click", function(){ openEditor(d); });
+    }
   }
+
+  /* ---------- 편집 모드 ---------- */
+  var editMode = false;
+  var isDirty = false;
+  var originalSnapshot = null; // 되돌리기용 — 편집모드 진입 시 전체 데이터 1회 스냅샷
+
+  /* body(문자열 또는 배열) → 편집용 평면 행 배열[{text, indent}] */
+  function bodyToRows(body){
+    if (typeof body === "string"){
+      return body.split("\n").map(function(l){ return l.trim(); }).filter(function(l){ return l.length>0; })
+        .map(function(l){ return {text:l, indent:0}; });
+    }
+    var rows = [];
+    body.forEach(function(entry){
+      if (typeof entry === "string"){ rows.push({text:entry, indent:0}); return; }
+      rows.push({text:entry.group, indent:0});
+      entry.items.forEach(function(sub){ rows.push({text:sub, indent:1}); });
+    });
+    return rows;
+  }
+  /* 편집용 행 배열 → body(배열: 문자열 | {group,items}) — indent:1 행은 바로 위 indent:0 행의 하위 항목으로 묶인다 */
+  function rowsToBody(rows){
+    var body = [];
+    rows.forEach(function(row){
+      var text = row.text.trim();
+      if (!text) return;
+      if (row.indent === 1 && body.length && typeof body[body.length-1] !== "string"){
+        body[body.length-1].items.push(text);
+      } else if (row.indent === 1 && body.length && typeof body[body.length-1] === "string"){
+        var prevText = body.pop();
+        body.push({group: prevText, items:[text]});
+      } else if (row.indent === 1){
+        body.push(text); // 맨 앞 행이 하위로 지정된 예외 케이스 — 그냥 최상위로 처리
+      } else {
+        body.push(text);
+      }
+    });
+    return body;
+  }
+
+  function openEditor(d){
+    var rows = bodyToRows(d.body);
+    renderEditor(d, rows);
+  }
+
+  function renderEditor(d, rows){
+    var rowsHtml = rows.map(function(row, i){
+      return '<div class="desc-editor-row'+(row.indent ? ' indent' : '')+'" data-idx="'+i+'">' +
+        '<input type="text" value="'+esc(row.text)+'" data-idx="'+i+'">' +
+        '<button type="button" data-act="bold" data-idx="'+i+'" title="선택한 부분 굵게(**로 감싸기)">B</button>' +
+        '<button type="button" data-act="indent" data-idx="'+i+'" title="하위 항목으로">⇥</button>' +
+        '<button type="button" data-act="outdent" data-idx="'+i+'" title="상위 항목으로">⇤</button>' +
+        '<button type="button" data-act="add" data-idx="'+i+'" title="아래에 항목 추가">＋</button>' +
+        '<button type="button" data-act="del" data-idx="'+i+'" title="삭제">🗑</button>' +
+      '</div>';
+    }).join("");
+
+    els.descPanel.innerHTML =
+      '<div class="desc-eyebrow">Description · 편집중</div><h3>'+esc(d.title)+'</h3>' +
+      '<div id="editorRows">'+rowsHtml+'</div>' +
+      '<div class="desc-editor-hint">⇥ 하위 항목으로 넣기(바로 위 항목 아래 묶임) · ⇤ 다시 상위 항목으로 · B는 입력칸에서 드래그로 선택한 글자를 **볼드**로 표시</div>' +
+      '<div class="desc-editor-toolbar">' +
+        '<button type="button" id="editorAddTop">+ 항목 추가</button>' +
+        '<button type="button" id="editorApply" class="primary">적용</button>' +
+        '<button type="button" id="editorCancel">취소</button>' +
+      '</div>';
+
+    function readRows(){
+      return Array.from(document.querySelectorAll("#editorRows .desc-editor-row")).map(function(rowEl){
+        var input = rowEl.querySelector("input");
+        return { text: input.value, indent: rowEl.classList.contains("indent") ? 1 : 0 };
+      });
+    }
+
+    document.getElementById("editorRows").addEventListener("click", function(e){
+      var btn = e.target.closest("button[data-act]");
+      if (!btn) return;
+      var idx = Number(btn.dataset.idx);
+      var currentRows = readRows();
+      var act = btn.dataset.act;
+      if (act === "indent"){ currentRows[idx].indent = 1; }
+      else if (act === "outdent"){ currentRows[idx].indent = 0; }
+      else if (act === "add"){ currentRows.splice(idx+1, 0, {text:"", indent: currentRows[idx].indent}); }
+      else if (act === "del"){ currentRows.splice(idx, 1); }
+      else if (act === "bold"){
+        var input = document.querySelector('#editorRows .desc-editor-row[data-idx="'+idx+'"] input');
+        var s = input.selectionStart, en = input.selectionEnd;
+        if (s === en){ alert("먼저 굵게 표시할 글자를 드래그로 선택하세요."); return; }
+        var v = input.value;
+        currentRows[idx].text = v.slice(0,s) + "**" + v.slice(s,en) + "**" + v.slice(en);
+      }
+      renderEditor(d, currentRows);
+    });
+    document.getElementById("editorAddTop").addEventListener("click", function(){
+      var currentRows = readRows();
+      currentRows.push({text:"", indent:0});
+      renderEditor(d, currentRows);
+    });
+    document.getElementById("editorApply").addEventListener("click", function(){
+      d.body = rowsToBody(readRows());
+      markDirty();
+      focusIn(lastFocus.container, lastFocus.key, lastFocus.descMap);
+    });
+    document.getElementById("editorCancel").addEventListener("click", function(){
+      focusIn(lastFocus.container, lastFocus.key, lastFocus.descMap);
+    });
+  }
+
+  function markDirty(){
+    isDirty = true;
+    document.getElementById("descSaveBar").classList.add("show");
+  }
+  function snapshotData(){
+    return JSON.stringify({ sectionMain: SECTION_DESC_MAIN, descByType: DESC_BY_TYPE });
+  }
+  function restoreSnapshot(json){
+    var data = JSON.parse(json);
+    Object.keys(SECTION_DESC_MAIN).forEach(function(k){ delete SECTION_DESC_MAIN[k]; });
+    Object.assign(SECTION_DESC_MAIN, data.sectionMain);
+    Object.keys(DESC_BY_TYPE).forEach(function(k){ delete DESC_BY_TYPE[k]; });
+    Object.assign(DESC_BY_TYPE, data.descByType);
+  }
+
+  var SAVE_SERVER = "http://127.0.0.1:4737/save";
+  function setSaveStatus(msg){ document.getElementById("saveStatus").textContent = msg; }
+  function sendToSaveServer(doPush){
+    setSaveStatus("저장 중...");
+    fetch(SAVE_SERVER, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ sectionMain: SECTION_DESC_MAIN, descByType: DESC_BY_TYPE, push: doPush })
+    }).then(function(r){ return r.json(); }).then(function(res){
+      if (!res.ok) throw new Error(res.error || "저장 실패");
+      isDirty = false;
+      originalSnapshot = snapshotData();
+      document.getElementById("descSaveBar").classList.remove("show");
+      alert(doPush ? "저장하고 push까지 완료했습니다." : "로컬 파일과 게시 폴더에 저장했습니다.");
+    }).catch(function(err){
+      setSaveStatus("");
+      alert(
+        "저장 서버에 연결할 수 없습니다.\n" +
+        "html 폴더에서 다음 명령을 실행한 뒤 다시 시도하세요:\n" +
+        "node HRFW-32534.save-server.js\n\n" +
+        "(오류: " + err.message + ")"
+      );
+    });
+  }
+
+  document.getElementById("editToggleBtn").addEventListener("click", function(){
+    editMode = !editMode;
+    this.classList.toggle("active", editMode);
+    if (editMode && !originalSnapshot) originalSnapshot = snapshotData();
+    if (lastFocus) focusIn(lastFocus.container, lastFocus.key, lastFocus.descMap);
+  });
+  document.getElementById("btnSaveLocal").addEventListener("click", function(){ sendToSaveServer(false); });
+  document.getElementById("btnSavePush").addEventListener("click", function(){ sendToSaveServer(true); });
+  document.getElementById("btnDiscard").addEventListener("click", function(){
+    if (!originalSnapshot) return;
+    if (!confirm("편집모드 진입 이후 수정사항을 모두 되돌릴까요?")) return;
+    restoreSnapshot(originalSnapshot);
+    isDirty = false;
+    document.getElementById("descSaveBar").classList.remove("show");
+    if (lastFocus) focusIn(lastFocus.container, lastFocus.key, lastFocus.descMap);
+  });
+
   function wireFocusable(container, descMap){
     container.querySelectorAll(".focusable").forEach(function(el){
       el.addEventListener("click", function(e){
@@ -737,151 +972,210 @@
     });
   }
 
-  /* 리스트 화면(요구사항 탭) 설명 맵 — 여기는 "어떤 버튼을 눌러야 팝업이 뜨는지"만 짧게 안내 */
+  /* __DESC_DATA_START__ 편집모드 저장 서버가 이 마커 사이 블록을 통째로 교체한다. 마커 자체나
+     이 사이의 코드 스타일(변수명 SECTION_DESC_MAIN/DESC_BY_TYPE)을 바꾸면 save-server.js도 함께 고칠 것. */
   var SECTION_DESC_MAIN = {
-    "filter": {title:"검색 필터 영역", body:"수정 범위 아님"},
-    "actions": {title:"액션 영역", body:"수정 범위 아님"},
-    "list": {title:"리스트 영역", body:"결과보기: 대시보드 팝업 노출\n설문보고서: 수정 범위 아님"},
-    "btn-result": {title:"결과보기 버튼", body:"클릭: 대시보드 팝업 노출\n상단 탭: 동일 팝업 바로가기"}
-  };
+  "filter": {
+    "title": "검색 필터 영역",
+    "body": "수정 범위 아님"
+  },
+  "actions": {
+    "title": "액션 영역",
+    "body": "수정 범위 아님"
+  },
+  "list": {
+    "title": "리스트 영역",
+    "body": "결과보기: 대시보드 팝업 노출\n설문보고서: 수정 범위 아님"
+  },
+  "btn-result": {
+    "title": "결과보기 버튼",
+    "body": "클릭: 대시보드 팝업 노출\n상단 탭: 동일 팝업 바로가기"
+  }
+};
 
-  /* 결과보기 팝업 내부 설명 맵 — 설문유형별로 완전히 분리(교육과정/교과목 및 강사/교육환경).
-     한 유형을 보는 사람이 다른 유형의 구성·계산식을 알 필요는 없으므로 서로 참조하지 않는다. */
   var DESC_BY_TYPE = {
-    course: {
-      rheader: {title:"상단 영역", body:
-        "제목: 과정명\n" +
-        "설문기간: 시작일~종료일\n" +
-        "대상자수: 설문 대상자 인원수\n" +
-        "응답자수: 설문 참여자 수\n" +
-        "응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n" +
-        "데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n" +
-        "액션: 닫기(✕ 또는 팝업 바깥 클릭)"
-      },
-      rsummary: {title:"평균점수 영역", body:[
-        {group:"구성", items:[
-          "교육효과(분류코드: 102) · 교과편성(분류코드: 103) · 교육운영(분류코드: 104), 고정 3개",
-          "분류 출처: 문항 등록 화면의 '분류' 값",
-          "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
-        ]},
+  "course": {
+    "rheader": {
+      "title": "상단 영역",
+      "body": "제목: 과정명\n설문기간: 시작일~종료일\n대상자수: 설문 대상자 인원수\n응답자수: 설문 참여자 수\n응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n액션: 닫기(✕ 또는 팝업 바깥 클릭)"
+    },
+    "rsummary": {
+      "title": "평균점수 영역",
+      "body": [
+        {
+          "group": "구성",
+          "items": [
+            "교육효과(분류코드: 102) · 교과편성(분류코드: 103) · 교육운영(분류코드: 104), 고정 3개",
+            "분류 출처: 문항 등록 화면의 '분류' 값",
+            "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
+          ]
+        },
         "집계 대상: 객관식 문항만",
-        {group:"분류 점수", items:[
-          "분류별 평균점수 (분류당 문항 1개)"
-        ]},
+        {
+          "group": "분류 점수",
+          "items": [
+            "분류별 평균점수 (분류당 문항 1개)"
+          ]
+        },
         "액션: 없음"
-      ]},
-      rdetail: {title:"문항별 상세결과 영역", body:[
+      ]
+    },
+    "rdetail": {
+      "title": "문항별 상세결과 영역",
+      "body": [
         "순서: 등록 순서대로 나열, 없는 분류는 미노출",
         "구조: 문항+점수 → 분포바 → 분포라벨 → 주관식 토글",
-        {group:"점수", items:[
-          "응답 점수 평균 (소수 둘째자리 반올림)",
-          "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족"
-        ]},
-        {group:"분포바", items:[
-          "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
-          "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
-          "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
-          "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C"
-        ]},
-        {group:"주관식", items:[
-          "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
-          "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
-          "빈 상태: \"주관식 응답이 없는 문항입니다\""
-        ]},
+        {
+          "group": "점수",
+          "items": [
+            "응답 점수 평균 (소수 둘째자리 반올림)",
+            "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족"
+          ]
+        },
+        {
+          "group": "분포바",
+          "items": [
+            "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
+            "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
+            "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
+            "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C"
+          ]
+        },
+        {
+          "group": "주관식",
+          "items": [
+            "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
+            "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
+            "빈 상태: \"주관식 응답이 없는 문항입니다\""
+          ]
+        },
         "액션: 주관식 응답 보기 토글(가로 전체 바 클릭, 문항별 독립 동작)"
-      ]}
-    },
-    teacher: {
-      rheader: {title:"상단 영역", body:
-        "제목: 과정명\n" +
-        "강사명·과목명: 이 유형에만 표시\n" +
-        "설문기간: 시작일~종료일\n" +
-        "대상자수: 설문 대상자 인원수\n" +
-        "응답자수: 설문 참여자 수\n" +
-        "응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n" +
-        "데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n" +
-        "액션: 닫기(✕ 또는 팝업 바깥 클릭)"
-      },
-      rsummary: {title:"평균점수 영역", body:[
-        {group:"구성", items:[
-          "강의효과(분류코드: 96) · 강의전문성(분류코드: 97) · 강의기술(분류코드: 98) · 강의만족도(분류코드: 99) · 강사추천 NPS(분류코드: 100), 고정 5개",
-          "제외: 강의적합성 (3점 척도)",
-          "분류 출처: 문항 등록 화면의 '분류' 값",
-          "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
-        ]},
-        "집계 대상: 객관식 문항만",
-        {group:"분류 점수", items:[
-          "분류별 평균점수 (분류당 문항 1개, NPS 제외)",
-          "NPS: (추천비율 − 비추천비율) × 100, 추천=9~10점 / 중립=7~8점 / 비추천=1~6점"
-        ]},
-        "액션: 없음"
-      ]},
-      rdetail: {title:"문항별 상세결과 영역", body:[
-        "순서: 등록 순서대로 나열, 없는 분류는 미노출",
-        {group:"점수", items:[
-          "응답 점수 평균 (소수 둘째자리 반올림)",
-          "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족",
-          "NPS 문항: \"X.XX/10\" 표기"
-        ]},
-        {group:"분포바", items:[
-          "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
-          "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
-          "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
-          "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C",
-          "NPS 분포: 1~10점 세분화 렌더, 범례는 비추천/중립/추천 3그룹"
-        ]},
-        {group:"주관식", items:[
-          "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
-          "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
-          "빈 상태: \"주관식 응답이 없는 문항입니다\""
-        ]},
-        "액션: 주관식 응답 보기 토글(가로 전체 바 클릭, 문항별 독립 동작)"
-      ]}
-    },
-    env: {
-      rheader: {title:"상단 영역", body:
-        "제목: 과정명\n" +
-        "설문기간: 시작일~종료일\n" +
-        "대상자수: 설문 대상자 인원수\n" +
-        "응답자수: 설문 참여자 수\n" +
-        "응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n" +
-        "데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n" +
-        "액션: 닫기(✕ 또는 팝업 바깥 클릭)"
-      },
-      rsummary: {title:"평균점수 영역", body:[
-        {group:"구성", items:[
-          "연수관(분류코드: 108) · 식사 및 식당(분류코드: 109) · 생활관(분류코드: 110) · 기타 편의 및 부대시설(분류코드: 113), 고정 4개",
-          "분류 출처: 문항 등록 화면의 '분류' 값",
-          "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
-        ]},
-        "집계 대상: 객관식 문항만",
-        {group:"분류 점수", items:[
-          "분류별 평균점수 (분류당 문항 1개)"
-        ]},
-        "액션: 없음"
-      ]},
-      rdetail: {title:"문항별 상세결과 영역", body:[
-        "순서: 등록 순서대로 나열, 없는 분류는 미노출",
-        "구조: 문항+점수 → 분포바 → 분포라벨 → 주관식 토글",
-        {group:"점수", items:[
-          "응답 점수 평균 (소수 둘째자리 반올림)",
-          "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족"
-        ]},
-        {group:"분포바", items:[
-          "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
-          "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
-          "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
-          "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C"
-        ]},
-        {group:"주관식", items:[
-          "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
-          "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
-          "빈 상태: \"주관식 응답이 없는 문항입니다\""
-        ]},
-        "액션: 주관식 응답 보기 토글(가로 전체 바 클릭, 문항별 독립 동작)"
-      ]}
+      ]
     }
-  };
+  },
+  "teacher": {
+    "rheader": {
+      "title": "상단 영역",
+      "body": "제목: 과정명\n강사명·과목명: 이 유형에만 표시\n설문기간: 시작일~종료일\n대상자수: 설문 대상자 인원수\n응답자수: 설문 참여자 수\n응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n액션: 닫기(✕ 또는 팝업 바깥 클릭)"
+    },
+    "rsummary": {
+      "title": "평균점수 영역",
+      "body": [
+        {
+          "group": "구성",
+          "items": [
+            "강의효과(분류코드: 96) · 강의전문성(분류코드: 97) · 강의기술(분류코드: 98) · 강의만족도(분류코드: 99) · 강사추천 NPS(분류코드: 100), 고정 5개",
+            "제외: 강의적합성 (3점 척도)",
+            "분류 출처: 문항 등록 화면의 '분류' 값",
+            "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
+          ]
+        },
+        "집계 대상: 객관식 문항만",
+        {
+          "group": "분류 점수",
+          "items": [
+            "분류별 평균점수 (분류당 문항 1개, NPS 제외)",
+            "NPS: (추천비율 − 비추천비율) × 100, 추천=9~10점 / 중립=7~8점 / 비추천=1~6점"
+          ]
+        },
+        "액션: 없음"
+      ]
+    },
+    "rdetail": {
+      "title": "문항별 상세결과 영역",
+      "body": [
+        "순서: 등록 순서대로 나열, 없는 분류는 미노출",
+        {
+          "group": "점수",
+          "items": [
+            "응답 점수 평균 (소수 둘째자리 반올림)",
+            "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족",
+            "NPS 문항: \"X.XX/10\" 표기"
+          ]
+        },
+        {
+          "group": "분포바",
+          "items": [
+            "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
+            "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
+            "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
+            "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C",
+            "NPS 분포: 1~10점 세분화 렌더, 범례는 비추천/중립/추천 3그룹"
+          ]
+        },
+        {
+          "group": "주관식",
+          "items": [
+            "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
+            "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
+            "빈 상태: \"주관식 응답이 없는 문항입니다\""
+          ]
+        },
+        "액션: 주관식 응답 보기 토글(가로 전체 바 클릭, 문항별 독립 동작)"
+      ]
+    }
+  },
+  "env": {
+    "rheader": {
+      "title": "상단 영역",
+      "body": "제목: 과정명\n설문기간: 시작일~종료일\n대상자수: 설문 대상자 인원수\n응답자수: 설문 참여자 수\n응답률: 응답자수 ÷ 대상자수 × 100 (소수 첫째자리 반올림)\n데이터 시점: 결과보기 클릭 시점까지 집계된 스냅샷 (팝업을 열어둔 채로 있어도 자동 갱신 안 됨, 최신 데이터는 다시 열어야 반영)\n액션: 닫기(✕ 또는 팝업 바깥 클릭)"
+    },
+    "rsummary": {
+      "title": "평균점수 영역",
+      "body": [
+        {
+          "group": "구성",
+          "items": [
+            "연수관(분류코드: 108) · 식사 및 식당(분류코드: 109) · 생활관(분류코드: 110) · 기타 편의 및 부대시설(분류코드: 113), 고정 4개",
+            "분류 출처: 문항 등록 화면의 '분류' 값",
+            "미등록 시: 해당 분류로 등록된 문항이 없으면 그 카드는 노출되지 않음"
+          ]
+        },
+        "집계 대상: 객관식 문항만",
+        {
+          "group": "분류 점수",
+          "items": [
+            "분류별 평균점수 (분류당 문항 1개)"
+          ]
+        },
+        "액션: 없음"
+      ]
+    },
+    "rdetail": {
+      "title": "문항별 상세결과 영역",
+      "body": [
+        "순서: 등록 순서대로 나열, 없는 분류는 미노출",
+        "구조: 문항+점수 → 분포바 → 분포라벨 → 주관식 토글",
+        {
+          "group": "점수",
+          "items": [
+            "응답 점수 평균 (소수 둘째자리 반올림)",
+            "1=매우미흡 · 2=미흡 · 3=보통 · 4=만족 · 5=매우만족"
+          ]
+        },
+        {
+          "group": "분포바",
+          "items": [
+            "선택지별 응답 비율(%) = 선택 인원 ÷ 전체 응답 인원 × 100, 반올림 없이 실제 비율 그대로 막대 폭에 반영(화면에 숫자로 표시하는 값만 반올림)",
+            "응답 인원 기준: 문항 전체 필수 응답이라 문항별 응답 인원 수는 응답자수와 항상 동일",
+            "무응답 처리: 응답자 0명이면 점수 0, 각 선택지 0명, 분포바는 회색으로 표시",
+            "색상: #E6F1FB → #B5D4F4 → #85B7EB → #378ADD → #0C447C"
+          ]
+        },
+        {
+          "group": "주관식",
+          "items": [
+            "데이터: 주관식(kind=text) 응답 원문, 제출순 정렬",
+            "노출: 패널 높이 200px 고정, 화면상 약 4~5개 노출 후 나머지는 세로 스크롤(답변 수 제한 없음)",
+            "빈 상태: \"주관식 응답이 없는 문항입니다\""
+          ]
+        },
+        "액션: 주관식 응답 보기 토글(가로 전체 바 클릭, 문항별 독립 동작)"
+      ]
+    }
+  }
+};
+  /* __DESC_DATA_END__ */
 
   wireFocusable(document.querySelector(".view-body"), SECTION_DESC_MAIN);
 
