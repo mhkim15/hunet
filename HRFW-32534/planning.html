@@ -26,16 +26,27 @@
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
+  /* body를 뷰포트에 고정된 flex 컬럼으로 만들고(height:100vh + overflow:hidden), 실제 콘텐츠
+     (.req-doc·.stage 등)는 flex:1 1 auto + min-height:0로 "남은 공간만큼만" 차지하게 한다.
+     이전엔 body가 min-height:100vh + padding이라 콘텐츠 총합이 100vh를 넘으면 body 자체가
+     페이지 스크롤을 만들었다 — 각 탭 콘텐츠가 스스로 정확한 나머지 높이를 계산해 자기 안에서만
+     스크롤하도록(overflow-y:auto) 바꿔야 위아래 여백이 남는데도 스크롤이 생기는 문제가 없어진다. */
+  html,body{height:100%;overflow:hidden;}
   body{
     background:var(--page-bg);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     color:var(--text);
     -webkit-font-smoothing:antialiased;
     padding:28px;
-    min-height:100vh;
+    display:flex;flex-direction:column;align-items:center;
   }
+  /* body는 뷰포트 폭 전체를 쓰되 align-items:center로 콘텐츠 블록 자체를 가운데 놓는다.
+     .frame-note/.top-tabs/.stage는 width:100%(자기 max-width 1710px 한도 안에서)라서, 그
+     1710px 블록 "안에서"만 좌측(타이틀·탭)/우측(모드 토글) 정렬이 일어난다 — 뷰포트가
+     1710px보다 넓어도 컨텐츠 영역 밖으로 넘치지 않는다. */
   .frame-note{
-    max-width:1710px;margin:0 auto 12px;
+    flex:0 0 auto;
+    width:100%;max-width:1710px;margin:0 0 12px;
     font-size:12.5px;color:var(--text-muted);
     display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   }
@@ -47,7 +58,7 @@
 
   /* 최상단 탭 — 요구사항 / 설문유형별 대시보드 3종. 디자인/개발/퍼블이 팝업 3종을 각각 바로 열어볼 수 있게 함
      stage(1710px)와 같은 폭으로 맞춰야 app-shell 좌측 끝과 탭 좌측 끝이 정렬된다(좌측 정렬) */
-  .top-tabs{max-width:1710px;margin:0 auto 14px;display:flex;gap:8px;flex-wrap:wrap;}
+  .top-tabs{flex:0 0 auto;width:100%;max-width:1710px;margin:0 0 14px;display:flex;gap:8px;flex-wrap:wrap;}
   .top-tab{
     flex:0 0 auto;padding:11px 18px;border-radius:10px;background:var(--surface);
     border:1px solid var(--border);font-size:13px;font-weight:700;color:var(--text-muted);
@@ -57,7 +68,10 @@
   .top-tab.active{background:var(--text);color:#fff;border-color:var(--text);}
 
   /* 기획 영역(app-shell)과 디스크립션 패널을 나란히 배치하는 바깥 레인 */
-  .stage{max-width:1710px;margin:0 auto;display:flex;align-items:flex-start;gap:20px;}
+  /* align-items:stretch(기본값 유지) — .req-doc·.app-shell 둘 다 .stage의 실제 높이(=뷰포트
+     남은 공간)를 그대로 물려받는다. .app-shell 내부는 .gnb(고정)+.body-row(flex:1 1 auto)로
+     나눠 GNB를 제외한 나머지를 .body-row가 정확히 채우게 한다(매직넘버 없이 항상 정확). */
+  .stage{flex:1 1 auto;min-height:0;width:100%;max-width:1710px;margin:0;display:flex;gap:20px;}
   .app-shell{
     width:1400px;max-width:1400px;flex:0 0 1400px;
     display:flex;flex-direction:column;
@@ -81,10 +95,7 @@
   .gnb .badge-platinum{background:#2455e6;color:#fff;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;}
   .gnb .gnb-btn{background:rgba(255,255,255,.12);border:none;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;}
 
-  /* 820px 고정값을 그대로 쓰면 낮은 모니터(예: 900px대 뷰포트)에서 상단 여백(body padding·
-     frame-note·top-tabs)을 합친 전체 높이가 뷰포트를 넘겨 페이지 전체 스크롤이 생겼다 —
-     뷰포트 기준 가변 높이로 바꾸고 820px는 상한으로만 둔다. */
-  .body-row{flex:1 1 auto;display:flex;min-height:0;height:min(820px, calc(100vh - 154px));}
+  .body-row{flex:1 1 auto;display:flex;min-height:0;}
 
   /* 좌측 사이드바 */
   .sidebar{
@@ -115,12 +126,17 @@
   .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;}
   .card-pad{padding:16px 18px;}
 
-  /* 요구사항 개요 문서 — 에듀매니저 화면 목업이 아니라 순수 개요/스펙 문서 형태 */
+  /* 요구사항 개요 문서 — 에듀매니저 화면 목업이 아니라 순수 개요/스펙 문서 형태.
+     width만 고정(flex-basis)하고 height는 지정하지 않는다 — .stage가 align-items:stretch
+     (기본값)이라 부모가 실제로 갖고 있는 만큼(뷰포트 남은 공간)을 그대로 물려받는다.
+     실측(923px 뷰포트 기준) 콘텐츠가 컨테이너에 정확히 맞아 스크롤이 구조적으로 필요
+     없다 — overflow-y:auto 자체를 없애 스크롤바가 아예 렌더링되지 않게 한다(다른 대시보드
+     탭의 .body-row는 실제 화면 목업이라 내부 스크롤이 필요해 그대로 auto 유지). */
   .req-doc{
     width:1400px;max-width:1400px;flex:0 0 1400px;
-    background:#fff;border-radius:10px;overflow-y:auto;
+    background:#fff;border-radius:10px;
     box-shadow:0 20px 60px rgba(10,12,16,.28);border:1px solid rgba(0,0,0,.06);
-    padding:48px 64px 56px;height:min(820px, calc(100vh - 154px));
+    padding:32px 43px 37px;
   }
   .req-doc[hidden]{display:none;}
   .req-doc .req-doc-eyebrow{font-size:11px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
@@ -137,7 +153,7 @@
   .req-doc table th{text-align:left;font-weight:700;background:#f7f8fa;border:1px solid var(--border);padding:8px 10px;}
   .req-doc table td{border:1px solid var(--border);padding:8px 10px;}
   .req-doc-nav{
-    margin-top:28px;padding:14px 16px;background:var(--accent-soft);border-radius:10px;
+    margin:28px 0 0;padding:14px 16px;background:var(--accent-soft);border-radius:10px;
     font-size:13px;color:#0B3B66;
   }
 
@@ -267,7 +283,7 @@
 
   /* 디스크립션 패널 */
   .desc-panel{
-    position:sticky;top:28px;flex:0 0 320px;width:320px;max-height:calc(min(820px, 100vh - 154px) + 56px);
+    position:sticky;top:28px;flex:0 0 320px;width:320px;max-height:100%;
     background:var(--surface);border:1px solid var(--border);border-radius:12px;
     box-shadow:0 16px 40px rgba(15,17,20,.16);padding:22px;overflow-y:auto;
     font-size:12.5px;color:var(--text);
