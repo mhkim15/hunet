@@ -81,7 +81,10 @@
   .gnb .badge-platinum{background:#2455e6;color:#fff;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:700;}
   .gnb .gnb-btn{background:rgba(255,255,255,.12);border:none;color:#fff;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;}
 
-  .body-row{flex:1 1 auto;display:flex;min-height:0;height:820px;}
+  /* 820px 고정값을 그대로 쓰면 낮은 모니터(예: 900px대 뷰포트)에서 상단 여백(body padding·
+     frame-note·top-tabs)을 합친 전체 높이가 뷰포트를 넘겨 페이지 전체 스크롤이 생겼다 —
+     뷰포트 기준 가변 높이로 바꾸고 820px는 상한으로만 둔다. */
+  .body-row{flex:1 1 auto;display:flex;min-height:0;height:min(820px, calc(100vh - 154px));}
 
   /* 좌측 사이드바 */
   .sidebar{
@@ -117,7 +120,7 @@
     width:1400px;max-width:1400px;flex:0 0 1400px;
     background:#fff;border-radius:10px;overflow-y:auto;
     box-shadow:0 20px 60px rgba(10,12,16,.28);border:1px solid rgba(0,0,0,.06);
-    padding:48px 64px 56px;height:820px;
+    padding:48px 64px 56px;height:min(820px, calc(100vh - 154px));
   }
   .req-doc[hidden]{display:none;}
   .req-doc .req-doc-eyebrow{font-size:11px;letter-spacing:.08em;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
@@ -185,7 +188,7 @@
   /* 결과보기 팝업 오버레이 */
   .overlay{
     position:absolute;inset:0;background:rgba(10,12,16,.5);
-    display:flex;align-items:flex-start;justify-content:center;padding:40px 0;
+    display:flex;align-items:center;justify-content:center;padding:16px 0;
     z-index:40;overflow-y:auto;
   }
   .overlay[hidden]{display:none;}
@@ -194,13 +197,23 @@
   /* 테두리는 box-shadow만으로 표현 — border를 두면 라운드 코너 상/하단에 얇은 직선이 그대로 남아 보임(피드백 반영, 테두리선 제거) */
   .rmodal{
     background:#fff;width:100%;max-width:660px;border:none;border-radius:20px;
-    box-shadow:0 8px 32px rgba(0,0,0,.22);overflow:hidden;flex:0 0 auto;
+    box-shadow:0 8px 32px rgba(0,0,0,.22);flex:0 0 auto;
+    /* .overlay는 .app-shell(뷰포트보다 작을 수 있는 고정 높이 컨테이너) 안에 떠 있으므로
+       100vh 기준이 아니라 오버레이(부모) 높이 기준 100%로 제한해야 실제로 그 안에 다 들어간다.
+       overlay의 상하 padding(16px*2)만큼 빼서 여유를 둔다. */
+    max-height:calc(100% - 32px);display:flex;flex-direction:column;overflow:hidden;
   }
+  /* .rmodal 자체가 라운드 코너 때문에 overflow:hidden이라, 그 안 .rmodal-body(overflow-y:auto)
+     콘텐츠인 .rsection(평균점수)의 focused 포커스 링(box-shadow, 2px)이 .rmodal 좌우 경계에서
+     그대로 잘렸다 — .rsection·.rdetail-wrap의 좌우 margin을 26px→22px로 4px씩 줄이고, 그중
+     2px만 여기 패딩으로 돌려줘 시각적 위치는 2px만 안쪽으로 당기고 나머지 2px을 box-shadow가
+     들어갈 실제 여유 공간으로 남긴다(높이값은 건드리지 않음). */
+  .rmodal-body{overflow-y:auto;}
   .rmodal-header{
     /* 좌우는 padding이 아니라 margin으로 인셋(평균점수 영역과 같은 폭). 위쪽도 margin-top을
        살짝 둬야 한다 — 헤더 박스 상단이 모달 최상단(둥근 모서리 시작점)에 그대로 붙어 있으면
        포커스 링의 위쪽 변이 overflow:hidden에 가려 사라져 "위가 잘린" 것처럼 보인다. */
-    margin:10px 26px 0;padding:16px 14px 18px;border-bottom:none;
+    margin:8px 26px 0;padding:10px 14px 10px;border-bottom:none;
     display:flex;justify-content:space-between;align-items:flex-start;
   }
   .rmodal-title{font-weight:700;font-size:16px;margin:0 0 8px;color:#0f1720;}
@@ -254,7 +267,7 @@
 
   /* 디스크립션 패널 */
   .desc-panel{
-    position:sticky;top:28px;flex:0 0 320px;width:320px;max-height:calc(820px + 56px);
+    position:sticky;top:28px;flex:0 0 320px;width:320px;max-height:calc(min(820px, 100vh - 154px) + 56px);
     background:var(--surface);border:1px solid var(--border);border-radius:12px;
     box-shadow:0 16px 40px rgba(15,17,20,.16);padding:22px;overflow-y:auto;
     font-size:12.5px;color:var(--text);
@@ -288,6 +301,12 @@
   body[data-mode="proto"] .focusable.focused{box-shadow:none;}
   /* 프로토타입 모드에서는 편집 자체가 성립하지 않으므로 편집모드 버튼을 숨긴다 */
   body[data-mode="proto"] .edit-toggle-btn{display:none;}
+
+  /* 개발모드 전용 — .rsection의 focused 포커스 링(box-shadow 2px 위쪽 변)이 바로 위 헤더와
+     너무 가까워 겹쳐 보이는 문제. 프로토타입 모드는 포커스 링 자체가 box-shadow:none(위
+     .focusable.focused 규칙)이라 애초에 안 겹치므로 그대로 두고, 개발모드에서만 평균점수
+     영역의 위쪽 간격을 늘려 헤더와 떨어뜨린다. */
+  body[data-mode="dev"] .rsection{margin-top:10px;}
 
   /* 편집 모드 */
   .edit-toggle-btn{
@@ -685,8 +704,10 @@
         '<div><p class="rmodal-title">'+esc(d.title)+'</p><p class="rmodal-meta">'+d.meta+'</p></div>' +
         '<button class="rmodal-close" onclick="window.__closeResult()">✕</button>' +
       '</div>' +
-      '<div class="rsection focusable" data-desc-key="rsummary"><p class="rsection-label">문항별 평균점수</p>'+summaryHtml+'</div>' +
-      '<div class="rdetail-wrap focusable" data-desc-key="rdetail"><p class="rsection-label">문항별 상세결과</p><div class="rq-list">'+questionsHtml+'</div></div>' +
+      '<div class="rmodal-body">' +
+        '<div class="rsection focusable" data-desc-key="rsummary"><p class="rsection-label">문항별 평균점수</p>'+summaryHtml+'</div>' +
+        '<div class="rdetail-wrap focusable" data-desc-key="rdetail"><p class="rsection-label">문항별 상세결과</p><div class="rq-list">'+questionsHtml+'</div></div>' +
+      '</div>' +
     '</div>';
   }
 
