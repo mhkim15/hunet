@@ -210,9 +210,11 @@
     display:inline-flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex-shrink:0;
   }
   .rmodal-close:hover{background:#f4f5f7;}
-  .rsection{padding:6px 26px 0;}
+  /* 타이틀(rsection-label)과 카드 그리드를 같은 focusable 박스 안에 두어 좌측 정렬을 맞춘다 —
+     예전엔 그리드에만 패딩이 있어 타이틀만 왼쪽으로 튀어나와 보였다. */
+  .rsection{margin:0 26px 8px;padding:14px;}
   .rsection-label{font-size:12.5px;color:#6b7280;margin:0 0 10px;}
-  .rtype-grid{display:grid;gap:8px;margin-bottom:22px;padding:14px;}
+  .rtype-grid{display:grid;gap:8px;}
   .rtype-card{background:#EAF3FC;border-radius:14px;padding:11px 9px;}
   .rtype-card .rlabel{font-size:11px;color:#1D6FB8;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .rtype-card .rvalue{font-size:17px;font-weight:700;margin:0;color:#0B3B66;}
@@ -268,6 +270,24 @@
   .desc-panel .desc-sublist li{margin-bottom:8px;line-height:1.6;font-size:12px;color:var(--text);}
   .desc-panel .desc-sublist li::marker{color:var(--text-faint);font-weight:400;}
   .desc-panel .desc-sublist li b{color:var(--text);}
+
+  /* 프로토타입 / 개발모드 토글(HRFW-27113 기획서와 동일) — 프로토타입 모드는 디스크립션 패널과
+     focusable 클릭 반응을 숨기고 기획 영역을 화면 중앙에 배치, 개발모드는 기존처럼 클릭 시
+     우측에 디스크립션을 노출한다. 편집모드 버튼과 함께 프레임노트 우측 끝에 배치. */
+  .frame-note-controls{margin-left:auto;display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+  .mode-toggle{flex:0 0 auto;display:inline-flex;background:#e4e6ea;border-radius:20px;padding:3px;gap:2px;}
+  .mode-btn{
+    font:inherit;font-size:11.5px;font-weight:700;padding:6px 14px;border-radius:16px;border:none;
+    background:transparent;color:var(--text-muted);cursor:pointer;font-family:inherit;
+  }
+  .mode-btn.active{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(15,17,20,.16);}
+  body[data-mode="proto"] .stage{justify-content:center;}
+  body[data-mode="proto"] .desc-panel{display:none;}
+  body[data-mode="proto"] .focusable{cursor:default;}
+  body[data-mode="proto"] .focusable:hover{box-shadow:none;}
+  body[data-mode="proto"] .focusable.focused{box-shadow:none;}
+  /* 프로토타입 모드에서는 편집 자체가 성립하지 않으므로 편집모드 버튼을 숨긴다 */
+  body[data-mode="proto"] .edit-toggle-btn{display:none;}
 
   /* 편집 모드 */
   .edit-toggle-btn{
@@ -328,7 +348,13 @@
 <div class="frame-note">
   <span><b>HRFW-32534</b> 설문 결과보기 팝업 개선</span>
   <span class="scope-badge">스코프: 에듀매니저 &gt; 설문 &gt; 결과보기 팝업 교체</span>
-  <button class="edit-toggle-btn" id="editToggleBtn" type="button">✏️ 편집 모드</button>
+  <div class="frame-note-controls">
+    <div class="mode-toggle" id="modeToggle">
+      <button class="mode-btn active" data-mode="proto" type="button">프로토타입</button>
+      <button class="mode-btn" data-mode="dev" type="button">개발모드</button>
+    </div>
+    <button class="edit-toggle-btn" id="editToggleBtn" type="button">✏️ 편집 모드</button>
+  </div>
 </div>
 
 <div class="top-tabs" id="topTabs"></div>
@@ -646,7 +672,7 @@
 
   function renderDashboard(key){
     var d = DASHBOARDS[key];
-    var summaryHtml = '<div class="rtype-grid focusable" data-desc-key="rsummary" style="grid-template-columns:repeat('+d.summary.length+', minmax(0,1fr));">' +
+    var summaryHtml = '<div class="rtype-grid" style="grid-template-columns:repeat('+d.summary.length+', minmax(0,1fr));">' +
       d.summary.map(function(c){
         return '<div class="rtype-card"><p class="rlabel">'+esc(c.label)+'</p>' +
           '<p class="rvalue">'+esc(c.value)+'<span style="font-size:11px;font-weight:400;color:#1D6FB8;">'+esc(c.suffix)+'</span></p></div>';
@@ -659,7 +685,7 @@
         '<div><p class="rmodal-title">'+esc(d.title)+'</p><p class="rmodal-meta">'+d.meta+'</p></div>' +
         '<button class="rmodal-close" onclick="window.__closeResult()">✕</button>' +
       '</div>' +
-      '<div class="rsection"><p class="rsection-label">문항별 평균점수</p>'+summaryHtml+'</div>' +
+      '<div class="rsection focusable" data-desc-key="rsummary"><p class="rsection-label">문항별 평균점수</p>'+summaryHtml+'</div>' +
       '<div class="rdetail-wrap focusable" data-desc-key="rdetail"><p class="rsection-label">문항별 상세결과</p><div class="rq-list">'+questionsHtml+'</div></div>' +
     '</div>';
   }
@@ -786,6 +812,7 @@
      d는 SECTION_DESC_MAIN/DESC_BY_TYPE 안의 실제 객체 참조라서, d.body를 바로 고치면 그게 곧 원본 데이터 수정이다. */
   var lastFocus = null;
   function focusIn(container, key, descMap){
+    if (appMode === "proto") return; // 프로토타입 모드에서는 디스크립션 클릭 반응을 끈다
     container.querySelectorAll(".focusable.focused").forEach(function(el){ el.classList.remove("focused"); });
     var target = container.querySelector('.focusable[data-desc-key="'+key+'"]');
     if (target) target.classList.add("focused");
@@ -798,6 +825,9 @@
       document.getElementById("descEditBtn").addEventListener("click", function(){ openEditor(d); });
     }
   }
+
+  /* ---------- 프로토타입/개발모드 ---------- */
+  var appMode = "proto"; // "proto" | "dev"
 
   /* ---------- 편집 모드 ---------- */
   var editMode = false;
@@ -951,6 +981,22 @@
     this.classList.toggle("active", editMode);
     if (editMode && !originalSnapshot) originalSnapshot = snapshotData();
     if (lastFocus) focusIn(lastFocus.container, lastFocus.key, lastFocus.descMap);
+  });
+
+  /* ---------- 프로토타입 / 개발모드 토글 ---------- */
+  document.querySelectorAll("#modeToggle .mode-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      appMode = btn.dataset.mode;
+      document.body.dataset.mode = appMode;
+      document.querySelectorAll("#modeToggle .mode-btn").forEach(function(b){
+        b.classList.toggle("active", b === btn);
+      });
+      if (appMode === "proto" && editMode){
+        editMode = false;
+        document.getElementById("editToggleBtn").classList.remove("active");
+      }
+      resetDescPanel();
+    });
   });
   document.getElementById("btnSaveLocal").addEventListener("click", function(){ sendToSaveServer(false); });
   document.getElementById("btnSavePush").addEventListener("click", function(){ sendToSaveServer(true); });
@@ -1182,6 +1228,7 @@
   /* 초기 진입 화면 = 요구사항 개요. resetDescPanel 등 디스크립션 패널 관련 함수·데이터에
      의존하므로 반드시 그것들이 전부 정의된 뒤(스크립트 맨 마지막)에 호출해야 한다 —
      예전에 이 호출이 var els 선언보다 앞에 있어서 렌더 자체가 조용히 실패했었다. */
+  document.body.dataset.mode = appMode;
   renderTopTabs("req");
   showReqDoc();
 })();
