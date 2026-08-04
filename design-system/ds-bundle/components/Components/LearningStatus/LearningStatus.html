@@ -143,6 +143,16 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
   .cal-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--color-border); }
   .cal-section-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
   .cal-list-item { font-size: 14px; color: var(--color-text-secondary); padding: 3px 0; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* 나의 학습현황 — 원형(도넛) 진행률 게이지 */
+  .my-status-circular { background: var(--color-surface); border: none; border-radius: var(--radius-sm); width: 340px; padding: 24px; box-shadow: var(--shadow-card); }
+  .msc-graph { position: relative; display: flex; justify-content: center; margin: 8px 0 16px; }
+  .msc-chart { width: 160px; height: 160px; }
+  .msc-chart-bg { stroke: var(--color-gray-200); }
+  .msc-chart-fg { stroke: var(--color-accent); transition: stroke-dasharray .3s; }
+  .msc-chart-label { font-size: 3px; fill: var(--color-text-secondary); font-family: var(--font-family); }
+  .msc-chart-pct { font-size: 6px; font-weight: 700; fill: var(--color-accent); font-family: var(--font-family); }
+  .msc-dday { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); background: var(--color-gray-50); border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 3px 12px; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); }
 </style>
 <body>
 
@@ -168,6 +178,38 @@ body { font-family: var(--font-family); font-size: var(--font-size-md); color: v
         <div class="ms-progress-legend">
           <span><span class="ms-legend-dot mine"></span>나의진도</span>
           <span><span class="ms-legend-dot recommend"></span>권장진도</span>
+        </div>
+        <button class="ms-cta-btn">학습하기</button>
+      </div>
+      <!-- /ds-template -->
+    </div>
+
+    <div>
+      <div class="label">나의 학습현황 — 원형 게이지</div>
+      <!-- ds-template:LearningStatus.my-status-circular -->
+      <div class="my-status-circular">
+        <div class="ms-header">
+          <div class="ms-title" data-ds-field="title">나의 학습현황</div>
+          <div class="ms-more">더보기 ›</div>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-ds-field="tab1">온라인</button>
+          <button class="tab" data-ds-field="tab2">마이크로러닝</button>
+        </div>
+        <div class="msc-graph">
+          <div class="msc-dday" data-ds-field="dday">D-11</div>
+          <svg class="msc-chart" viewBox="0 0 36 36">
+            <circle class="msc-chart-bg" cx="18" cy="18" r="15.9" stroke-width="2.5" fill="none"></circle>
+            <circle class="msc-chart-fg" cx="18" cy="18" r="15.9" stroke-width="2.5" fill="none"
+                    stroke-linecap="round" stroke-dasharray="30, 100" transform="rotate(-90 18 18)"
+                    data-ds-field="dasharray"></circle>
+            <text class="msc-chart-label" x="18" y="17" text-anchor="middle">나의 진도율</text>
+            <text class="msc-chart-pct" x="18" y="24.5" text-anchor="middle" data-ds-field="percent">30%</text>
+          </svg>
+        </div>
+        <div class="ms-course-row">
+          <div class="ms-course-title" data-ds-field="course">핵심인재의 조건 - 설득 프레젠테이션</div>
+          <div class="ms-course-arrow">›</div>
         </div>
         <button class="ms-cta-btn">학습하기</button>
       </div>

@@ -1,0 +1,70 @@
+<!-- @dsCard group="Components" -->
+<title>Rolling Banner — EDU Design System</title>
+<style id="ds-tokens">
+:root {
+  --color-black:    #1c1c1e;
+  --color-gray-700: #636366;
+  --color-gray-500: #8e8e93;
+  --color-gray-300: #c7c7cc;
+  --color-gray-200: #d1d1d6;
+  --color-gray-100: #e5e5ea;
+  --color-gray-50:  #f2f2f7;
+  --color-white:    #FFFFFF;
+
+  --color-bg:          var(--color-gray-50);
+  --color-surface:     var(--color-white);
+  --color-border:      var(--color-gray-200);
+
+  --color-text-primary:   var(--color-black);
+  --color-text-secondary: var(--color-gray-500);
+  --color-text-inverse:   var(--color-white);
+
+  --color-accent: var(--color-black);
+
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+
+  --radius-md: 24px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 1px 2px rgba(0,0,0,.03), 0 8px 24px rgba(0,0,0,.05);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-family); color: var(--color-text-primary); background: var(--color-bg); -webkit-font-smoothing: antialiased; }
+</style>
+<style>
+  body { padding: 32px; background: var(--color-bg); }
+  .label { font-size: 13px; font-weight: 600; color: var(--color-gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px; }
+
+  /* 롤링 배너 — 이미지 슬라이드 자동 전환 + 페이지네이션 + 재생/정지 */
+  .rolling-banner { position: relative; width: 480px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); background: var(--color-surface); }
+  .rb-slide { position: relative; aspect-ratio: 16/7; background: var(--color-gray-100); display: flex; align-items: center; justify-content: center; }
+  .rb-slide-placeholder { color: var(--color-gray-300); font-size: 14px; font-weight: 600; letter-spacing: .04em; }
+  .rb-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .rb-controls { position: absolute; right: var(--space-3, 12px); bottom: var(--space-3, 12px); display: flex; align-items: center; gap: 10px; background: rgba(28,28,30,.55); backdrop-filter: blur(4px); border-radius: var(--radius-pill); padding: 6px 8px; }
+  .rb-nav { width: 22px; height: 22px; border: none; background: transparent; color: var(--color-text-inverse); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: .85; }
+  .rb-nav:hover { opacity: 1; }
+  .rb-count { font-size: 12px; color: var(--color-text-inverse); font-variant-numeric: tabular-nums; }
+  .rb-count .current { font-weight: 700; }
+  .rb-playpause { width: 22px; height: 22px; border: none; background: transparent; color: var(--color-text-inverse); font-size: 12px; cursor: pointer; opacity: .85; }
+  .rb-playpause:hover { opacity: 1; }
+</style>
+<body>
+
+  <div>
+    <div class="label">롤링 배너</div>
+    <!-- ds-template:RollingBanner.slider -->
+    <div class="rolling-banner">
+      <div class="rb-slide" data-ds-slot="slide">
+        <span class="rb-slide-placeholder">배너 이미지 영역</span>
+      </div>
+      <div class="rb-controls">
+        <button class="rb-nav" aria-label="이전">‹</button>
+        <span class="rb-count"><span class="current" data-ds-field="current">1</span> / <span data-ds-field="total">2</span></span>
+        <button class="rb-nav" aria-label="다음">›</button>
+        <button class="rb-playpause" aria-label="일시정지">❙❙</button>
+      </div>
+    </div>
+    <!-- /ds-template -->
+  </div>
+
+</body>
