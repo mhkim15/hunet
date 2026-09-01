@@ -26,7 +26,7 @@
 
   /* 플레이어 */
   #player{position:fixed;inset:0;background:#0b0b0b;display:none;z-index:50;overflow:hidden;overscroll-behavior:contain}
-  body.locked{overflow:hidden}
+  html.locked,body.locked{overflow:hidden;height:100%}
   #player.on{display:block}
   #pad{position:absolute;inset:0}           /* 여백 = 스크롤 감지 영역 */
   #frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;pointer-events:none;z-index:2}
@@ -107,8 +107,8 @@ function load(i){
   ytf.src = 'https://www.youtube.com/embed/' + ITEMS[cur].id +
             '?enablejsapi=1&autoplay=1&mute=1&rel=0&playsinline=1';
 }
-function open_(i){ player.classList.add('on'); document.body.classList.add('locked'); load(i); }
-function close_(){ player.classList.remove('on'); document.body.classList.remove('locked'); ytf.src = ''; }
+function open_(i){ player.classList.add('on'); document.body.classList.add('locked'); document.documentElement.classList.add('locked'); load(i); }
+function close_(){ player.classList.remove('on'); document.body.classList.remove('locked'); document.documentElement.classList.remove('locked'); ytf.src = ''; }
 
 document.getElementById('close').onclick = close_;
 document.getElementById('up').onclick = () => load(cur - 1);
