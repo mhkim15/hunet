@@ -45,6 +45,7 @@
   .modes button.on{background:#17a05c;color:#fff}
   body.mobileview{max-width:390px;margin:0 auto;box-shadow:0 0 0 1px #e3e3e6}
   body.mobileview #player{left:50%;transform:translateX(-50%);width:390px;right:auto}
+  body.mobileview #stage{width:390px;height:100dvh;max-height:none;aspect-ratio:auto;border-radius:0}
 </style>
 <style id="mcss" media="(max-width:768px)">
     header{padding:10px 14px;gap:8px;flex-wrap:nowrap}
@@ -61,10 +62,10 @@
     .note{font-size:12px;line-height:1.85}
 
     #frame{gap:0}
-    #stage{width:100vw;height:auto;max-height:100dvh;border-radius:0}
-    #rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);gap:10px}
-    .nav{width:44px;height:44px;font-size:19px;background:rgba(255,255,255,.18)}
-    #close{right:14px;top:12px;font-size:20px}
+    #stage{width:100vw;height:100dvh;max-height:none;aspect-ratio:auto;border-radius:0}
+    #rail{position:absolute;right:12px;top:auto;bottom:132px;transform:none;gap:12px;z-index:4}
+    .nav{width:48px;height:48px;font-size:20px;background:rgba(0,0,0,.45);border-color:rgba(255,255,255,.32)}
+    #close{right:12px;top:10px;font-size:20px;z-index:4;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 </style>
 </head>
 <body>
