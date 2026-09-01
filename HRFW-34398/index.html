@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>연수원 유튜브 쇼츠 — 동작 프로토타입 (HRFW-34398)</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Noto Sans KR','Malgun Gothic',sans-serif;color:#1a1a1a;background:#fff}
+  header{border-bottom:1px solid #e3e3e6;padding:18px 32px;display:flex;align-items:center;gap:16px}
+  .logo{font-weight:700;font-size:19px;color:#0d5a33}
+  .gnb{display:flex;gap:26px;padding:0 32px;border-bottom:1px solid #e3e3e6;font-size:13px}
+  .gnb span{padding:14px 0;color:#333}
+  .gnb .on{color:#17a05c;font-weight:700;box-shadow:inset 0 -2px 0 #17a05c}
+  main{max-width:1180px;margin:0 auto;padding:28px 32px 80px}
+  h1{font-size:24px;margin:8px 0 18px}
+  .bar{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee;border-bottom:1px solid #eee;padding:12px 0;font-size:13px;color:#555}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px;margin-top:22px}
+  .card{cursor:pointer}
+  .thumb{width:100%;aspect-ratio:9/16;background:#e5e5e7;border-radius:6px;overflow:hidden;position:relative}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .src{position:absolute;left:8px;top:8px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;padding:3px 7px;border-radius:10px}
+  .ct{font-size:13.5px;font-weight:700;margin-top:10px;line-height:1.45}
+  .note{margin-top:40px;background:#fbf7ec;border:1px solid #efe2c4;border-radius:6px;padding:16px 18px;font-size:12.5px;color:#6b4e05;line-height:1.9}
+  .note b{display:block;margin-bottom:6px;font-size:13px}
+
+  /* 플레이어 */
+  #player{position:fixed;inset:0;background:#0b0b0b;display:none;z-index:50}
+  #player.on{display:block}
+  #pad{position:absolute;inset:0}           /* 여백 = 스크롤 감지 영역 */
+  #stage{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+         height:min(88vh,900px);aspect-ratio:9/16;background:#000}
+  #stage iframe{width:100%;height:100%;border:0;display:block}
+  #close{position:absolute;right:26px;top:22px;color:#ddd;font-size:22px;cursor:pointer;z-index:3}
+  .nav{position:absolute;right:70px;width:52px;height:52px;border-radius:50%;background:#242424;color:#e0e0e0;
+       display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer;z-index:3;user-select:none}
+  #up{top:calc(50% - 66px)} #dn{top:calc(50% + 14px)}
+  .hint{position:absolute;color:#7a7a7a;font-size:12px;top:50%;transform:translateY(-50%);z-index:2;line-height:1.7}
+  #hintL{left:40px;width:200px} #hintR{right:150px;width:120px;text-align:right}
+  #idx{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;color:#8a8a8a;font-size:12px;z-index:3}
+  #warn{position:absolute;left:50%;transform:translateX(-50%);top:18px;color:#c9a227;font-size:12px;z-index:3}
+</style>
+</head>
+<body>
+
+<header><div class="logo">NH지식충전소</div><div style="font-size:12px;color:#888">동작 프로토타입 · HRFW-34398</div></header>
+<div class="gnb">
+  <span>인사이트 영상</span><span>아티클</span><span>카드뉴스</span><span>쇼츠</span>
+  <span class="on">유튜브 쇼츠</span><span>유튜브 러닝</span><span>나의 강의실</span><span>상담실</span>
+</div>
+
+<main>
+  <h1>유튜브 쇼츠</h1>
+  <div class="bar"><div>총 <b id="cnt">0</b>개</div><div>최신순 ⌄ &nbsp;&nbsp; 12개 ⌄</div></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="note">
+    <b>이 프로토타입으로 확인할 것</b>
+    · 카드를 누르면 유튜브 자체 플레이어가 9:16 풀화면으로 열린다<br>
+    · 좋아요 · 댓글 · 스크랩이 없다 — 유튜브 임베드가 제공하지 않는다<br>
+    · <b style="display:inline">영상 위에서 휠을 굴려도 넘어가지 않는다</b> — 영상 영역이 유튜브 iframe이라 우리가 이벤트를 받을 수 없다<br>
+    · 좌우 검은 여백에서 휠을 굴리면 넘어간다. 위/아래 버튼과 키보드 ↑ ↓ 는 항상 동작한다<br>
+    · 재생 중 상단 우측(음소거 · 자막 · 설정), 하단(시간 · 전체화면 · 진행 바 · 링크 · Shorts 로고)은 모두 유튜브가 그리는 것이다
+  </div>
+</main>
+
+<div id="player">
+  <div id="pad"></div>
+  <div id="warn">영상 위에서는 스크롤이 동작하지 않습니다 — 여백에서 굴려 보세요</div>
+  <div id="hintL" class="hint">◀ 이 여백에서 휠을 굴리면<br>이전 · 다음으로 넘어갑니다</div>
+  <div id="hintR" class="hint">여백 ▶</div>
+  <div id="stage"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+  <div id="up" class="nav">⌃</div>
+  <div id="dn" class="nav">⌄</div>
+  <div id="idx"></div>
+  <div id="close">✕</div>
+</div>
+
+<script>
+const ITEMS = [
+  {id:'O1oaDMFGT40', t:'은근히 모르는 엑셀 기초 모음', src:'자동'},
+  {id:'iCmI2maYoo8', t:'직장인 필수 엑셀 단축키 기초 모음', src:'자동'},
+  {id:'aGMS6j8kFrA', t:'엑셀 데이터 입력, 10초 안에 끝내세요! ChatGPT 꿀팁 대공개', src:'자동'},
+  {id:'-rdCOoPc4-8', t:'나만 노가다했었던 거야?', src:'수동'},
+  {id:'dL1rJKXWHJI', t:'알면 퇴근 빨라지는 엑셀 단축키', src:'자동'},
+  {id:'5DrCqITuXNA', t:'업무가 최소 2배 편해지는 엑셀 보고서 관리법', src:'수동'},
+  {id:'37ki2fa3oOI', t:'엑셀 재고 관리 보고서, 1분 안에 만드는 방법', src:'자동'},
+  {id:'jP5oZYpeKh8', t:'폴더 정리가 어렵다고? 일잘러의 업무 엑셀 폴더 관리법', src:'수동'}
+];
+let cur = 0;
+
+const grid = document.getElementById('grid');
+document.getElementById('cnt').textContent = ITEMS.length;
+ITEMS.forEach((it, i) => {
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML =
+    '<div class="thumb"><span class="src">' + it.src + '</span>' +
+    '<img src="https://i.ytimg.com/vi/' + it.id + '/oardefault.jpg" ' +
+    'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + it.id + '/hqdefault.jpg\'"></div>' +
+    '<div class="ct">' + it.t + '</div>';
+  d.onclick = () => open_(i);
+  grid.appendChild(d);
+});
+
+const player = document.getElementById('player');
+const ytf = document.getElementById('ytf');
+const idx = document.getElementById('idx');
+
+function load(i){
+  cur = (i + ITEMS.length) % ITEMS.length;
+  ytf.src = 'https://www.youtube.com/embed/' + ITEMS[cur].id +
+            '?enablejsapi=1&autoplay=1&mute=1&rel=0&playsinline=1';
+  idx.textContent = (cur + 1) + ' / ' + ITEMS.length + '  ·  ' + ITEMS[cur].src + '등록';
+}
+function open_(i){ player.classList.add('on'); load(i); }
+function close_(){ player.classList.remove('on'); ytf.src = ''; }
+
+document.getElementById('close').onclick = close_;
+document.getElementById('up').onclick = () => load(cur - 1);
+document.getElementById('dn').onclick = () => load(cur + 1);
+
+let lock = 0;
+function wheel(e){
+  const now = Date.now();
+  if (now - lock < 600) return;
+  lock = now;
+  load(cur + (e.deltaY > 0 ? 1 : -1));
+}
+document.getElementById('pad').addEventListener('wheel', wheel, {passive:true});
+
+document.addEventListener('keydown', e => {
+  if (!player.classList.contains('on')) return;
+  if (e.key === 'ArrowDown') load(cur + 1);
+  if (e.key === 'ArrowUp')   load(cur - 1);
+  if (e.key === 'Escape')    close_();
+});
+</script>
+</body>
+</html>
