@@ -107,8 +107,21 @@ function load(i){
   ytf.src = 'https://www.youtube.com/embed/' + ITEMS[cur].id +
             '?enablejsapi=1&autoplay=1&mute=1&rel=0&playsinline=1';
 }
-function open_(i){ player.classList.add('on'); document.body.classList.add('locked'); document.documentElement.classList.add('locked'); load(i); }
-function close_(){ player.classList.remove('on'); document.body.classList.remove('locked'); document.documentElement.classList.remove('locked'); ytf.src = ''; }
+function lockScroll(on){
+  const de=document.documentElement, b=document.body;
+  if(on){
+    lockScroll._y = window.scrollY || de.scrollTop || 0;
+    de.style.overflow='hidden'; b.style.overflow='hidden';
+    b.style.position='fixed'; b.style.top = (-lockScroll._y)+'px';
+    b.style.left='0'; b.style.right='0'; b.style.width='100%';
+  }else{
+    de.style.overflow=''; b.style.overflow='';
+    b.style.position=''; b.style.top=''; b.style.left=''; b.style.right=''; b.style.width='';
+    window.scrollTo(0, lockScroll._y || 0);
+  }
+}
+function open_(i){ player.classList.add('on'); lockScroll(true); load(i); }
+function close_(){ player.classList.remove('on'); lockScroll(false); ytf.src = ''; }
 
 document.getElementById('close').onclick = close_;
 document.getElementById('up').onclick = () => load(cur - 1);
