@@ -35,10 +35,6 @@
   .nav{position:absolute;right:70px;width:52px;height:52px;border-radius:50%;background:#242424;color:#e0e0e0;
        display:flex;align-items:center;justify-content:center;font-size:19px;cursor:pointer;z-index:3;user-select:none}
   #up{top:calc(50% - 66px)} #dn{top:calc(50% + 14px)}
-  .hint{position:absolute;color:#7a7a7a;font-size:12px;top:50%;transform:translateY(-50%);z-index:2;line-height:1.7}
-  #hintL{left:40px;width:200px} #hintR{right:150px;width:120px;text-align:right}
-  #idx{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;color:#8a8a8a;font-size:12px;z-index:3}
-  #warn{position:absolute;left:50%;transform:translateX(-50%);top:18px;color:#c9a227;font-size:12px;z-index:3}
 </style>
 </head>
 <body>
@@ -66,13 +62,9 @@
 
 <div id="player">
   <div id="pad"></div>
-  <div id="warn">영상 위에서는 스크롤이 동작하지 않습니다 — 여백에서 굴려 보세요</div>
-  <div id="hintL" class="hint">◀ 이 여백에서 휠을 굴리면<br>이전 · 다음으로 넘어갑니다</div>
-  <div id="hintR" class="hint">여백 ▶</div>
   <div id="stage"><iframe id="ytf" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
   <div id="up" class="nav">⌃</div>
   <div id="dn" class="nav">⌄</div>
-  <div id="idx"></div>
   <div id="close">✕</div>
 </div>
 
@@ -105,13 +97,11 @@ ITEMS.forEach((it, i) => {
 
 const player = document.getElementById('player');
 const ytf = document.getElementById('ytf');
-const idx = document.getElementById('idx');
 
 function load(i){
   cur = (i + ITEMS.length) % ITEMS.length;
   ytf.src = 'https://www.youtube.com/embed/' + ITEMS[cur].id +
             '?enablejsapi=1&autoplay=1&mute=1&rel=0&playsinline=1';
-  idx.textContent = (cur + 1) + ' / ' + ITEMS.length + '  ·  ' + ITEMS[cur].src + '등록';
 }
 function open_(i){ player.classList.add('on'); load(i); }
 function close_(){ player.classList.remove('on'); ytf.src = ''; }
