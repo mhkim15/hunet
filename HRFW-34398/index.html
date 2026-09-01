@@ -39,8 +39,14 @@
        transition:background .15s}
   .nav:hover{background:rgba(255,255,255,.26)}
 
-  /* ── 모바일 ── */
-  @media (max-width:768px){
+
+  .modes{margin-left:auto;display:flex;border:1px solid #dcdce0;border-radius:6px;overflow:hidden}
+  .modes button{border:0;background:#fff;padding:7px 15px;font-size:12px;cursor:pointer;font-family:inherit;color:#555}
+  .modes button.on{background:#17a05c;color:#fff}
+  body.mobileview{max-width:390px;margin:0 auto;box-shadow:0 0 0 1px #e3e3e6}
+  body.mobileview #player{left:50%;transform:translateX(-50%);width:390px;right:auto}
+</style>
+<style id="mcss" media="(max-width:768px)">
     header{padding:12px 16px;gap:10px}
     .logo{font-size:16px}
     .gnb{padding:0 16px;gap:18px;overflow-x:auto;white-space:nowrap}
@@ -57,12 +63,15 @@
     #rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);gap:10px}
     .nav{width:44px;height:44px;font-size:19px;background:rgba(255,255,255,.18)}
     #close{right:14px;top:12px;font-size:20px}
-  }
 </style>
 </head>
 <body>
 
-<header><div class="logo">NH지식충전소</div><div style="font-size:12px;color:#888">동작 프로토타입 · HRFW-34398</div></header>
+<header>
+  <div class="logo">NH지식충전소</div>
+  <div style="font-size:12px;color:#888">동작 프로토타입 · HRFW-34398</div>
+  <div class="modes"><button id="mWeb" class="on">웹</button><button id="mMob">모바일</button></div>
+</header>
 <div class="gnb">
   <span>인사이트 영상</span><span>아티클</span><span>카드뉴스</span><span>쇼츠</span>
   <span class="on">유튜브 쇼츠</span><span>유튜브 러닝</span><span>나의 강의실</span><span>상담실</span>
@@ -93,6 +102,18 @@
 </div>
 
 <script>
+function setMode(m){
+  const mob = (m === 'mobile');
+  document.body.classList.toggle('mobileview', mob);
+  document.getElementById('mcss').media = mob ? 'all' : '(max-width:768px)';
+  document.getElementById('mWeb').classList.toggle('on', !mob);
+  document.getElementById('mMob').classList.toggle('on', mob);
+  try { localStorage.setItem('ytshorts-mode', m); } catch(e){}
+}
+document.getElementById('mWeb').onclick = () => setMode('web');
+document.getElementById('mMob').onclick = () => setMode('mobile');
+try { setMode(localStorage.getItem('ytshorts-mode') || 'web'); } catch(e){ setMode('web'); }
+
 const ITEMS = [
   {id:'O1oaDMFGT40', t:'은근히 모르는 엑셀 기초 모음', src:'자동'},
   {id:'iCmI2maYoo8', t:'직장인 필수 엑셀 단축키 기초 모음', src:'자동'},
