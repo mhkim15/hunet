@@ -30,7 +30,7 @@
   #player.on{display:block}
   #pad{position:absolute;inset:0}           /* 여백 = 스크롤 감지 영역 */
   #frame{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;pointer-events:none;z-index:2}
-  #stage{height:min(88vh,900px);aspect-ratio:9/16;background:#000;pointer-events:auto}
+  #stage{height:min(88vh,900px);aspect-ratio:9/16;background:#000;pointer-events:auto;border-radius:12px;overflow:hidden}
   #stage iframe{width:100%;height:100%;border:0;display:block}
   #rail{display:flex;flex-direction:column;gap:14px;pointer-events:auto}
   #close{position:absolute;right:26px;top:22px;color:#ddd;font-size:22px;cursor:pointer;z-index:3}
@@ -38,6 +38,26 @@
        color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;user-select:none;
        transition:background .15s}
   .nav:hover{background:rgba(255,255,255,.26)}
+
+  /* ── 모바일 ── */
+  @media (max-width:768px){
+    header{padding:12px 16px;gap:10px}
+    .logo{font-size:16px}
+    .gnb{padding:0 16px;gap:18px;overflow-x:auto;white-space:nowrap}
+    .gnb span{padding:12px 0;font-size:12.5px}
+    main{padding:18px 16px 60px}
+    h1{font-size:20px}
+    .bar{font-size:12px}
+    .grid{grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+    .ct{font-size:12.5px;margin-top:8px}
+    .note{font-size:12px;line-height:1.85}
+
+    #frame{gap:0}
+    #stage{width:100vw;height:auto;max-height:100dvh;border-radius:0}
+    #rail{position:absolute;right:10px;top:50%;transform:translateY(-50%);gap:10px}
+    .nav{width:44px;height:44px;font-size:19px;background:rgba(255,255,255,.18)}
+    #close{right:14px;top:12px;font-size:20px}
+  }
 </style>
 </head>
 <body>
@@ -135,6 +155,17 @@ function wheel(e){
   load(cur + (e.deltaY > 0 ? 1 : -1));
 }
 document.getElementById('pad').addEventListener('wheel', wheel, {passive:true});
+
+let ty0 = null;
+const pad = document.getElementById('pad');
+pad.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, {passive:true});
+pad.addEventListener('touchend', e => {
+  if (ty0 === null) return;
+  const dy = e.changedTouches[0].clientY - ty0;
+  ty0 = null;
+  if (Math.abs(dy) < 40) return;
+  load(cur + (dy < 0 ? 1 : -1));
+}, {passive:true});
 
 document.addEventListener('keydown', e => {
   if (!player.classList.contains('on')) return;
