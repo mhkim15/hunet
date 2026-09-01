@@ -136,9 +136,13 @@ ITEMS.forEach((it, i) => {
   d.className = 'card';
   d.innerHTML =
     '<div class="thumb"><span class="src">' + it.src + '</span>' +
-    '<img src="https://i.ytimg.com/vi/' + it.id + '/oardefault.jpg" ' +
-    'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + it.id + '/hqdefault.jpg\'"></div>' +
+    '<img src="https://i.ytimg.com/vi/' + it.id + '/oardefault.jpg"></div>' +
     '<div class="ct">' + it.t + '</div>';
+  const im = d.querySelector('img');
+  // 세로 썸네일이 없으면 유튜브가 200으로 120x90 회색 이미지를 준다 → onerror가 아니라 크기로 판정
+  const fallback = () => { im.onload = null; im.src = 'https://i.ytimg.com/vi/' + it.id + '/hqdefault.jpg'; };
+  im.onerror = fallback;
+  im.onload = () => { if (im.naturalWidth <= 120 && im.naturalHeight <= 90) fallback(); };
   d.onclick = () => open_(i);
   grid.appendChild(d);
 });
