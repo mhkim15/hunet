@@ -826,6 +826,15 @@
   /* 이 명단이 곧 메일 받는 사람이라 주소를 여기서 확인할 수 있어야 한다 */
   .person-row .pmail{color:var(--text-muted);flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .person-row .pdept{color:var(--text-faint);margin-left:auto;font-size:11px;}
+  /* 머리글 행 — 아래 행과 같은 칸 배치를 써야 컬럼명이 값 위에 정확히 선다 */
+  .person-row.person-head{
+    background:#FAFAFA;border-bottom:1px solid var(--edu-line);cursor:default;
+    font-size:11.5px;color:var(--text-muted);font-weight:700;
+  }
+  .person-row.person-head:hover{background:#FAFAFA;}
+  .person-row.person-head .pname,
+  .person-row.person-head .pid,
+  .person-row.person-head .pmail{color:var(--text-muted);font-weight:700;}
 
   .toast-wrap{
     position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
@@ -2723,7 +2732,7 @@
       "form-basic": {title:"설문 정보 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일 (유형 · 제목 · 설명 · 설문기간 · 사용여부)\n  ii. 유효성·제약도 동일"},
       "form-questions": {title:"문항 구성 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일\n  ii. 문항 풀도 같은 것을 씀"},
       "form-actions": {title:"액션 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일 ([등록완료] [목록] / 수정 시 [저장] [삭제] [목록])"},
-      "form-deliver": {title:"노출 정보 영역", body:"진행 방식과 노출 메뉴는 개별 기업과 같습니다. 다른 것은 대상 하나입니다.\na. 대상\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (기업 지정 / 전체 기업)\n  iii. 기본값: 기업 지정\n  iv. 기본값을 전체로 두지 않는 이유: 전체는 한 번 누르면 수백 개 기업에 메일이 나가는 선택이라, 담당자가 그것을 고른 순간이 화면에 남아야 함\n  v. 고르는 단위는 사람이 아니라 기업 — 전체 기업의 교육담당자는 수백~수천 명이라 하나씩 고를 수 없음\n  vi. 담당자 명단: 어느 쪽이든 저장하지 않고 발송 시점에 /Student/EduRoleV2 최신 명단에서 읽음\nb. 대상이 되는 기업의 범위 (두 경우 공통)\n  i. LMS 기업사용여부가 Y인 기업만\n  ii. N인 기업은 목록에도 나오지 않고, 기업코드 엑셀로 올려도 담기지 않음\n  iii. 고를 수 있는 것이 Y뿐이라 화면에 「Y만 보기」 같은 칸을 두지 않음\nc. 기업 지정을 골랐을 때\n  i. [기업 선택] 버튼 하나가 나타나고, 누르면 기업 검색 레이어가 열림\n  ii. 레이어 구성: 기업명·기업코드 검색 · [기업코드 엑셀 업로드] · 목록 · 페이징 · [선택 완료] [취소]\n  iii. [기업코드 엑셀 업로드]는 이 레이어 안에 둠 — 밖에 두면 두 버튼이 같은 일을 하는 것처럼 보임\n  iv. 엑셀 양식: 기업코드 한 칸만. 올리면 목록에서 그 기업들이 체크됨 (바로 담기지 않음 — 눈으로 보고 [선택 완료])\n  v. 등록되지 않은 기업코드: 건너뛰고 몇 건이 그랬는지 알려줌\n  vi. 고른 기업은 칩으로 쌓이고 칩의 ✕로 제거. 그 아래 「선택한 N개 기업 · 교육담당자 M명」\n  vii. 하나도 안 고르고 [선택 완료]: 「대상 기업을 선택해주세요.」 + 레이어를 닫지 않음\n  viii. 저장하는 값: 고른 기업의 코드 목록 — 이 목록은 그대로 굳음\n  ix. 목록의 대상 칸 표기: 「기업명 외 N개 기업」\nd. 전체 기업을 골랐을 때\n  i. 버튼도 칩도 두지 않고 설명 한 줄만: 「LMS의 기업사용여부가 Y인 기업 대상으로만 노출됩니다.」\n  ii. 저장하는 값: 기업 목록이 아니라 「전체」라는 상태 하나\n  iii. 그래서 등록 뒤에 Y로 바뀐 기업은 발송 시점에 자동으로 들어오고, N으로 바뀐 기업은 빠짐\n  iv. 목록의 대상 칸 표기: 「전체 기업 (N개)」\n  v. 대상자 수: 그 시점 Y 기업들의 교육담당자 합계 — 결과 화면의 [대상자]\ne. 복사 시\n  i. 대상은 기본값(기업 지정)으로 돌아가고 고른 기업은 비움 — 회차마다 대상이 달라지므로 담당자가 반드시 다시 봄\nf. 확인 필요\n  i. 「전체」의 기준을 LMS 기업사용여부 Y로 두었음 — 계약 중인 기업만으로 좁혀야 하는지 운영팀 확인 필요"},
+      "form-deliver": {title:"노출 정보 영역", body:"진행 방식과 노출 메뉴는 개별 기업과 같습니다. 다른 것은 대상 하나입니다.\na. 대상\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (기업 지정 / 전체 기업)\n  iii. 기본값: 기업 지정\n  iv. 기본값을 전체로 두지 않는 이유: 전체는 한 번 누르면 수백 개 기업에 메일이 나가는 선택이라, 담당자가 그것을 고른 순간이 화면에 남아야 함\n  v. 고르는 단위는 사람이 아니라 기업 — 전체 기업의 교육담당자는 수백~수천 명이라 하나씩 고를 수 없음\n  vi. 담당자 명단: 어느 쪽이든 저장하지 않고 발송 시점에 /Student/EduRoleV2 최신 명단에서 읽음\nb. 대상이 되는 기업의 범위 (두 경우 공통)\n  i. LMS 기업사용여부가 Y인 기업만\n  ii. N인 기업은 목록에 나오지 않음\n  iii. 고를 수 있는 것이 Y뿐이라 화면에 「Y만 보기」 같은 칸을 두지 않음\nc. 기업 지정을 골랐을 때\n  i. [기업 선택] 버튼 하나가 나타나고, 누르면 기업 선택 레이어가 열림\n  ii. 레이어 구성: 검색줄 · 건수와 페이지당 개수 · 머리글 행 · 목록 · 페이징 · [선택 완료] [취소]\n  iii. 검색 키: 기업명 · 기업코드 (치는 즉시 걸러짐)\n  iv. 목록 컬럼: 체크박스 / 기업명 / 기업코드 / 교육담당자\n  v. 교육담당자 값은 그 기업의 인원 수(예: 6명) — 이 값들의 합계가 결과 화면의 [대상자]\n  vi. 머리글 행: 컬럼명 자리이면서 맨 앞 체크박스가 전체 선택 노릇을 함\n  vii. 전체 선택의 범위는 이 페이지 — 일부만 골라져 있으면 반쯤 켠 모양으로 표시\n  viii. 검색 결과 전체를 한 번에 집지 않는 이유: 보이지 않는 페이지의 기업까지 담겨 담당자 수가 갑자기 뜀\n  ix. 페이지를 넘겨도 앞 페이지에서 고른 것은 그대로 남음\n  x. 고른 기업은 칩으로 쌓이고 칩의 ✕로 제거. 그 아래 「선택한 N개 기업 · 교육담당자 M명」\n  xi. 하나도 안 고르고 [선택 완료]: 「대상 기업을 선택해주세요.」 + 레이어를 닫지 않음\n  xii. [취소]로 닫으면 고른 것은 반영되지 않음\n  xiii. 검색 결과 0건: 「검색 결과가 없습니다.」\n  xiv. 저장하는 값: 고른 기업의 코드 목록 — 이 목록은 그대로 굳음\n  xv. 목록의 대상 칸 표기: 「기업명 외 N개 기업」\nd. 전체 기업을 골랐을 때\n  i. 버튼도 칩도 두지 않고 설명 한 줄만: 「LMS의 기업사용여부가 Y인 기업 대상으로만 노출됩니다.」\n  ii. 저장하는 값: 기업 목록이 아니라 「전체」라는 상태 하나\n  iii. 그래서 등록 뒤에 Y로 바뀐 기업은 발송 시점에 자동으로 들어오고, N으로 바뀐 기업은 빠짐\n  iv. 목록의 대상 칸 표기: 「전체 기업 (N개)」\n  v. 대상자 수: 그 시점 Y 기업들의 교육담당자 합계 — 결과 화면의 [대상자]\ne. 복사 시\n  i. 대상은 기본값(기업 지정)으로 돌아가고 고른 기업은 비움 — 회차마다 대상이 달라지므로 담당자가 반드시 다시 봄\nf. 확인 필요\n  i. 「전체」의 기준을 LMS 기업사용여부 Y로 두었음 — 계약 중인 기업만으로 좁혀야 하는지 운영팀 확인 필요"},
     },
 };
   SECTION_DESC["s-edit"] = SECTION_DESC["s-register"];
@@ -5187,9 +5196,6 @@
           '<div class="modal-search">' +
             '<input type="text" id="coSearch" placeholder="기업명 또는 기업코드 검색">' +
             '<button class="btn btn-primary btn-sm" id="coSearchBtn">검색</button>' +
-            /* 엑셀 업로드도 "기업을 고르는 방법"이라 고르는 자리 안에 둔다 —
-               밖에 따로 두면 두 버튼이 같은 일을 하는 것처럼 보인다 */
-            '<button class="btn btn-ghost btn-sm" id="coExcel">기업코드 엑셀 업로드</button>' +
           '</div>' +
           '<div class="list-head">' +
             '<span class="cnt" id="coCount"></span>' +
@@ -5197,6 +5203,11 @@
               COMPANY_PAGE_SIZES.map(function(n){ return '<option value="'+n+'">'+n+'개씩</option>'; }).join("") +
             '</select>' +
           '</div>' +
+          /* 아래 행들이 무슨 값인지 머리글로 알려 준다 — 체크박스 자리도 같은 칸을 쓴다 */
+          '<div class="person-row person-head">' +
+            '<input type="checkbox" id="coAll" title="이 페이지의 기업을 모두 선택">' +
+            '<span class="pname">기업명</span><span class="pid">기업코드</span>' +
+            '<span class="pmail">교육담당자</span></div>' +
           '<div class="person-list" id="coList"></div>' +
           '<div class="pager" id="coPager"></div>' +
           '<div class="btn-row">' +
@@ -5221,6 +5232,20 @@
       var picked = COMPANY_LIST.filter(function(c){ return selection[c.code]; });
       document.getElementById("coCount").innerHTML =
         '전체 ' + shownTotal + '개' + (picked.length ? ' · 선택 ' + picked.length + '개 · 담당자 ' + managersOf(picked) + '명' : '');
+      paintHeadCheck();
+    }
+    /* 머리글 체크박스는 <b>이 페이지</b>를 가리킨다 — 일부만 골라졌으면 반쯤 켠 모양으로 둔다.
+       검색 결과 전체를 집어 버리면 보이지 않는 페이지의 기업까지 담기고, 담당자 수가 갑자기 뛴다. */
+    function pageRows(){
+      return Array.prototype.slice.call(document.querySelectorAll("#coList input[type=checkbox]"));
+    }
+    function paintHeadCheck(){
+      var head = document.getElementById("coAll");
+      if (!head) return;
+      var rows = pageRows();
+      var on = rows.filter(function(cb){ return cb.checked; }).length;
+      head.checked = rows.length > 0 && on === rows.length;
+      head.indeterminate = on > 0 && on < rows.length;
     }
     function renderList(){
       var list = filtered();
@@ -5231,7 +5256,7 @@
       document.getElementById("coList").innerHTML = list.slice(from, from + pageSize).map(function(c){
         return '<div class="person-row"><input type="checkbox" data-code="'+esc(c.code)+'" '+(selection[c.code]?"checked":"")+'>'+
           '<span class="pname">'+esc(c.name)+'</span><span class="pid">'+esc(c.code)+'</span>' +
-          '<span class="pmail">교육담당자 '+c.managers+'명</span></div>';
+          '<span class="pmail">'+c.managers+'명</span></div>';
       }).join("") || '<div class="muted-note">검색 결과가 없습니다.</div>';
 
       var first = Math.max(1, Math.min(page - 2, pages - 4));
@@ -5254,23 +5279,22 @@
       overlay.querySelectorAll("#coPager button").forEach(function(b){
         b.addEventListener("click", function(){ page = Number(b.dataset.p); renderList(); });
       });
+      /* 머리글 상태는 <b>다시 그린 뒤</b>에 칠한다 — 위 paintCount() 시점에는
+         아직 앞 페이지의 체크박스가 남아 있어, 페이지를 넘기면 옛 페이지 상태가 찍힌다 */
+      paintHeadCheck();
     }
     renderList();
-
+    document.getElementById("coAll").addEventListener("change", function(){
+      var on = this.checked;
+      pageRows().forEach(function(cb){ cb.checked = on; selection[cb.dataset.code] = on; });
+      paintCount();
+    });
 
     function search(){ query = document.getElementById("coSearch").value.trim(); page = 1; renderList(); }
     document.getElementById("coSearch").addEventListener("input", search);
     document.getElementById("coSearchBtn").addEventListener("click", search);
     document.getElementById("coSize").addEventListener("change", function(){
       pageSize = Number(this.value); page = 1; renderList();
-    });
-    document.getElementById("coExcel").addEventListener("click", function(){
-      openCompanyCodeUpload(function(picked, fileName){
-        var added = 0;
-        picked.forEach(function(c){ if (!selection[c.code]){ selection[c.code] = true; added++; } });
-        renderList();
-        toast('"'+fileName+'" 업로드 완료 — 기업 '+added+'개를 체크했습니다. (이미 선택된 '+(picked.length-added)+'건 제외)');
-      });
     });
     document.getElementById("coClose").addEventListener("click", closePersonSearch);
     document.getElementById("coCancel").addEventListener("click", closePersonSearch);
@@ -5281,35 +5305,6 @@
       closePersonSearch();
       opts.onConfirm(chosen);
     });
-  }
-
-  /* 기업코드 엑셀 업로드 — 담당자 명단이 아니라 기업코드만 받는다.
-     명단을 받으면 그 시점의 스냅샷이라 담당자가 바뀐 뒤에도 옛 주소로 나간다. */
-  function openCompanyCodeUpload(onPicked){
-    openBulkUploadModal({
-      title: "기업코드 엑셀 업로드",
-      guide: [
-        "샘플파일을 다운로드 하셔서 입력 후 등록해주세요.",
-        "<b>기업코드 한 칸만</b> 있으면 됩니다. 그 기업의 교육담당자는 시스템이 자동으로 가져옵니다.",
-        "담당자 명단을 직접 올리지 않는 이유는, 명단은 올린 시점의 값이라 담당자가 바뀌면 옛 주소로 나가기 때문입니다.",
-        "이미 체크한 기업에 <b>더해집니다.</b> 같은 기업이 중복되면 한 번만 담깁니다.",
-        "등록되지 않은 기업코드는 건너뛰고 몇 건이 그랬는지 알려드립니다.",
-        "LMS 기업사용여부가 N인 기업의 코드는 담기지 않습니다."
-      ],
-      downloads: [
-        { label:"샘플 엑셀파일 다운로드", onClick: downloadCompanyCodeSample }
-      ],
-      onConfirm: function(fileName){
-        /* 목업 — 실제로는 올린 파일의 기업코드를 읽는다. 여기서는 기업 8개를 담는다. */
-        onPicked(COMPANY_LIST.filter(function(c){ return c.active; }).slice(0, 8), fileName);
-      }
-    });
-  }
-  function downloadCompanyCodeSample(){
-    var lines = ["기업코드"].concat(COMPANY_LIST.filter(function(c){ return c.active; }).slice(0,5)
-      .map(function(c){ return c.code; }));
-    downloadCsv(lines, "대상기업_기업코드_샘플.csv");
-    toast("기업코드 샘플을 다운로드했습니다. 기업코드 한 칸만 채우면 됩니다.");
   }
 
   /* ---------- 팝업: 문항 선택 ----------
