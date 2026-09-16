@@ -147,23 +147,6 @@
     margin-bottom:2px;
   }
   .target-sum .sum-note{display:block;margin-top:4px;font-size:11.5px;color:var(--text-muted);font-weight:400;}
-  /* 기업 선택 레이어 — 맨 위에서 갈래를 고르고, 아래는 그에 따라 잠긴다 */
-  .co-scope{display:flex;gap:10px;margin-bottom:14px;}
-  .co-scope .radio{
-    flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
-    padding:11px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);cursor:pointer;
-  }
-  .co-scope .radio:has(input:checked){border-color:var(--accent);background:var(--accent-soft);}
-  .co-scope .radio input{margin-right:6px;}
-  .co-scope .radio b{font-size:12.5px;color:var(--text);}
-  .co-scope-sub{display:block;padding-left:20px;font-size:11px;color:var(--text-muted);line-height:1.6;}
-  #coPickArea.is-locked{opacity:.4;pointer-events:none;}
-  .co-all-note{
-    padding:14px 16px;border:1px dashed var(--border);border-radius:8px;background:var(--surface);
-    font-size:12.5px;color:var(--text);line-height:1.7;
-  }
-  .co-all-note .sum-note{display:block;margin-top:5px;font-size:11.5px;color:var(--text-muted);}
-  .chip.chip-all{background:var(--accent-soft);color:var(--accent);font-weight:700;}
   .sidebar-item:hover{background:#f4f5f7;}
   .sidebar-item.active{
     background:var(--sidebar-active-bg);
@@ -1728,15 +1711,16 @@
   function managersOf(list){
     return (list||[]).reduce(function(a,c){ return a + (c.managers||0); }, 0);
   }
-  /* 운영 중인 기업 = 연수원이 열려 있는 기업. 닫힌 연수원은 메일이 반송되고 응답률만 낮아진다. */
+  /* 고를 수 있는 기업 = LMS 기업사용여부가 Y인 기업. 그것뿐이라 화면에 고르는 칸을 두지 않는다 —
+     "Y만 보여준다"가 규칙이면 「Y만 보기」 체크박스는 끌 수 없는 스위치이고, 끌 수 없는 스위치는 두지 않는다. */
   function activeCompanies(){
     return COMPANY_LIST.filter(function(c){ return c.active; })
       .map(function(c){ return {name:c.name, code:c.code, managers:c.managers}; });
   }
   /* 0번 기업 설문의 대상 기업 —
      「전체 기업」은 <b>명단이 아니라 상태</b>다. 고른 순간의 목록으로 굳혀 두면
-     등록한 뒤에 새로 열린 연수원이 영영 빠지고, 닫힌 연수원에는 계속 메일이 나간다.
-     상태로 두면 발송·집계 시점에 그때의 운영 중인 기업을 다시 읽는다. */
+     등록한 뒤에 기업사용여부가 Y로 바뀐 기업이 영영 빠지고, N으로 바뀐 기업에는 계속 메일이 나간다.
+     상태로 두면 발송·집계 시점에 그때의 Y 기업을 다시 읽는다. */
   function companyTargetsOf(s){
     return s.companyScope === "all" ? activeCompanies() : (s.companyTargets || []);
   }
@@ -2739,7 +2723,7 @@
       "form-basic": {title:"설문 정보 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일 (유형 · 제목 · 설명 · 설문기간 · 사용여부)\n  ii. 유효성·제약도 동일"},
       "form-questions": {title:"문항 구성 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일\n  ii. 문항 풀도 같은 것을 씀"},
       "form-actions": {title:"액션 영역", body:"a. 구성\n  i. 개별 기업 등록 화면과 동일 ([등록완료] [목록] / 수정 시 [저장] [삭제] [목록])"},
-      "form-deliver": {title:"노출 정보 영역", body:"진행 방식과 노출 메뉴는 개별 기업과 같습니다. 다른 것은 대상 하나입니다.\na. 대상\n  i. 필수여부: 필수\n  ii. 화면에 두는 것: [기업 선택] 버튼 하나 · 그 아래 결과(칩)와 합계 한 줄\n  iii. 전체로 할지 골라서 지정할지도 그 레이어 안에서 정함 — 고르는 일을 두 자리로 가르지 않기 위해\n  iv. 고르는 단위는 사람이 아니라 기업 — 전체 기업의 교육담당자는 수백~수천 명이라 하나씩 고를 수 없음\n  v. 담당자 명단: 어느 쪽이든 저장하지 않고 발송 시점에 /Student/EduRoleV2 최신 명단에서 읽음\nb. 기업 선택 레이어\n  i. 맨 위: [전체 기업] / [골라서 지정] 둘 중 하나 (기본값 전체 기업)\n  ii. 전체 기업을 고르면 아래 검색·목록이 잠기고, 대상이 몇 명이 되는지 안내만 표시\n  iii. 잠그되 지우지 않음 — 되돌렸을 때 체크해 둔 것이 그대로 남아 있어야 함\n  iv. 골라서 지정: 기업명·기업코드 검색 · 「운영 중인 기업만」 체크(기본 켜짐) · 페이징\n  v. [기업코드 엑셀 업로드]도 이 레이어 안 — 밖에 두면 두 버튼이 같은 일을 하는 것처럼 보임\n  vi. 엑셀 양식: 기업코드 한 칸만. 올리면 목록에서 그 기업들이 체크됨 (담기는 것이 아니라 체크 — 눈으로 보고 [선택 완료])\n  vii. 등록되지 않은 기업코드: 건너뛰고 몇 건이 그랬는지 알려줌\n  viii. 골라서 지정인데 하나도 안 골랐으면: 「대상 기업을 선택해주세요.」 + 레이어를 닫지 않음\nc. 전체 기업으로 저장했을 때\n  i. 저장하는 값: 기업 목록이 아니라 「전체」라는 상태 하나\n  ii. 그래서 등록 뒤에 새로 열린 연수원은 발송 시점에 자동으로 들어오고, 그 사이 닫힌 연수원은 빠짐\n  iii. 등록 화면 표시: 칩 자리에 [전체 기업] 한 개 + 「운영 중인 N개 기업 · 교육담당자 M명」\n  iv. 목록의 대상 칸 표기: 「전체 기업 (N개)」\nd. 골라서 지정으로 저장했을 때\n  i. 저장하는 값: 고른 기업의 코드 목록 — 이 목록은 그대로 굳음\n  ii. 등록 화면 표시: 기업마다 칩 하나, 칩의 ✕로 제거\n  iii. 목록의 대상 칸 표기: 「기업명 외 N개 기업」\ne. 합계 한 줄\n  i. 두 경우 모두 항상 표시\n  ii. 이 합계가 곧 결과 화면의 [대상자]이고 응답률을 낼 때 나누는 수\nf. 복사 시\n  i. 대상은 기본값(전체 기업)으로 돌아감 — 회차마다 대상이 달라지므로 담당자가 반드시 다시 봄\ng. 확인 필요\n  i. [전체 기업]의 「전체」가 등록된 모든 기업인지 계약 중인 기업만인지 운영팀 확인 필요\n  ii. 현재는 운영 중(연수원이 열려 있는) 기업으로 두었음"},
+      "form-deliver": {title:"노출 정보 영역", body:"진행 방식과 노출 메뉴는 개별 기업과 같습니다. 다른 것은 대상 하나입니다.\na. 대상\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (기업 지정 / 전체 기업)\n  iii. 기본값: 기업 지정\n  iv. 기본값을 전체로 두지 않는 이유: 전체는 한 번 누르면 수백 개 기업에 메일이 나가는 선택이라, 담당자가 그것을 고른 순간이 화면에 남아야 함\n  v. 고르는 단위는 사람이 아니라 기업 — 전체 기업의 교육담당자는 수백~수천 명이라 하나씩 고를 수 없음\n  vi. 담당자 명단: 어느 쪽이든 저장하지 않고 발송 시점에 /Student/EduRoleV2 최신 명단에서 읽음\nb. 대상이 되는 기업의 범위 (두 경우 공통)\n  i. LMS 기업사용여부가 Y인 기업만\n  ii. N인 기업은 목록에도 나오지 않고, 기업코드 엑셀로 올려도 담기지 않음\n  iii. 고를 수 있는 것이 Y뿐이라 화면에 「Y만 보기」 같은 칸을 두지 않음\nc. 기업 지정을 골랐을 때\n  i. [기업 선택] 버튼 하나가 나타나고, 누르면 기업 검색 레이어가 열림\n  ii. 레이어 구성: 기업명·기업코드 검색 · [기업코드 엑셀 업로드] · 목록 · 페이징 · [선택 완료] [취소]\n  iii. [기업코드 엑셀 업로드]는 이 레이어 안에 둠 — 밖에 두면 두 버튼이 같은 일을 하는 것처럼 보임\n  iv. 엑셀 양식: 기업코드 한 칸만. 올리면 목록에서 그 기업들이 체크됨 (바로 담기지 않음 — 눈으로 보고 [선택 완료])\n  v. 등록되지 않은 기업코드: 건너뛰고 몇 건이 그랬는지 알려줌\n  vi. 고른 기업은 칩으로 쌓이고 칩의 ✕로 제거. 그 아래 「선택한 N개 기업 · 교육담당자 M명」\n  vii. 하나도 안 고르고 [선택 완료]: 「대상 기업을 선택해주세요.」 + 레이어를 닫지 않음\n  viii. 저장하는 값: 고른 기업의 코드 목록 — 이 목록은 그대로 굳음\n  ix. 목록의 대상 칸 표기: 「기업명 외 N개 기업」\nd. 전체 기업을 골랐을 때\n  i. 버튼도 칩도 두지 않고 설명 한 줄만: 「LMS의 기업사용여부가 Y인 기업 대상으로만 노출됩니다.」\n  ii. 저장하는 값: 기업 목록이 아니라 「전체」라는 상태 하나\n  iii. 그래서 등록 뒤에 Y로 바뀐 기업은 발송 시점에 자동으로 들어오고, N으로 바뀐 기업은 빠짐\n  iv. 목록의 대상 칸 표기: 「전체 기업 (N개)」\n  v. 대상자 수: 그 시점 Y 기업들의 교육담당자 합계 — 결과 화면의 [대상자]\ne. 복사 시\n  i. 대상은 기본값(기업 지정)으로 돌아가고 고른 기업은 비움 — 회차마다 대상이 달라지므로 담당자가 반드시 다시 봄\nf. 확인 필요\n  i. 「전체」의 기준을 LMS 기업사용여부 Y로 두었음 — 계약 중인 기업만으로 좁혀야 하는지 운영팀 확인 필요"},
     },
 };
   SECTION_DESC["s-edit"] = SECTION_DESC["s-register"];
@@ -2906,7 +2890,7 @@
   function targetsCellOf(s){
     if (s.owner === "root"){
       if (s.companyScope === "all"){
-        return '<span title="운영 중인 연수원 전체 — 발송 시점에 다시 읽습니다">전체 기업 ('
+        return '<span title="' + esc("LMS의 기업사용여부가 Y인 기업 대상으로만 노출됩니다.") + '">전체 기업 ('
              + activeCompanies().length + '개)</span>';
       }
       var ct = s.companyTargets || [];
@@ -2955,7 +2939,7 @@
     copy.participants = 0;
     copy.targets = [];
     copy.companyTargets = [];
-    copy.companyScope = "all";
+    copy.companyScope = "pick";
     if (copy.delivery.email){ copy.delivery.email.targets = []; copy.delivery.email.sendAt = ""; copy.delivery.email.sentCount = 0; }
     return copy;
   }
@@ -3107,7 +3091,7 @@
                               : (src ? JSON.parse(JSON.stringify(src.picks||{})) : defaultPicksFor(state.formType));
     /* 0번 기업은 기업 단위로 고른다. 기본값은 전체 기업이고, 고르는 것이 예외다 */
     state.companyTargetDraft = isEdit ? ((existing.companyTargets||[]).slice()) : [];
-    state.companyScope = isEdit ? (existing.companyScope || "pick") : "all";
+    state.companyScope = isEdit ? (existing.companyScope || "pick") : "pick";
     state.basicDraft = src
       ? {title:src.title, desc:src.desc, startAt:"", endAt:"", expose:false,
          menuUrl:src.delivery.popup.menuUrl}
@@ -3210,6 +3194,7 @@
     var vStart  = bd.startAt !== undefined ? bd.startAt : (existing ? existing.startAt : "");
     var vEnd    = bd.endAt  !== undefined ? bd.endAt  : (existing ? existing.endAt : "");
     var vExpose = bd.expose !== undefined ? bd.expose : (existing ? existing.expose : true);
+    var coScope = state.companyScope || "pick";
     var vDont   = bd.dontShow !== undefined ? bd.dontShow
                 : ((existing && existing.delivery.popup && existing.delivery.popup.dontShow) || "day");
     /* 메일 본문 — 이미 친 값 > 원본 > 기본 본문 순. 빈 문자열도 "사람이 지운 것"이라 존중한다 */
@@ -3249,15 +3234,21 @@
       /* 대상은 팝업이든 메일이든 같은 사람들이라 칸 하나다.
          0번 기업만 고르는 단위가 기업이다 — 수백~수천 명을 하나씩 고를 수 없기 때문이고,
          기업만 고르면 그 안의 교육담당자는 시스템이 최신 명단에서 가져온다. */
-      /* 고르는 자리는 [기업 선택] 하나다 — 「전체 기업」이냐 「골라서 지정」이냐도
-         그 레이어 안에서 정한다. 밖에 라디오를 두면 고르는 일이 두 자리로 갈리고,
-         예전의 [전체 기업 선택] 버튼처럼 눌렀을 때 무엇이 담기는지도 보이지 않는다.
-         결과(전체인지, 어느 기업인지)만 버튼 아래에 남는다. */
+      /* 기본값은 기업 지정이다 — 전체 기업은 한 번 누르면 수백 개 연수원에 메일이 나가는
+         선택이라, 담당자가 그것을 고른 순간이 화면에 남아야 한다. 기본으로 켜 두지 않는다. */
       (owner === "root"
         ? rowSpec("d", "대상",
-            '<button class="btn btn-ghost btn-sm" id="btnCompanySearch">기업 선택</button>' +
-            '<div class="chip-row" id="companyChips"></div>' +
-            '<div class="target-sum" id="companySum"></div>', true)
+            '<div class="row-inline">' +
+              '<label class="radio"><input type="radio" name="coScope" value="pick"'+(coScope==="pick"?" checked":"")+'>기업 지정</label>' +
+              '<label class="radio" style="margin-left:14px;"><input type="radio" name="coScope" value="all"'+(coScope==="all"?" checked":"")+'>전체 기업</label>' +
+            '</div>' +
+            (coScope === "pick"
+              ? '<div class="row-inline" style="margin-top:10px;">' +
+                  '<button class="btn btn-ghost btn-sm" id="btnCompanySearch">기업 선택</button>' +
+                '</div>' +
+                '<div class="chip-row" id="companyChips"></div>' +
+                '<div class="target-sum" id="companySum"></div>'
+              : '<p class="hint" style="margin-top:10px;">LMS의 기업사용여부가 Y인 기업 대상으로만 노출됩니다.</p>'), true)
         : rowSpec("d", "대상지정",
             '<button class="btn btn-ghost btn-sm" id="btnPersonSearch">교육담당자 검색</button>' +
             '<div class="chip-row" id="targetChips"></div>', true));
@@ -3295,8 +3286,7 @@
       '</div>';
 
     if (document.getElementById("targetChips")) renderTargetChips();
-    /* 「전체 기업」일 때는 칩 자리가 없고 합계 줄만 있다 — 칩으로 찾으면 합계가 비어 버린다 */
-    if (document.getElementById("companySum")) renderCompanyChips();
+    if (document.getElementById("companyChips")) renderCompanyChips();
     wireSlotPicker(function(){ state.basicDraft = readSurveyFields(); paintSurveyForm(existing, owner); });
 
     var selType = document.getElementById("fSurveyType");
@@ -3308,20 +3298,19 @@
       paintSurveyForm(existing, owner);
       toast('"'+typeLabel(state.formType)+'" 유형의 최근 설문 구성으로 문항이 채워졌습니다.');
     });
+    els.viewBody.querySelectorAll('input[name="coScope"]').forEach(function(r){
+      r.addEventListener("change", function(){
+        state.basicDraft = readSurveyFields();
+        state.companyScope = r.value;
+        paintSurveyForm(existing, owner);
+      });
+    });
     var bCoSearch = document.getElementById("btnCompanySearch");
     if (bCoSearch) bCoSearch.addEventListener("click", function(){
-      openCompanySearch({
-        scope: state.companyScope,
-        selected: state.companyTargetDraft,
-        onConfirm: function(list, scope){
-          state.companyScope = scope;
-          state.companyTargetDraft = list;
-          renderCompanyChips();
-          toast(scope === "all"
-            ? "전체 기업 " + activeCompanies().length + "개 · 교육담당자 " + managersOf(activeCompanies()) + "명이 대상입니다."
-            : list.length + "개 기업 · 교육담당자 " + managersOf(list) + "명이 대상입니다.");
-        }
-      });
+      openCompanySearch({selected: state.companyTargetDraft, onConfirm: function(list){
+        state.companyTargetDraft = list; renderCompanyChips();
+        toast(list.length + "개 기업 · 교육담당자 " + managersOf(list) + "명이 대상입니다.");
+      }});
     });
     var bPerson = document.getElementById("btnPersonSearch");
     if (bPerson) bPerson.addEventListener("click", function(){
@@ -3747,17 +3736,8 @@
   }
   /* 고른 기업 칩 + 합계 한 줄. 합계가 곧 결과 화면의 [대상자]라 항상 눈에 보여야 한다. */
   function renderCompanyChips(){
+    /* 전체 기업을 고르면 칩도 합계도 그리지 않는다 — 그 자리에는 설명 한 줄만 있다 */
     var wrap = document.getElementById("companyChips");
-    var sumAll = document.getElementById("companySum");
-    if (state.companyScope === "all"){
-      /* 전체는 기업 하나하나를 칩으로 늘어놓지 않는다 — 스무 개가 화면을 덮고,
-         그 목록이 굳은 값처럼 보여 「발송 때 다시 읽는다」는 사실이 가려진다 */
-      if (wrap) wrap.innerHTML = '<span class="chip chip-all">전체 기업</span>';
-      if (sumAll) sumAll.innerHTML =
-        '운영 중인 <b>' + activeCompanies().length + '</b>개 기업 · 교육담당자 <b>' + managersOf(activeCompanies()) + '</b>명' +
-        '<span class="sum-note">발송·집계 시점의 명단을 그때 다시 읽습니다 — 그 사이 새로 열린 연수원은 들어오고, 닫힌 연수원은 빠집니다.</span>';
-      return;
-    }
     if (!wrap) return;
     var list = state.companyTargetDraft || [];
     wrap.innerHTML = list.length
@@ -3812,7 +3792,7 @@
     } else {
       if (!state.targetDraft.length){ toast("대상 교육담당자를 선택해주세요."); return; }
     }
-    var coScopeSave = owner === "root" ? (state.companyScope || "all") : null;
+    var coScopeSave = owner === "root" ? (state.companyScope || "pick") : null;
     /* 「전체 기업」은 명단을 저장하지 않는다 — 저장하는 순간 그 목록이 굳는다 */
     var coTargets = (owner === "root" && coScopeSave === "pick") ? state.companyTargetDraft.slice() : [];
 
@@ -5191,29 +5171,19 @@
 
   /* ---------- 팝업: 기업 검색 (0번 기업의 대상 지정) ----------
      사람이 아니라 기업을 고른다. 기업 하나가 교육담당자 여러 명을 데려오므로
-     '담당자 수' 칸을 함께 보여준다 — 그 합계가 응답률의 분모가 된다.
-     운영이 끝난 연수원은 회색으로 구분한다(고를 수는 있지만 메일이 반송된다). */
+     '담당자 수' 칸을 함께 보여준다 — 그 합계가 결과 화면의 [대상자]가 된다.
+     LMS 기업사용여부가 Y인 기업만 나온다 — 고를 수 있는 것이 그것뿐이라 상태 칸도 두지 않는다. */
   var COMPANY_PAGE_SIZES = [10, 20, 50];
   function openCompanySearch(opts){
     var overlay = els.overlayPerson;
     var selection = {};
     (opts.selected||[]).forEach(function(c){ selection[c.code] = true; });
-    var query = "", onlyActive = true, pageSize = COMPANY_PAGE_SIZES[0], page = 1;
-    /* 「전체 기업」도 여기서 고른다 — 고르는 일이 한 자리에 모인다 */
-    var scope = opts.scope === "pick" ? "pick" : "all";
-
+    var query = "", pageSize = COMPANY_PAGE_SIZES[0], page = 1;
     overlay.innerHTML =
       '<div class="modal wide admin">' +
         '<button class="modal-close" id="coClose">✕</button>' +
         '<h3>기업 선택</h3>' +
         '<div class="modal-body">' +
-          '<div class="co-scope">' +
-            '<label class="radio"><input type="radio" name="coScope" value="all">' +
-              '<b>전체 기업</b><span class="co-scope-sub">운영 중인 연수원 전부 · 발송 때 명단을 다시 읽습니다</span></label>' +
-            '<label class="radio"><input type="radio" name="coScope" value="pick">' +
-              '<b>골라서 지정</b><span class="co-scope-sub">아래에서 기업을 찾아 체크합니다</span></label>' +
-          '</div>' +
-          '<div id="coPickArea">' +
           '<div class="modal-search">' +
             '<input type="text" id="coSearch" placeholder="기업명 또는 기업코드 검색">' +
             '<button class="btn btn-primary btn-sm" id="coSearchBtn">검색</button>' +
@@ -5222,7 +5192,6 @@
             '<button class="btn btn-ghost btn-sm" id="coExcel">기업코드 엑셀 업로드</button>' +
           '</div>' +
           '<div class="list-head">' +
-            '<label class="radio"><input type="checkbox" id="coActive" checked>운영 중인 기업만</label>' +
             '<span class="cnt" id="coCount"></span>' +
             '<select id="coSize">' +
               COMPANY_PAGE_SIZES.map(function(n){ return '<option value="'+n+'">'+n+'개씩</option>'; }).join("") +
@@ -5230,8 +5199,6 @@
           '</div>' +
           '<div class="person-list" id="coList"></div>' +
           '<div class="pager" id="coPager"></div>' +
-          '</div>' +
-          '<div class="co-all-note" id="coAllNote" hidden></div>' +
           '<div class="btn-row">' +
             '<button class="btn btn-primary" id="coOk">선택 완료</button>' +
             '<button class="btn btn-ghost" id="coCancel">취소</button>' +
@@ -5243,7 +5210,7 @@
     function filtered(){
       var f = query.toLowerCase();
       return COMPANY_LIST.filter(function(c){
-        if (onlyActive && !c.active) return false;
+        if (!c.active) return false;          // LMS 기업사용여부 Y만
         if (!f) return true;
         return c.name.toLowerCase().indexOf(f) > -1 || c.code.indexOf(f) > -1;
       });
@@ -5264,8 +5231,7 @@
       document.getElementById("coList").innerHTML = list.slice(from, from + pageSize).map(function(c){
         return '<div class="person-row"><input type="checkbox" data-code="'+esc(c.code)+'" '+(selection[c.code]?"checked":"")+'>'+
           '<span class="pname">'+esc(c.name)+'</span><span class="pid">'+esc(c.code)+'</span>' +
-          '<span class="pmail">교육담당자 '+c.managers+'명</span>' +
-          '<span class="pdept">'+(c.active?"운영 중":"운영 종료")+'</span></div>';
+          '<span class="pmail">교육담당자 '+c.managers+'명</span></div>';
       }).join("") || '<div class="muted-note">검색 결과가 없습니다.</div>';
 
       var first = Math.max(1, Math.min(page - 2, pages - 4));
@@ -5289,34 +5255,12 @@
         b.addEventListener("click", function(){ page = Number(b.dataset.p); renderList(); });
       });
     }
-    /* 전체를 고르면 아래 고르는 자리를 잠근다 — 지우지 않고 잠그는 이유는,
-       되돌렸을 때 아까 체크해 둔 것이 그대로 남아 있어야 하기 때문이다 */
-    function paintScope(){
-      var pick = document.getElementById("coPickArea");
-      var note = document.getElementById("coAllNote");
-      var on = scope === "pick";
-      pick.classList.toggle("is-locked", !on);
-      note.hidden = on;
-      if (!on){
-        note.innerHTML = '운영 중인 <b>' + activeCompanies().length + '</b>개 기업 · 교육담당자 <b>' +
-          managersOf(activeCompanies()) + '</b>명이 대상이 됩니다.' +
-          '<span class="sum-note">지금 목록을 굳혀 담는 것이 아니라 「전체」라는 상태로 저장합니다. ' +
-          '발송·집계 시점에 그때 운영 중인 기업을 다시 읽습니다.</span>';
-      }
-      overlay.querySelectorAll('input[name="coScope"]').forEach(function(r){ r.checked = (r.value === scope); });
-    }
-    overlay.querySelectorAll('input[name="coScope"]').forEach(function(r){
-      r.addEventListener("change", function(){ scope = r.value; paintScope(); });
-    });
     renderList();
-    paintScope();
+
 
     function search(){ query = document.getElementById("coSearch").value.trim(); page = 1; renderList(); }
     document.getElementById("coSearch").addEventListener("input", search);
     document.getElementById("coSearchBtn").addEventListener("click", search);
-    document.getElementById("coActive").addEventListener("change", function(){
-      onlyActive = this.checked; page = 1; renderList();
-    });
     document.getElementById("coSize").addEventListener("change", function(){
       pageSize = Number(this.value); page = 1; renderList();
     });
@@ -5333,9 +5277,9 @@
     document.getElementById("coOk").addEventListener("click", function(){
       var chosen = COMPANY_LIST.filter(function(c){ return selection[c.code]; })
         .map(function(c){ return {name:c.name, code:c.code, managers:c.managers}; });
-      if (scope === "pick" && !chosen.length){ toast("대상 기업을 선택해주세요."); return; }
+      if (!chosen.length){ toast("대상 기업을 선택해주세요."); return; }
       closePersonSearch();
-      opts.onConfirm(chosen, scope);
+      opts.onConfirm(chosen);
     });
   }
 
@@ -5350,13 +5294,13 @@
         "담당자 명단을 직접 올리지 않는 이유는, 명단은 올린 시점의 값이라 담당자가 바뀌면 옛 주소로 나가기 때문입니다.",
         "이미 체크한 기업에 <b>더해집니다.</b> 같은 기업이 중복되면 한 번만 담깁니다.",
         "등록되지 않은 기업코드는 건너뛰고 몇 건이 그랬는지 알려드립니다.",
-        "운영이 끝난 연수원의 코드도 담기지만, 메일이 반송될 수 있어 확인 후 빼 주세요."
+        "LMS 기업사용여부가 N인 기업의 코드는 담기지 않습니다."
       ],
       downloads: [
         { label:"샘플 엑셀파일 다운로드", onClick: downloadCompanyCodeSample }
       ],
       onConfirm: function(fileName){
-        /* 목업 — 실제로는 올린 파일의 기업코드를 읽는다. 여기서는 운영 중인 기업 8개를 담는다. */
+        /* 목업 — 실제로는 올린 파일의 기업코드를 읽는다. 여기서는 기업 8개를 담는다. */
         onPicked(COMPANY_LIST.filter(function(c){ return c.active; }).slice(0, 8), fileName);
       }
     });
