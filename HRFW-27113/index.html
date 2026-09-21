@@ -870,7 +870,7 @@
   /* 제목만 눌린다 — 나머지 칸은 누를 것이 아니라는 게 모양에 드러나야 한다 */
   .row-title{cursor:pointer;color:var(--text);text-decoration:none;}
   .row-title:hover{color:var(--accent);text-decoration:underline;}
-  .pager{display:flex;justify-content:center;align-items:center;gap:3px;margin:10px 0 2px;}
+  .pager{display:flex;justify-content:center;align-items:center;gap:3px;margin:14px 0 4px;}
   .pager button{
     min-width:24px;height:24px;padding:0 6px;border:1px solid var(--edu-ctl-line);background:#fff;
     font:inherit;font-size:11.5px;color:#666;cursor:pointer;border-radius:2px;
@@ -3280,8 +3280,9 @@
           '<th style="width:88px;">설문 초기화</th><th style="width:222px;">관리</th>' +
         '</tr></thead><tbody id="surveyRows"></tbody></table>' +
         '<div class="muted-note" id="surveyEmpty" hidden></div>' +
-        '<div class="pager" id="surveyPager"></div>' +
-      '</div>';
+      '</div>' +
+      /* 페이저는 카드 밖 — 쪽을 넘기는 것은 표가 아니라 화면이 하는 일이다 */
+      '<div class="pager" id="surveyPager"></div>';
 
     paintSurveyRows(surveys, "s-edit", "s-result", renderSurveyList);
     document.getElementById("btnNewSurvey").addEventListener("click", function(){ go("s-register"); });
@@ -5080,8 +5081,8 @@
           '<th class="left">문제</th><th style="width:150px;">유형</th><th style="width:120px;">표시 형태</th>' +
           '<th style="width:70px;">사용</th>' +
         '</tr></thead><tbody id="qRows"></tbody></table>' +
-        '<div class="pager" id="qPager"></div>' +
-      '</div>';
+      '</div>' +
+      '<div class="pager" id="qPager"></div>';
 
     document.getElementById("btnQNew").addEventListener("click", function(){ go("q-register"); });
     document.getElementById("btnQStd").addEventListener("click", function(){
@@ -5526,8 +5527,9 @@
           '<th style="width:88px;">설문 초기화</th><th style="width:222px;">관리</th>' +
         '</tr></thead><tbody id="surveyRows"></tbody></table>' +
         '<div class="muted-note" id="surveyEmpty" hidden></div>' +
-        '<div class="pager" id="surveyPager"></div>' +
-      '</div>';
+      '</div>' +
+      /* 페이저는 카드 밖 — 쪽을 넘기는 것은 표가 아니라 화면이 하는 일이다 */
+      '<div class="pager" id="surveyPager"></div>';
     paintSurveyRows(rootSurveys, "r-survey-edit", "r-result", renderRootSurveyList);
     document.getElementById("btnNewRoot").addEventListener("click", function(){ go("r-survey-register"); });
     document.getElementById("btnRSearch").addEventListener("click", function(){
