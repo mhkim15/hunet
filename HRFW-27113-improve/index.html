@@ -498,7 +498,10 @@
   .radio{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;}
   .radio input{margin:0;}
   .readonly-value{font-size:12.5px;padding-top:7px;}
-  .chip-row{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+  /* 엑셀로 들어온 명단 — 지우는 ✕가 없으므로 칩이 아니라 값처럼 보이게 둔다 */
+  .chip-sum{cursor:default;font-weight:600;}
+  .chip-note{font-size:11.5px;color:var(--text-muted);}
   .chip{
     display:inline-flex;align-items:center;gap:6px;
     background:#fff;border:1px solid var(--edu-ctl-line);
@@ -2102,6 +2105,7 @@
     editingRootSurveyId: null,
     viewingRootSurveyId: null,
     targetDraft: [],       // chips being edited in a survey form
+    targetSource: "search",// 대상이 어디서 왔는가 — "search" | "excel"
     picksDraft: {},        // 설문 등록 중인 자리별 문항 목록 {good:[], bad:[]}
     rootQuestionDraft: [], // 전체 기업 대상 설문 — 문항 chips
     personSearchOpenFor: null // "register" | "edit"
@@ -2318,7 +2322,7 @@
       "form-basic": {id:"s-register/form-basic", title:"설문 정보 영역", body:"a. 제목\n  i. 필수여부: 필수\n  ii. 입력 방식: 텍스트 한 줄\n  iii. 미입력 시: 「제목을 입력해주세요.」\n  iv. 중복 허용\n  v. 쓰이는 곳: 목록 · 결과 화면 머리말 · 메일 본문의 {{설문제목}} 자리\nb. 설문기간\n  i. 필수여부: 필수\n  ii. 입력 방식: 일시 2개 (분 단위까지)\n  iii. 동작: 시작 시각에 팝업이 열리고 종료 시각이 지나면 닫힘\n  iv. 미입력 시: 「설문기간을 입력해주세요.」\n  v. 시작이 종료보다 늦을 때: 「시작일시가 종료일시보다 늦습니다.」\n  vi. 과거 일시: 막지 않음 — 저장 즉시 시작된 상태 · 종료된 상태로 반영\n  vii. 빈 채로 저장되지 않으므로 목록에 기간이 비어 보이는 설문은 없음\nc. 사용여부\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (사용 / 미사용)\n  iii. 기본값: 사용\n  iv. 미사용: 기간 안이라도 팝업이 뜨지 않음\n  v. 복사로 연 등록 화면: 「미사용」으로 열림 — 기간과 대상을 채운 뒤 「사용」으로 바꿔 저장\nd. 수정 제약\n  i. 응답이 있어도 모든 칸을 수정할 수 있음 — 막는 칸 없음\n  ii. 문항 구성을 바꾸면 결과 화면도 바뀐 구성으로 다시 집계됨 — 빠진 문항의 응답은 화면에서 보이지 않음(엑셀에도 안 나감)\n  iii. 확인 필요: 응답이 쌓인 뒤 문항 구성 수정을 막을지"},
       "form-questions": {id:"s-register/form-questions", title:"문항 구성 영역", body:"「문항」 칸 하나 안에 자리가 둘 생김 — 좋아요를 고른 사람에게 / 아쉬워요를 고른 사람에게.\na. 표준 템플릿 불러오기\n  i. 자리: 문항이 담기는 테두리의 맨 위\n  ii. 동작: 기본 제공 문항 5개가 자리마다 자동 세팅됨 — 좋아요 3문항 · 아쉬워요 2문항\n  iii. 이미 담긴 문항이 있을 때: 「지금 담긴 문항을 비우고 표준 구성으로 바꿉니다. 계속할까요?」 한 번 확인\n  iv. 담긴 문항이 없으면 묻지 않고 바로 채움\n  v. 채운 뒤: 「표준 템플릿으로 채웠습니다 — 문항 N개」\n  vi. 채운 뒤에는 보통 구성과 같음 — 빼기 · 더하기 · 순서 변경 가능\n  vii. 확인 필요: 기본 제공 문항을 설문에 어떻게 담을지(저장 구조 · 기업별 수정 반영)\nb. 문항\n  i. 필수여부: 필수 (자리마다 1개 이상)\n  ii. 입력 방식: 자리마다 [문항 추가] → 문항 선택 레이어에서 체크\n  iii. 레이어 구성: 문제 검색 · 체크박스 목록 · [문항 관리로 이동] [선택 완료] [취소]\n  iv. 레이어 초기 상태: 이미 담긴 문항은 체크된 채로 열리고, 체크를 풀면 자리에서 빠짐\n  v. 담긴 표시: 카드로 쌓이고 위 · 아래 화살표로 순서 변경, ✕로 제거\n  vi. 이 순서가 곧 응답 화면의 문항 순서\n  vii. 미선택 시: 「『좋아요를 고른 사람에게』에 문항을 1개 이상 선택해주세요.」 — 자리 이름을 넣어 표시\nc. 중복 규칙\n  i. 한 자리 안: 같은 문항을 두 번 담을 수 없음\n  ii. 두 자리 사이: 같은 문항을 양쪽에 담을 수 있음\nd. 문항 관리로 이동\n  i. 작성 중인 설문 값은 유지\ne. 예외\n  i. 담은 뒤 그 문항이 미사용으로 바뀐 경우: 응답 화면에서는 빠지고 이 목록에는 회색으로 남음"},
       "form-actions": {id:"s-register/form-actions", title:"액션 영역", body:"a. 버튼 구성\n  i. 등록 화면: [등록완료] [목록]\n  ii. 수정 화면: [저장] [삭제] [목록]\n  iii. 정렬: 가운데\nb. 등록완료 · 저장\n  i. 성공 시: 목록으로 이동 + 「설문이 등록되었습니다.」 / 「설문이 수정되었습니다.」\n  ii. 실패 시: 화면을 떠나지 않고 문구만 표시, 입력값 유지\n  iii. 검증 순서: 제목 → 설문기간 → 기간 역전 → 문항(자리별) → 노출 메뉴 URL → 대상\n  iv. 막힌 칸: 안내 문구를 띄우고 그 칸을 화면 가운데로 끌어와 커서를 둠 — 문항·대상처럼 입력칸이 아닌 것은 그 영역을 끌어옴\nc. 삭제\n  i. 동작: 확인 레이어 1회 → 설문과 그 설문의 응답을 함께 삭제 → 목록\n  ii. 되돌리기: 없음\nd. 목록\n  i. 동작: 저장하지 않고 목록으로 이동, 작성 중인 값은 버림\n  ii. 확인 레이어: 없음"},
-      "form-deliver": {id:"s-register/form-deliver", title:"노출 정보 영역", body:"a. 진행 방식\n  i. 입력 방식: 없음 — 「에듀매니저 팝업」 읽기 전용 한 줄\n  ii. 끄는 칸을 두지 않음: 끄면 답할 곳이 없어짐\n  iii. [노출 메뉴 URL]에 들어온 대상자에게 팝업이 뜸\n  iv. 참여 독려는 목록의 [메일 보내기] — 메일의 버튼이 에듀매니저로 데려감\nb. 노출 메뉴 URL\n  i. 필수여부: 필수\n  ii. 입력 방식: 텍스트 — 에듀매니저 내부 경로 1개 (예: /Manage/Home)\n  iii. 제약: 도메인은 받지 않음 / 한 설문에 한 경로 — 여러 경로가 필요하면 설문을 나눠 등록\n  iv. 미입력 시: 「노출 메뉴 URL을 입력해주세요.」\nc. 보이지 않기\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (하루동안 보이지 않기 / 사용안함)\n  iii. 기본값: 하루동안 보이지 않기\n  iv. 하루동안 보이지 않기: 팝업 아래에 [오늘 하루 다시 보지 않기] 체크가 함께 나옴\n  v. 사용안함: 그 체크가 나오지 않음 — 닫아도 다음 접속에 다시 뜸\nd. 대상지정\n  i. 필수여부: 필수\n  ii. 입력 방식: [교육담당자 검색] 레이어에서 선택 → 칩으로 쌓임, 칩의 ✕로 제거\n  iii. 레이어 구성: 검색줄 · 건수와 페이지당 인원 · 머리글 행 · 목록 · 페이징 · [선택 완료] [취소]\n  iv. 검색 키: 이름 · 아이디 · 메일 주소 (치는 즉시 걸러짐)\n  v. 목록 컬럼: 체크박스 / 이름 / 아이디 / 메일 주소 / 소속\n  vi. 머리글 행: 컬럼명 자리이면서 맨 앞 체크박스가 그 페이지 전체 선택 — 일부만 골라져 있으면 반쯤 켠 모양\n  vii. 체크는 페이지를 넘겨도 유지\n  viii. 메일 주소가 없는 사람: 「-」로 표시 — 고를 수는 있으나 메일은 나가지 않음\n  ix. 미선택 시: 「대상 교육담당자를 선택해주세요.」\n  x. 검색 결과 0건: 「검색 결과가 없습니다.」\n  xi. 팝업을 볼 사람과 메일을 받을 사람이 같은 명단 — 한 번만 고름\n  xii. 복사로 연 등록 화면: 대상은 비어 있음 — 회차마다 다시 고름\ne. 엑셀로 등록\n  i. 자리: [교육담당자 검색] 오른쪽 — 검색 레이어 안이 아니라 이 화면의 버튼\n  ii. 레이어 구성: [찾아보기] [파일 업로드하기] 유의사항 [샘플 엑셀파일 다운로드] [닫기]\n  iii. 양식: 아이디 · 이름 · 메일 주소 3칸 — 맞추는 값은 아이디\n  iv. 받는 확장자: .xlsx · .xls · .csv\n  v. 올린 명단이 그대로 대상자가 됨 — 앞서 [교육담당자 검색]에서 고른 사람은 지워짐\n  vi. 이 기업의 교육담당자에 없는 아이디: 담기지 않고 몇 번째 줄이 왜 빠졌는지 표시\n  vii. 같은 아이디가 여러 줄: 한 번만 담김\n  viii. 파일을 고르기 전: [파일 업로드하기]가 비활성 — 파일명 자리에 「선택된 파일이 없습니다」"},
+      "form-deliver": {id:"s-register/form-deliver", title:"노출 정보 영역", body:"a. 진행 방식\n  i. 입력 방식: 없음 — 「에듀매니저 팝업」 읽기 전용 한 줄\n  ii. 끄는 칸을 두지 않음: 끄면 답할 곳이 없어짐\n  iii. [노출 메뉴 URL]에 들어온 대상자에게 팝업이 뜸\n  iv. 참여 독려는 목록의 [메일 보내기] — 메일의 버튼이 에듀매니저로 데려감\nb. 노출 메뉴 URL\n  i. 필수여부: 필수\n  ii. 입력 방식: 텍스트 — 에듀매니저 내부 경로 1개 (예: /Manage/Home)\n  iii. 제약: 도메인은 받지 않음 / 한 설문에 한 경로 — 여러 경로가 필요하면 설문을 나눠 등록\n  iv. 미입력 시: 「노출 메뉴 URL을 입력해주세요.」\nc. 보이지 않기\n  i. 필수여부: 필수\n  ii. 입력 방식: 라디오 (하루동안 보이지 않기 / 사용안함)\n  iii. 기본값: 하루동안 보이지 않기\n  iv. 하루동안 보이지 않기: 팝업 아래에 [오늘 하루 다시 보지 않기] 체크가 함께 나옴\n  v. 사용안함: 그 체크가 나오지 않음 — 닫아도 다음 접속에 다시 뜸\nd. 대상지정\n  i. 필수여부: 필수\n  ii. 입력 방식: [교육담당자 검색] 레이어에서 고르거나 [엑셀로 등록]으로 올림 — 두 길이 한 칸을 함께 씀\n  iii. 검색으로 고른 경우: 사람이 칩으로 쌓이고 칩의 ✕로 하나씩 제거\n  iv. 엑셀로 올린 경우: 「엑셀로 등록한 N명」 한 줄 — 하나씩 빼는 ✕ 없음, 마우스를 올리면 전체 명단\n  v. 엑셀로 올린 명단을 고치려면 엑셀을 다시 올림 — 화면에서 고치게 두면 파일과 화면 중 무엇이 대상인지 갈림\n  vi. 엑셀로 올린 뒤 [교육담당자 검색]에서 다시 고르면 그때부터 칩으로 바뀌고 ✕가 생김\n  vii. 레이어 구성: 검색줄 · 건수와 페이지당 인원 · 머리글 행 · 목록 · 페이징 · [선택 완료] [취소]\n  viii. 검색 키: 이름 · 아이디 · 메일 주소 (치는 즉시 걸러짐)\n  ix. 목록 컬럼: 체크박스 / 이름 / 아이디 / 메일 주소 / 소속\n  x. 머리글 행: 컬럼명 자리이면서 맨 앞 체크박스가 그 페이지 전체 선택 — 일부만 골라져 있으면 반쯤 켠 모양\n  xi. 체크는 페이지를 넘겨도 유지\n  xii. 메일 주소가 없는 사람: 「-」로 표시 — 고를 수는 있으나 메일은 나가지 않음\n  xiii. 미선택 시: 「대상 교육담당자를 선택해주세요.」\n  xiv. 검색 결과 0건: 「검색 결과가 없습니다.」\n  xv. 팝업을 볼 사람과 메일을 받을 사람이 같은 명단 — 한 번만 고름\n  xvi. 복사로 연 등록 화면: 대상은 비어 있음 — 회차마다 다시 고름\ne. 엑셀로 등록\n  i. 자리: [교육담당자 검색] 오른쪽 — 검색 레이어 안이 아니라 이 화면의 버튼\n  ii. 레이어 구성: [찾아보기] [파일 업로드하기] 유의사항 [샘플 엑셀파일 다운로드] [닫기]\n  iii. 양식: 아이디 · 이름 · 메일 주소 3칸 — 맞추는 값은 아이디\n  iv. 받는 확장자: .xlsx · .xls · .csv\n  v. 올린 명단이 그대로 대상자가 됨 — 앞서 고른 사람은 지워짐\n  vi. 이 기업의 교육담당자에 없는 아이디: 담기지 않고 몇 번째 줄이 왜 빠졌는지 표시\n  vii. 같은 아이디가 여러 줄: 한 번만 담김\n  viii. 파일을 고르기 전: [파일 업로드하기]가 비활성 — 파일명 자리에 「선택된 파일이 없습니다」"},
     },
     "s-result": {
       summary: {id:"s-result/summary", title:"요약 영역", body:"a. 머리말\n  i. 표시: 설문 제목 한 줄\n  ii. 제목이 길어도 말줄임 없이 전부 노출\nb. 카드 구성\n  i. 항목: 대상자 / 응답 / 응답률 3개\n  ii. 값이 0이어도 카드를 숨기지 않음\nc. 대상자\n  i. 정의: 응답률의 분모 — 이 설문이 닿은 사람 수\n  ii. 개별 기업: 대상지정한 인원 수\n  iii. 0번 기업: 엑셀로 올린 기업들의 교육담당자 수 합계\nd. 응답\n  i. 정의: 이 설문에 제출된 응답 수\n  ii. [설문 초기화]로 응답을 지우면 함께 줄어듦\ne. 응답률\n  i. 계산: 응답 ÷ 대상자, 소수 첫째 자리\n  ii. 검산: 대상 8명 중 5명 → 62.5%\nf. [목록] (화면 맨 아래, 이 영역 밖)\n  i. 개별 기업: 설문 관리 목록으로 이동\n  ii. 0번 기업: 전체 설문 결과 목록으로 이동"},
@@ -2346,7 +2350,7 @@
       "form-basic": {id:"r-survey-register/form-basic", title:"설문 정보 영역", body:"a. 구성\n  i. 제목 · 설문기간 · 사용여부 — 칸·기본값·유효성 모두 개별 기업 등록 화면과 동일"},
       "form-questions": {id:"r-survey-register/form-questions", title:"문항 구성 영역", body:"a. 구성\n  i. [표준 템플릿 불러오기] · 자리별 [문항 추가] · 순서 변경 — 개별 기업 등록 화면과 동일\nb. 문항 풀\n  i. 0번 기업 자신의 문항만 나옴 — 개별 기업 문항은 나오지 않음\nc. 표준 템플릿 불러오기\n  i. 기본 제공 문항 5개가 자리마다 자동으로 세팅됨 (좋아요 3 · 아쉬워요 2)\n  ii. 이미 담긴 문항이 있으면 한 번 물음: 「지금 담긴 문항을 비우고 표준 구성으로 바꿉니다. 계속할까요?」"},
       "form-actions": {id:"r-survey-register/form-actions", title:"액션 영역", body:"a. 버튼 구성\n  i. 등록 화면: [등록완료] [목록]\n  ii. 수정 화면: [저장] [삭제] [목록]\n  iii. 동작·검증 순서는 개별 기업 등록 화면과 동일"},
-      "form-deliver": {id:"r-survey-register/form-deliver", title:"노출 정보 영역", body:"진행 방식 · 노출 메뉴 URL · 보이지 않기는 개별 기업 등록 화면과 같음. 다른 것은 대상임.\na. 대상 기업\n  i. 필수여부: 필수\n  ii. 입력 방식: [엑셀로 등록] 하나 — 기업 목록을 화면에서 고르는 길은 두지 않음\n  iii. 고르는 단위: 사람이 아니라 기업 — 그 기업의 교육담당자 전원이 대상\n  iv. 담당자 명단을 읽어 오는 곳: /Student/EduRoleV2 — 노출·발송 시점에 읽음\n  v. 등록 뒤 그 기업에 담당자가 새로 생기면 그때부터 대상에 들어옴\n  vi. 미등록 상태로 저장: 「대상 기업을 엑셀로 등록해주세요.」 + 그 영역으로 커서 이동\nb. 엑셀로 등록\n  i. 레이어 구성: [찾아보기] [파일 업로드하기] 유의사항 [샘플 엑셀파일 다운로드] [닫기]\n  ii. 양식: 기업코드 · 기업명 2칸, 맞추는 값은 기업코드 (기업명은 눈으로 확인하는 칸)\n  iii. 받는 확장자: .xlsx · .xls · .csv\n  iv. 올린 명단이 그대로 대상 기업이 됨 — 앞서 올린 기업은 지워짐\n  v. LMS 기업사용여부가 N인 기업과 없는 코드는 담기지 않고, 몇 번째 줄이 왜 빠졌는지 표시\n  vi. 같은 기업코드가 여러 줄: 한 번만 담김\n  vii. 파일을 고르기 전: [파일 업로드하기]가 비활성 — 파일명 자리에 「선택된 파일이 없습니다」\nc. 올린 뒤 표시\n  i. 기업이 칩으로 쌓이고 칩의 ✕로 하나씩 제거\n  ii. 칩 아래에 「선택한 N개 기업 · 교육담당자 M명」\n  iii. M: 그 기업들의 교육담당자 수 합계 — 결과 화면의 [대상자]와 같은 값\nd. 복사 시\n  i. 대상 기업은 비움 — 회차마다 다시 올림\ne. 확인 필요\n  i. 대상 기업 수의 상한 — 한 번에 수백 개를 올렸을 때 노출·발송이 견디는지"},
+      "form-deliver": {id:"r-survey-register/form-deliver", title:"노출 정보 영역", body:"진행 방식 · 노출 메뉴 URL · 보이지 않기는 개별 기업 등록 화면과 같음. 다른 것은 대상임.\na. 대상 기업\n  i. 필수여부: 필수\n  ii. 입력 방식: [엑셀로 등록] 하나 — 기업 목록을 화면에서 고르는 길은 두지 않음\n  iii. 고르는 단위: 사람이 아니라 기업 — 그 기업의 교육담당자 전원이 대상\n  iv. 담당자 명단을 읽어 오는 곳: /Student/EduRoleV2 — 노출·발송 시점에 읽음\n  v. 등록 뒤 그 기업에 담당자가 새로 생기면 그때부터 대상에 들어옴\n  vi. 미등록 상태로 저장: 「대상 기업을 엑셀로 등록해주세요.」 + 그 영역으로 커서 이동\nb. 엑셀로 등록\n  i. 레이어 구성: [찾아보기] [파일 업로드하기] 유의사항 [샘플 엑셀파일 다운로드] [닫기]\n  ii. 양식: 기업코드 · 기업명 2칸, 맞추는 값은 기업코드 (기업명은 눈으로 확인하는 칸)\n  iii. 받는 확장자: .xlsx · .xls · .csv\n  iv. 올린 명단이 그대로 대상 기업이 됨 — 앞서 올린 기업은 지워짐\n  v. LMS 기업사용여부가 N인 기업과 없는 코드는 담기지 않고, 몇 번째 줄이 왜 빠졌는지 표시\n  vi. 같은 기업코드가 여러 줄: 한 번만 담김\n  vii. 파일을 고르기 전: [파일 업로드하기]가 비활성 — 파일명 자리에 「선택된 파일이 없습니다」\nc. 올린 뒤 표시\n  i. 표시: 「엑셀로 등록한 N개 기업 · 교육담당자 M명」 한 줄\n  ii. 하나씩 빼는 ✕ 없음 — 대상을 바꾸려면 엑셀을 다시 올림\n  iii. 마우스를 올리면 전체 명단(기업명(기업코드) N명)이 뜸\n  iv. M: 그 기업들의 교육담당자 수 합계 — 결과 화면의 [대상자]와 같은 값\n  v. 등록된 기업이 없을 때: 「등록된 기업이 없습니다」\nd. 복사 시\n  i. 대상 기업은 비움 — 회차마다 다시 올림\ne. 확인 필요\n  i. 대상 기업 수의 상한 — 한 번에 수백 개를 올렸을 때 노출·발송이 견디는지"},
     },
 };
   /* 레이어 설명 — 목록에서 여는 두 레이어는 개별 기업과 0번 기업이 같은 코드를 쓴다 */
@@ -2725,6 +2729,8 @@
       ? ((existing.targets||[]).length ? existing.targets.slice()
          : ((existing.delivery.email||{}).targets||[]).slice())
       : [];
+    /* 대상이 어디서 왔는지 — 엑셀로 들어온 명단은 화면에서 고치지 않는다 */
+    state.targetSource = isEdit ? (existing.targetSource || "search") : "search";
     /* 새 설문은 직전 같은 유형 설문의 구성을 기본값으로 가져온다 — 그대로 두면 클릭 없이 넘어간다 */
     state.picksDraft = isEdit ? JSON.parse(JSON.stringify(existing.picks||{}))
                               : (src ? JSON.parse(JSON.stringify(src.picks||{})) : defaultPicksFor(state.formType));
@@ -2917,7 +2923,8 @@
     var bPerson = document.getElementById("btnPersonSearch");
     if (bPerson) bPerson.addEventListener("click", function(){
       openPersonSearch({selected: state.targetDraft, onConfirm: function(people){
-        state.targetDraft = people; renderTargetChips(); toast(people.length + "명 선택되었습니다."); }});
+        state.targetDraft = people; state.targetSource = "search";
+        renderTargetChips(); toast(people.length + "명 선택되었습니다."); }});
     });
     /* 업로드는 고른 것에 <b>더한다</b> — 갈아치우면 앞서 고른 대상이 말없이 사라진다 */
     var bPersonX = document.getElementById("btnPersonExcel");
@@ -2935,6 +2942,7 @@
         onConfirm: function(fileName){
           /* 올린 파일이 곧 대상 명단이다 — 앞서 고른 것과 섞지 않는다 */
           state.targetDraft = EDU_ROLE_LIST.slice(0, 5);
+          state.targetSource = "excel";
           renderTargetChips();
           toast(fileName + " 업로드 완료 — 대상자 " + state.targetDraft.length + "명으로 등록되었습니다. (2건은 등록되지 않은 아이디라 제외)");
         }
@@ -3437,32 +3445,42 @@
     });
   }
   /* 고른 기업 칩 + 합계 한 줄. 합계가 곧 결과 화면의 [대상자]라 항상 눈에 보여야 한다. */
+  /* 0번 기업은 넣는 길이 엑셀 하나다 — 그래서 언제나 몇 개 기업 몇 명인지만 보여준다 */
   function renderCompanyChips(){
-    /* 전체 기업을 고르면 칩도 합계도 그리지 않는다 — 그 자리에는 설명 한 줄만 있다 */
     var wrap = document.getElementById("companyChips");
     if (!wrap) return;
     var list = state.companyTargetDraft || [];
-    wrap.innerHTML = list.length
-      ? list.map(function(c, i){
-          var n = c.picked ? c.picked.length : c.managers;
-          return '<span class="chip">'+esc(c.name)+'('+esc(c.code)+') · ' +
-                 (n === c.managers ? String(c.managers) : n + ' / ' + c.managers) + '명' +
-                 '<button data-i="'+i+'" title="빼기">✕</button></span>';
-        }).join("")
-      : '<span class="empty-chip">선택된 기업이 없습니다</span>';
-    wrap.querySelectorAll("button").forEach(function(b){
-      b.addEventListener("click", function(){
-        state.companyTargetDraft.splice(Number(b.dataset.i), 1);
-        renderCompanyChips();
-      });
-    });
+    if (!list.length){
+      wrap.innerHTML = '<span class="empty-chip">등록된 기업이 없습니다</span>';
+    } else {
+      renderCountOnly("companyChips",
+        "엑셀로 등록한 " + list.length + "개 기업 · 교육담당자 " + managersOf(list) + "명",
+        list.map(function(c){ return c.name+"("+c.code+") "+c.managers+"명"; }).join(", "),
+        "대상을 바꾸려면 엑셀을 다시 올려주세요.");
+    }
     var sum = document.getElementById("companySum");
-    if (sum) sum.innerHTML = list.length
-      ? '선택한 <b>'+list.length+'</b>개 기업 · 교육담당자 <b>'+managersOf(list)+'</b>명'
-      : '';
+    if (sum) sum.innerHTML = "";
   }
 
-  function renderTargetChips(){ renderPersonChipsInto("targetChips", state.targetDraft, "선택된 교육담당자가 없습니다", renderTargetChips); }
+  /* 엑셀로 들어온 명단은 몇 명인지만 — 하나씩 지우게 두면 파일과 화면 중
+     어느 쪽이 대상인지 갈린다. 전체 명단은 마우스를 올리면 뜬다(목록의 대상 칸과 같은 방식). */
+  function renderCountOnly(wrapId, label, title, hint){
+    var wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    wrap.innerHTML = '<span class="chip chip-sum" title="'+esc(title)+'">'+esc(label)+'</span>' +
+                     '<span class="chip-note">'+esc(hint)+'</span>';
+  }
+  function renderTargetChips(){
+    var list = state.targetDraft || [];
+    if (state.targetSource === "excel" && list.length){
+      renderCountOnly("targetChips",
+        "엑셀로 등록한 " + list.length + "명",
+        list.map(function(p){ return p.name+"("+p.id+")"; }).join(", "),
+        "명단을 바꾸려면 엑셀을 다시 올려주세요.");
+      return;
+    }
+    renderPersonChipsInto("targetChips", list, "선택된 교육담당자가 없습니다", renderTargetChips);
+  }
 
   function saveSurvey(existing, owner){
     var title = document.getElementById("fTitle").value.trim();
@@ -3519,6 +3537,7 @@
       existing.startAt = start; existing.endAt = end; existing.expose = expose;
       existing.delivery = delivery;
       existing.targets = state.targetDraft.slice();
+      existing.targetSource = state.targetSource || "search";
       existing.companyTargets = coTargets;
       existing.picks = JSON.parse(JSON.stringify(state.picksDraft));
       toast("설문이 수정되었습니다.");
@@ -3530,6 +3549,7 @@
         title:title, startAt:start, endAt:end, expose:expose,
         delivery: delivery,
         targets: state.targetDraft.slice(),
+        targetSource: state.targetSource || "search",
         companyTargets: coTargets,
         picks: JSON.parse(JSON.stringify(state.picksDraft)),
         participants: 0
