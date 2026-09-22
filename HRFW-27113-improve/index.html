@@ -2841,9 +2841,7 @@
     /* 진행 방식은 고를 것이 없다 — 기능개선 설문은 단계형 팝업이라 에듀매니저 안에서만 돈다.
        끄는 칸을 두면 "끄면 무엇이 되는가"를 담당자가 생각해야 하는데, 끄면 답할 곳이 없다. */
     var deliverBlock =
-      rowSpec("a", "진행 방식",
-        '<div class="readonly-value">에듀매니저 팝업</div>' +
-        '<p class="hint">지정한 메뉴에 들어온 대상자에게 팝업이 뜹니다. 참여를 독려하려면 등록을 마친 뒤 목록의 <b>[메일 보내기]</b>로 안내 메일을 보내세요.</p>', true) +
+      rowSpec("a", "진행 방식", '<div class="readonly-value">에듀매니저 팝업</div>', true) +
 
       rowSpec("b", "노출 메뉴 URL", '<input type="text" id="fUrl" class="wide" value="'+esc(pick("menuUrl", isEdit?existing.delivery.popup.menuUrl:"/Manage/Home"))+'" style="max-width:340px">', true) +
       /* 기존 에듀매니저 팝업 설정의 [보이지 않기]와 같은 칸이다. 다섯 가지 중 둘만 쓴다 —
