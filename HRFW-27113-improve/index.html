@@ -4182,7 +4182,7 @@
     return out;
   }
 
-  /* 문항 단계 유형 — 표 하나. 문항 유형 3개 × 자유 입력란(객관식에만) = 유형 5개.
+  /* 문항 유형 — 표 하나. 문항 유형 3개 × 자유 입력란(객관식에만) = 노출 케이스 5개.
      세부(미응답 문구 · 필수/선택 · 어디서 정하나)는 단계마다 설명 패널이 갖고 있으므로 여기 적지 않는다. */
   function userPolicyHtml(s){
     var spots = s ? caseSpotsOf(s) : {};
@@ -4209,11 +4209,11 @@
         '</td></tr>';
     }).join("");
 
-    return '<h3>문항 단계 유형</h3>' +
-      '<p class="tc-note">문항 유형은 <b>3개</b>, 자유 입력란은 <b>객관식에만</b> 붙어서 문항 단계 유형은 모두 <b>5가지</b>입니다.</p>' +
+    return '<h3>문항 유형</h3>' +
+      '<p class="tc-note">문항 유형은 <b>3개</b>, 자유 입력란은 <b>객관식에만</b> 붙어서 노출 케이스는 모두 <b>5가지</b>입니다.</p>' +
       '<table class="pol-t"><thead><tr>' +
         '<th style="width:140px;">문항 유형</th><th style="width:110px;">자유 입력란</th>' +
-        '<th style="width:260px;">유형</th><th>이 화면에서 보기</th>' +
+        '<th style="width:260px;">노출 케이스</th><th>이 화면에서 보기</th>' +
       '</tr></thead><tbody>' + body + '</tbody></table>';
   }
 
