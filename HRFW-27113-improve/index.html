@@ -4182,54 +4182,39 @@
     return out;
   }
 
+  /* 주요 정책 — 표 하나. 문항 유형 3개 × 자유 입력란(객관식에만) = 전체 유형 5개.
+     세부(미응답 문구 · 필수/선택 · 어디서 정하나)는 단계마다 설명 패널이 갖고 있으므로 여기 적지 않는다. */
   function userPolicyHtml(s){
     var spots = s ? caseSpotsOf(s) : {};
-    var caseRows = STEP_CASES.map(function(c, n){
-      var at = spots[c.key] || [];
-      return '<tr><td style="width:36px;text-align:center;">'+(n+1)+'</td>' +
-        '<td><b>'+esc(c.label)+'</b></td>' +
+    var label = {};
+    STEP_CASES.forEach(function(c){ label[c.key] = c.label; });
+    var ROWS = [
+      {type:"객관식 단일형", span:2, extra:"없음", key:"single"},
+      {extra:"붙음", key:"single-extra"},
+      {type:"객관식 복수형", span:2, extra:"없음", key:"multi"},
+      {extra:"붙음", key:"multi-extra"},
+      {type:"주관식", span:1, extra:"붙지 않음", key:"text"}
+    ];
+    var body = ROWS.map(function(r){
+      var at = spots[r.key] || [];
+      return '<tr>' +
+        (r.type ? '<td rowspan="'+r.span+'"><b>'+esc(r.type)+'</b></td>' : '') +
+        '<td>'+esc(r.extra)+'</td>' +
+        '<td><b>'+esc(label[r.key])+'</b></td>' +
         '<td>' + (at.length
           ? at.map(function(p){
               return '<button class="btn btn-ghost btn-sm case-jump" data-branch="'+p.branch+'" data-idx="'+p.idx+'">'+esc(p.label)+'</button>';
             }).join(" ")
-          : '<span class="of-dim">이 목업 설문에는 없음 — 복수형 문항에 자유 입력란을 켜고 설문에 담으면 나옵니다</span>') +
+          : '<span class="of-dim">이 목업에는 없음</span>') +
         '</td></tr>';
     }).join("");
 
     return '<h3>주요 정책</h3>' +
-      '<p class="tc-note">아래 참여 화면을 누르기 전에 읽어 두면, 지금 보고 있는 단계가 어느 경우인지 바로 압니다.</p>' +
-
-      '<h4 class="pol-h">1. 문항 유형은 셋</h4>' +
-      '<table class="pol-t"><thead><tr><th style="width:130px;">유형</th><th>답하는 방식</th><th>화면</th><th style="width:220px;">답하지 않고 [다음]을 누르면</th></tr></thead><tbody>' +
-        '<tr><td><b>객관식 단일형</b></td><td>보기 중 하나</td><td>칩 버튼 — 다른 것을 누르면 앞서 고른 것이 풀림</td><td>「답변을 선택해 주세요.」</td></tr>' +
-        '<tr><td><b>객관식 복수형</b></td><td>보기 중 여럿 (최대 N개)</td><td>칩 버튼 + 「복수 선택 가능 · 최대 N개」 — N을 넘기면 방금 누른 것이 취소됨</td><td>「하나 이상 골라주세요.」</td></tr>' +
-        '<tr><td><b>주관식</b></td><td>직접 입력</td><td>입력칸 하나 · 500자</td><td>「내용을 입력해 주세요.」</td></tr>' +
-      '</tbody></table>' +
-      '<p class="tc-note">문항이 <b>[선택]</b>이면 비워도 넘어갑니다 — 위 문구는 <b>[필수]</b>일 때만 뜹니다.</p>' +
-
-      '<h4 class="pol-h">2. 자유 입력란은 객관식에만 붙습니다</h4>' +
-      '<ul class="pol">' +
-        '<li>문항 등록에서 [자유 입력란(주관식)]을 <b>켠 객관식에만</b> 나타나고, 끄면 칸째 사라집니다 — 빈 자리로 남지 않습니다</li>' +
-        '<li>자리는 보기 바로 아래 · 문구 뒤에 <b>(선택)</b></li>' +
-        '<li>언제나 선택 — 비워도 넘어가고, 문항의 필수 판정에 넣지 않습니다</li>' +
-        '<li>500자 · 칸 오른쪽 아래에 「0/500」</li>' +
-        '<li><b>주관식에는 붙지 않습니다</b> — 칸 자체가 자유 입력이라, 유형을 주관식으로 고르면 문항 등록에서 그 체크가 사라집니다</li>' +
-      '</ul>' +
-
-      '<h4 class="pol-h">3. 그래서 한 단계의 모양은 다섯 가지</h4>' +
-      '<table class="pol-t"><thead><tr><th style="width:36px;">#</th><th style="width:240px;">케이스</th><th>이 화면에서 보기 <span class="of-dim">(누르면 아래 참여 화면이 그 단계로 열림)</span></th></tr></thead><tbody>' +
-        caseRows +
-      '</tbody></table>' +
-      '<p class="tc-note">다섯은 따로 만드는 화면이 아니라 <b>부품의 조합</b>입니다 — 머리(단계 배지 · 문제 · 안내 문구) + 답변부(유형이 고름) + 자유 입력란(켜면 붙음) + 버튼. ' +
-        '개발모드에서 단계를 누르면 설명 제목에 케이스가 나오고, 화면의 a · b · c가 설명 항목과 짝입니다.</p>' +
-
-      '<h4 class="pol-h">4. 무엇을 어디서 정하나</h4>' +
-      '<table class="pol-t"><thead><tr><th style="width:250px;">정하는 곳</th><th>정하는 것</th></tr></thead><tbody>' +
-        '<tr><td>에듀매니저 › 기능개선 설문 문항 관리 › 문항 등록</td><td><b>문항 하나의 모든 것</b> — 유형 · 문제 · 안내 문구 · 보기와 보기 개수(1~20) · 선택 개수 · 자유 입력란 켬/끔과 그 문구 · 예시문구 · 입력칸 예시문구 · 필수 여부 · 사용 여부</td></tr>' +
-        '<tr><td>에듀매니저 › 기능개선 설문 관리 › 설문 등록</td><td>좋아요 · 아쉬워요 갈래마다 <b>어느 문항을 어떤 순서로</b> 담을지 — 담은 개수가 곧 단계 수 · 팝업이 뜰 메뉴 · 보이지 않기 기간 · 대상</td></tr>' +
-        '<tr><td>화면에 고정</td><td>첫 화면 제목 · 설명 · 카드 문구 · 버튼 글자 · 미응답 문구 · 완료 화면 · 글자수 500 — 설문마다 바뀌지 않습니다</td></tr>' +
-      '</tbody></table>' +
-      '<p class="tc-note"><b>디자인 · 퍼블에서 늘고 줄어드는 것을 대비할 곳</b> — 단계 수(갈래마다 다름) · 보기 개수(1~20, 칩이 여러 줄로 감김) · 문제 길이 · 안내 문구(비우면 유형별 기본 문구) · 자유 입력란 유무.</p>';
+      '<p class="tc-note">문항 유형은 <b>3개</b>, 자유 입력란은 <b>객관식에만</b> 붙어서 한 단계의 모양은 모두 <b>5가지</b>입니다.</p>' +
+      '<table class="pol-t"><thead><tr>' +
+        '<th style="width:140px;">문항 유형</th><th style="width:110px;">자유 입력란</th>' +
+        '<th style="width:260px;">전체 유형</th><th>이 화면에서 보기</th>' +
+      '</tr></thead><tbody>' + body + '</tbody></table>';
   }
 
   function renderUserImprove(root){
