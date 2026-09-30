@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>에듀매니저 매뉴얼 운영 가이드</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+  /* 레이아웃: 한 줄기 읽기 문서 — 본문은 68ch, 절차·표·주소 블록만 폭을 넓게 쓴다 */
+  :root {
+    --paper: #f7f5f3;
+    --surface: #ffffff;
+    --surface-2: #f0ece9;
+    --ink: #221b19;
+    --ink-2: #6b5f5b;
+    --ink-3: #9a8f8a;
+    --line: #e0d8d4;
+    --line-2: #cfc4bf;
+    --accent: #c0332c;
+    --accent-ink: #8f241f;
+    --accent-wash: #fbeceb;
+    --ext: #1e5fa8;
+    --ext-wash: #e8f0f9;
+    --int: #6a3bb5;
+    --int-wash: #f0eaf9;
+    --zero: #9a6206;
+    --zero-wash: #fbf1e0;
+    --warn: #a35a05;
+    --warn-wash: #fcf3e4;
+    --font-display: "IBM Plex Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --font-body: "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", "D2Coding", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #171413;
+      --surface: #201b19;
+      --surface-2: #2a2321;
+      --ink: #f0e9e6;
+      --ink-2: #b6a9a4;
+      --ink-3: #8b7d78;
+      --line: #362d2a;
+      --line-2: #4a3e3a;
+      --accent: #e8736a;
+      --accent-ink: #f0958e;
+      --accent-wash: #2e1d1b;
+      --ext: #79b0e8;
+      --ext-wash: #16222e;
+      --int: #b294ee;
+      --int-wash: #221a30;
+      --zero: #dda94f;
+      --zero-wash: #2b2114;
+      --warn: #e0a457;
+      --warn-wash: #2b2114;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #171413;
+    --surface: #201b19;
+    --surface-2: #2a2321;
+    --ink: #f0e9e6;
+    --ink-2: #b6a9a4;
+    --ink-3: #8b7d78;
+    --line: #362d2a;
+    --line-2: #4a3e3a;
+    --accent: #e8736a;
+    --accent-ink: #f0958e;
+    --accent-wash: #2e1d1b;
+    --ext: #79b0e8;
+    --ext-wash: #16222e;
+    --int: #b294ee;
+    --int-wash: #221a30;
+    --zero: #dda94f;
+    --zero-wash: #2b2114;
+    --warn: #e0a457;
+    --warn-wash: #2b2114;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 96px;
+  }
+
+  /* ── 머리말 ── */
+  header.masthead { padding-block: 56px 36px; border-bottom: 2px solid var(--ink); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: clamp(30px, 6vw, 42px); line-height: 1.22; letter-spacing: -.02em;
+    margin: 0 0 16px; text-wrap: balance;
+  }
+  .standfirst { margin: 0; max-width: 62ch; color: var(--ink-2); font-size: 16px; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 24px;
+    font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3);
+  }
+  .meta b { color: var(--ink-2); font-weight: 500; }
+
+  /* ── 섹션 ── */
+  section { padding-block: 44px 0; }
+  h2 {
+    font-family: var(--font-display); font-weight: 600; font-size: 22px;
+    letter-spacing: -.01em; margin: 0 0 6px;
+    display: flex; align-items: baseline; gap: 12px; text-wrap: balance;
+  }
+  h2 .num { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--accent); flex: none; }
+  .lede { color: var(--ink-2); margin: 0 0 22px; max-width: 66ch; }
+  h3 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 30px 0 10px; }
+  p { max-width: 68ch; }
+  code, .k {
+    font-family: var(--font-mono); font-size: .88em;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 4px; padding: 1px 6px; white-space: nowrap;
+  }
+
+  /* ── 세 동작 ── */
+  .triad { display: grid; gap: 14px; grid-template-columns: 1fr; margin-bottom: 22px; }
+  @media (min-width: 680px) { .triad { grid-template-columns: repeat(3, 1fr); } }
+  .act {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px; min-width: 0;
+  }
+  .act .a-n {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
+    color: var(--ink-3); display: block; margin-bottom: 8px;
+  }
+  .act .a-t { font-family: var(--font-display); font-weight: 600; font-size: 15.5px; margin: 0 0 6px; }
+  .act .a-d { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; max-width: none; }
+
+  /* ── 배지 ── */
+  .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: .04em; padding: 2px 7px; border-radius: 3px;
+    vertical-align: 2px; white-space: nowrap;
+  }
+  .tag.ext { background: var(--ext-wash); color: var(--ext); }
+  .tag.int { background: var(--int-wash); color: var(--int); }
+  .tag.zero { background: var(--zero-wash); color: var(--zero); }
+  .tag.each { background: var(--accent-wash); color: var(--accent-ink); }
+
+  /* ── 주소 목록 ── */
+  .addr { display: grid; gap: 0; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; }
+  .addr > div { padding: 16px 18px; border-bottom: 1px solid var(--line); min-width: 0; }
+  .addr > div:last-child { border-bottom: none; }
+  .addr .ad-t { font-weight: 600; font-size: 14.5px; display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+  .addr .ad-s { color: var(--ink-2); font-size: 13px; margin: 3px 0 6px; max-width: none; }
+  .addr a.url {
+    font-family: var(--font-mono); font-size: 12.5px;
+    word-break: break-all; display: inline-block; max-width: 100%;
+  }
+
+  /* ── 절차 ── */
+  .proc {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 22px 22px 10px; margin-bottom: 16px;
+  }
+  .proc > header { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .proc h3 { margin: 0; font-size: 17px; flex: 1 1 16ch; min-width: 0; }
+  .proc .p-sub { color: var(--ink-2); font-size: 13.5px; margin: 8px 0 0; max-width: none; }
+  .proc ol { margin: 16px 0 6px; padding-left: 21px; }
+  .proc ol li { margin-bottom: 8px; padding-left: 2px; }
+  .proc ol li::marker { font-family: var(--font-mono); font-size: 12.5px; color: var(--ink-3); }
+  .proc ol ul { margin: 6px 0 0; padding-left: 18px; }
+  .proc ol ul li { margin-bottom: 3px; font-size: 13.5px; color: var(--ink-2); }
+  .result {
+    border-top: 1px dashed var(--line-2); margin-top: 12px; padding: 12px 0 14px;
+    font-size: 13.5px; color: var(--ink-2); display: flex; gap: 10px;
+  }
+  .result b { color: var(--ink); font-weight: 600; }
+  .result .lbl {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em;
+    color: var(--ink-3); flex: none; padding-top: 3px;
+  }
+
+  /* ── 표 ── */
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 520px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  thead th {
+    font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--ink-3); font-weight: 500;
+    background: var(--surface-2); white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.val { font-weight: 600; }
+  .caption { font-size: 12.5px; color: var(--ink-3); margin: 10px 0 0; }
+
+  /* ── 주의 ── */
+  .note {
+    border-left: 3px solid var(--warn); background: var(--warn-wash);
+    padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 20px 0;
+  }
+  .note .n-h { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--warn); margin: 0 0 4px; }
+  .note p { margin: 0; font-size: 13.5px; color: var(--ink); max-width: none; }
+
+  /* ── 모달 ── */
+  .dialog {
+    max-width: 420px; background: var(--surface); border: 1px solid var(--line-2);
+    border-radius: 8px; box-shadow: 0 10px 30px rgb(0 0 0 / .12);
+    padding: 24px 24px 20px; margin: 18px 0 8px;
+  }
+  .dialog .d-t { font-weight: 700; font-size: 15px; margin: 0 0 8px; }
+  .dialog .d-b { color: var(--ink-2); font-size: 13.5px; margin: 0 0 18px; line-height: 1.65; }
+  .dialog .d-a { display: flex; gap: 8px; justify-content: center; }
+  .btn {
+    font-family: var(--font-body); font-size: 13px; padding: 7px 22px;
+    border-radius: 4px; border: 1px solid var(--line-2);
+    background: var(--surface); color: var(--ink-2);
+  }
+  .btn.primary { border-color: var(--accent); color: var(--accent); }
+
+  /* ── 화면 캡처 ── */
+  figure.shot {
+    margin: 20px 0 0; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; background: var(--surface-2);
+  }
+  figure.shot img { display: block; width: 100%; height: auto; max-width: 100%; }
+  figure.shot figcaption {
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.6;
+    padding: 11px 15px; border-top: 1px solid var(--line); background: var(--surface);
+  }
+  figure.shot figcaption b { color: var(--ink); font-weight: 600; }
+
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  ul.plain { padding-left: 19px; margin: 12px 0 0; }
+  ul.plain li { margin-bottom: 8px; max-width: 66ch; }
+
+  footer.foot {
+    margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--ink-3);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">운영팀 업무 가이드</p>
+    <h1>에듀매니저 매뉴얼 운영 가이드</h1>
+    <p class="standfirst">매뉴얼 등록과 노출 관리는 <b>연수원 설정(<code>companySetting/v2</code>)</b> 한 곳에서 합니다. 어느 기업에서 무엇을 등록하고, 등록한 것이 어느 페이지에 나오는지 정리했습니다.</p>
+    <div class="meta">
+      <span><b>대상</b> 휴넷 운영팀</span>
+      <span><b>관련 이슈</b> HRFW-35531</span>
+      <span><b>기준일</b> 2026-09-30</span>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>관리 화면에서 하는 일은 세 가지</h2>
+    <p class="lede">연수원 설정의 매뉴얼 관리 항목에서 할 일은 이것이 전부입니다. 매뉴얼 페이지에서는 아무것도 고칠 수 없습니다.</p>
+
+    <div class="triad">
+      <div class="act">
+        <span class="a-n">01</span>
+        <p class="a-t">버튼 노출 유무</p>
+        <p class="a-d"><b>버튼 사용여부</b>를 <span class="k">사용</span> / <span class="k">미사용</span> 중에서 고릅니다. 매뉴얼로 들어가는 버튼·메뉴가 보일지를 정합니다.</p>
+      </div>
+      <div class="act">
+        <span class="a-n">02</span>
+        <p class="a-t">HTML 붙여넣기</p>
+        <p class="a-d">매뉴얼 <b>HTML 소스를 그대로 복사해</b> 입력창에 붙여넣습니다. 파일 업로드나 주소 입력은 없습니다.</p>
+      </div>
+      <div class="act">
+        <span class="a-n">03</span>
+        <p class="a-t">등록</p>
+        <p class="a-d"><span class="k">등록</span>을 누르면 그 기업에 저장되고 <b>즉시 반영</b>됩니다. 별도 배포 절차는 없습니다.</p>
+      </div>
+    </div>
+
+    <p>이 세 가지를 <b>0번 기업</b>과 <b>개별 기업</b> 두 자리에서 합니다. 0번 기업에 등록한 것이 공통 매뉴얼이 되고, 개별 기업에 등록한 것은 그 고객사에만 쓰입니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>화면 주소</h2>
+    <p class="lede">아래는 테스트 서버 주소입니다.</p>
+
+    <div class="addr">
+      <div>
+        <p class="ad-t">연수원 설정 <span class="tag zero">0번 기업</span><span class="tag each">개별 기업</span></p>
+        <p class="ad-s">이 화면의 좌측 설정 목록 안에 매뉴얼 관리 항목이 있습니다. 로그인한 기업이 곧 작업 대상이라, 열기 전에 오른쪽 위 기업명을 확인합니다.</p>
+        <a class="url" href="https://testedumanager.hunet.co.kr/companySetting/v2#50952456">https://testedumanager.hunet.co.kr/companySetting/v2#50952456</a>
+      </div>
+      <div>
+        <p class="ad-t">외부용 매뉴얼 페이지 <span class="tag ext">표준형</span></p>
+        <p class="ad-s">상단 헤더 <span class="k">매뉴얼</span> 버튼으로 열립니다. 고객사 교육담당자가 보는 화면입니다.</p>
+        <a class="url" href="https://testedumanager.hunet.co.kr/Common/EdmManual">https://testedumanager.hunet.co.kr/Common/EdmManual</a>
+      </div>
+      <div>
+        <p class="ad-t">내부용 매뉴얼 페이지 <span class="tag int">확장형</span></p>
+        <p class="ad-s">좌측 사이드바 <span class="k">에듀매니저 매뉴얼(확장형)</span>으로 열립니다. 내부 IP에서만 열립니다.</p>
+        <a class="url" href="https://testedumanager.hunet.co.kr/Common/EdmManualExtended">https://testedumanager.hunet.co.kr/Common/EdmManualExtended</a>
+      </div>
+    </div>
+
+    <p class="caption">매뉴얼 페이지 주소에는 기업코드가 없습니다. <b>로그인한 기업</b>이 어느 매뉴얼을 보여줄지 정하므로, 상단 <span class="k">기업변경</span>으로 기업을 바꾸면 같은 주소에서 그 기업 매뉴얼이 나옵니다.</p>
+
+    <div class="note">
+      <p class="n-h">HTML이 길면 관리 화면 로딩이 느립니다</p>
+      <p>연수원 설정은 등록된 HTML 소스를 입력창에 통째로 불러옵니다. 소스가 길수록 화면이 뜨는 데 시간이 걸리니, 화면이 바로 안 열려도 기다려 주세요. 매뉴얼 페이지 자체는 영향을 받지 않습니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>0번 기업에서 등록하기</h2>
+    <p class="lede">여기서 등록한 것이 <b>공통 매뉴얼</b>입니다. 외부용·내부용 둘 다 이 화면에서 넣습니다.</p>
+
+    <div class="proc">
+      <header>
+        <h3>공통 매뉴얼 관리</h3>
+        <span class="tag zero">0번 기업</span>
+      </header>
+      <p class="p-sub">0번 기업으로 로그인하면 항목명이 <span class="k">공통 매뉴얼 관리</span>로 보입니다.</p>
+      <ol>
+        <li>0번 기업으로 로그인해 <span class="k">연수원 설정(companySetting/v2)</span>을 열고, 좌측 설정 목록에서 <span class="k">공통 매뉴얼 관리</span>를 누릅니다.</li>
+        <li><b>① 표준 매뉴얼(외부 교담자용)</b>
+          <ul>
+            <li>버튼 사용여부 — 0번 기업 자신의 버튼 노출을 정합니다</li>
+            <li>HTML 소스 — 전체 고객사가 공통으로 볼 매뉴얼을 붙여넣습니다</li>
+          </ul>
+        </li>
+        <li><b>② 확장 매뉴얼(내부 직원용)</b>
+          <ul>
+            <li>버튼 사용여부 — 0번 기업 자신의 메뉴 노출을 정합니다</li>
+            <li>HTML 소스 — 내부 직원이 볼 매뉴얼을 붙여넣습니다</li>
+          </ul>
+        </li>
+        <li><span class="k">등록</span>을 누릅니다.</li>
+      </ol>
+      <div class="result"><span class="lbl">결과</span><span>표준은 <b>개별 매뉴얼을 등록하지 않은 모든 고객사</b>에, 확장은 <b>전 기업</b>에 반영됩니다.</span></div>
+    </div>
+
+    <figure class="shot">
+      <img src="assets/edm-common.webp" alt="0번 기업으로 로그인한 연수원 설정의 공통 매뉴얼 관리 화면. 표준 매뉴얼과 확장 매뉴얼 각각에 버튼 사용여부 라디오와 HTML 입력창이 있고 아래에 등록 버튼이 있다.">
+      <figcaption><b>0번 기업 — 공통 매뉴얼 관리.</b> 표준·확장 <b>둘 다 HTML 입력창</b>이 있습니다. 좌측 설정 목록 맨 아래가 이 항목입니다.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>개별 기업에서 등록하기</h2>
+    <p class="lede">그 고객사에만 쓰이는 매뉴얼입니다. 외부용만 등록할 수 있습니다.</p>
+
+    <div class="proc">
+      <header>
+        <h3>매뉴얼 관리</h3>
+        <span class="tag each">개별 기업</span>
+      </header>
+      <p class="p-sub">일반 고객사로 로그인하면 항목명이 <span class="k">매뉴얼 관리</span>로 보입니다.</p>
+      <ol>
+        <li>상단 <span class="k">기업변경</span>으로 그 고객사로 전환합니다.</li>
+        <li><span class="k">연수원 설정(companySetting/v2)</span>을 열고, 좌측 설정 목록에서 <span class="k">매뉴얼 관리</span>를 누릅니다.</li>
+        <li><b>① 표준 매뉴얼(외부 교담자용)</b>
+          <ul>
+            <li>버튼 사용여부 — 이 고객사의 버튼 노출을 정합니다</li>
+            <li>HTML 소스 — 이 고객사 전용 매뉴얼을 붙여넣습니다</li>
+          </ul>
+        </li>
+        <li><b>② 확장 매뉴얼(내부 직원용)</b>
+          <ul>
+            <li>버튼 사용여부만 정합니다 — <b>HTML 입력창이 없습니다</b></li>
+          </ul>
+        </li>
+        <li><span class="k">등록</span>을 누릅니다.</li>
+      </ol>
+      <div class="result"><span class="lbl">결과</span><span>이 고객사만 전용 매뉴얼을 보게 됩니다. <b>공통으로 되돌리려면 HTML 입력창을 비워서 등록</b>하면 됩니다.</span></div>
+    </div>
+
+    <figure class="shot">
+      <img src="assets/edm-company.png" alt="일반 고객사로 로그인한 연수원 설정의 매뉴얼 관리 화면. 표준 매뉴얼에는 버튼 사용여부와 HTML 입력창이 있고, 확장 매뉴얼에는 버튼 사용여부만 있으며 그 아래에 안내 문구가 있다.">
+      <figcaption><b>개별 기업 — 매뉴얼 관리.</b> 확장 매뉴얼에는 <b>버튼 사용여부만</b> 있고 HTML 입력창이 없습니다.</figcaption>
+    </figure>
+
+    <div class="note">
+      <p class="n-h">내부용은 0번 기업에서만 등록합니다</p>
+      <p>확장형 매뉴얼은 전사 공통 문서 하나입니다. 개별 기업 화면에서는 내용을 넣을 수 없고 <b>버튼 노출 유무만</b> 관리합니다. 내용을 고치려면 0번 기업으로 전환해야 합니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>어느 매뉴얼이 나오는지</h2>
+    <p class="lede">외부용은 <b>개별 기업 매뉴얼이 우선</b>입니다. 등록돼 있지 않을 때만 0번 기업 매뉴얼이 나옵니다.</p>
+
+    <div class="tablebox">
+      <table>
+        <thead>
+          <tr>
+            <th>0번 기업 HTML</th>
+            <th>개별 기업 HTML</th>
+            <th>교담자에게 나오는 것</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>있음</td><td>있음</td><td class="val">개별 기업 매뉴얼</td><td>0번을 고쳐도 이 고객사는 그대로</td></tr>
+          <tr><td>있음</td><td>없음</td><td class="val">0번 기업 매뉴얼</td><td>대부분의 고객사가 여기</td></tr>
+          <tr><td>없음</td><td>있음</td><td class="val">개별 기업 매뉴얼</td><td>0번이 아직 없어도 제 것을 봄</td></tr>
+          <tr><td>없음</td><td>없음</td><td class="val">빈 화면 안내</td><td>「매뉴얼을 준비 중입니다」</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption">내부용(확장형)은 0번 기업 하나뿐이라 갈리지 않습니다 — 등록돼 있으면 그것이, 없으면 같은 빈 화면 안내가 나옵니다.</p>
+
+  </section>
+
+  <section>
+    <h2><span class="num">06</span>등록할 때 이 창이 뜨면</h2>
+    <p class="lede">버튼은 <span class="k">사용</span>인데 보여줄 HTML이 하나도 없는 상태로 등록하려 하면 먼저 알려줍니다.</p>
+
+    <div class="dialog" role="img" aria-label="저장 경고 창 예시 — 등록된 매뉴얼 내용이 없습니다. 이대로 저장하면 교담자에게 빈 화면이 보입니다. 저장하시겠습니까? 취소 또는 저장.">
+      <p class="d-t">등록된 매뉴얼 내용이 없습니다.</p>
+      <p class="d-b">이대로 저장하면 교담자에게 빈 화면이 보입니다.<br>저장하시겠습니까?</p>
+      <div class="d-a">
+        <span class="btn">취소</span>
+        <span class="btn primary">저장</span>
+      </div>
+    </div>
+
+    <p>내용을 아직 준비 중이라 자리만 열어 두는 것이라면 그대로 저장해도 됩니다. 교담자에게는 빈 화면 대신 <b>「매뉴얼을 준비 중입니다」</b> 안내가 나옵니다. 내용이 없다고 버튼이 저절로 감춰지지는 않으므로, 버튼을 안 보이게 하려면 <b>버튼 사용여부</b>를 <span class="k">미사용</span>으로 직접 바꿉니다.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span>매뉴얼 작성 가이드</h2>
+    <p class="lede">HTML을 어떻게 쓰는지는 별도 문서로 관리합니다. 연수원 설정의 매뉴얼 관리 화면 우측 상단에 있는 <b>매뉴얼 작성 가이드 ↗</b> 링크를 누르면 컨플루언스 문서가 새 탭으로 열립니다.</p>
+    <p><a href="https://ihunet.atlassian.net/wiki/spaces/AHA/pages/5384437766/w" style="font-family: var(--font-mono); font-size: 12.5px; word-break: break-all;">https://ihunet.atlassian.net/wiki/spaces/AHA/pages/5384437766/w</a></p>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span>등록 전 확인</h2>
+    <ul class="plain">
+      <li><b>지금 어느 기업으로 로그인해 있는지</b> 확인합니다 — 화면 오른쪽 위 기업명이 곧 작업 대상입니다.</li>
+      <li>전 고객사에 배포할 내용이면 <b>0번 기업</b>에서, 한 고객사만이면 <b>그 고객사</b>에서 등록합니다.</li>
+      <li>내용만 넣고 <b>버튼 사용여부</b>가 <span class="k">미사용</span>이면 아무도 보지 못합니다. 두 값을 함께 봅니다.</li>
+      <li>등록한 뒤 매뉴얼 페이지를 실제로 열어 확인합니다. 등록이 곧 반영입니다.</li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    화면 구성과 상세 동작은 HRFW-35531 기획서를 따릅니다. 이 문서는 등록·관리 절차만 다룹니다.
+  </footer>
+
+</div>
+
+</body>
+</html>
