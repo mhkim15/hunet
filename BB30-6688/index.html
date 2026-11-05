@@ -1,0 +1,815 @@
+<title>위탁계약서 관리 프로토타입</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg-page:#e9e9ec;
+  --gnb:#1b1b1d;
+  --gnb-text:#ffffff;
+  --side-bg:#ffffff;
+  --side-active:#f0f0f2;
+  --content-bg:#f4f4f5;
+  --card:#ffffff;
+  --search-bg:#f6f6f7;
+  --line:#e6e6e9;
+  --line-strong:#d4d4d8;
+  --text:#1b1b1d;
+  --text-2:#555559;
+  --text-3:#8a8a90;
+  --btn-dark:#1b1b1d;
+  --btn-search:#6b6b70;
+  --btn-disabled-bg:#f0f0f2;
+  --btn-disabled-text:#b4b4ba;
+  --link:#2f6fd6;
+  --danger:#e0323b;
+  --seal:#d42a2a;
+  --th-bg:#f7f7f8;
+  --focus:#2f6fd6;
+  --tbd-bg:#fff4e0;
+  --tbd-text:#a35a00;
+  --tbd-line:#f0b860;
+  --pid-bg:#e8f0ff;
+  --pid-text:#2453a6;
+  --proto-bar:#fffbe6;
+  --proto-line:#e8d48a;
+  --doc-paper:#ffffff;
+  --overlay:rgba(20,20,22,.45);
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg-page);color:var(--text);font-family:var(--font);font-size:13px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-top:12px;padding-bottom:24px;
+  overflow-x:hidden;
+}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+[hidden]{display:none !important}
+
+/* ---------- 프로토타입 바 (EDMS 밖) ---------- */
+.proto{background:var(--proto-bar);border:1px solid var(--proto-line);border-radius:8px;padding:8px 12px;margin-bottom:10px;display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px}
+.proto strong{font-weight:700}
+.proto .sep{color:var(--text-3)}
+.proto fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center}
+.proto legend{float:left;font-weight:700;margin-right:6px;padding:0}
+.proto label{display:inline-flex;gap:4px;align-items:center;cursor:pointer}
+.proto .today{color:var(--text-2)}
+
+.tbd{display:inline-block;font-size:10.5px;line-height:1;padding:3px 5px;border:1px dashed var(--tbd-line);background:var(--tbd-bg);color:var(--tbd-text);border-radius:4px;font-weight:500;vertical-align:middle;white-space:nowrap;cursor:help;margin-left:4px}
+.pid{display:none;font-size:10.5px;line-height:1;padding:3px 5px;background:var(--pid-bg);color:var(--pid-text);border-radius:4px;font-weight:500;vertical-align:middle;white-space:nowrap;margin-left:4px;cursor:help}
+body.show-pid .pid{display:inline-block}
+
+/* ---------- EDMS 프레임 ---------- */
+.frame-scroll{overflow-x:auto;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.frame{min-width:1180px;background:var(--content-bg);display:flex;flex-direction:column;min-height:820px}
+.gnb{height:48px;background:var(--gnb);color:var(--gnb-text);display:flex;align-items:center;padding:0 16px;gap:10px;flex:none}
+.gnb .logo{font-weight:700;font-size:17px;letter-spacing:-.3px}
+.gnb .tenant{font-weight:700;font-size:12px;margin-left:8px}
+.gnb .badge{background:#fff;color:var(--text);font-size:11px;padding:1px 6px;border-radius:3px;font-weight:500}
+.gnb .right{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px}
+.gnb .who{font-weight:700}
+.gnb .gbtn{background:#fff;color:var(--text);border:0;border-radius:6px;height:30px;padding:0 10px;font-size:12px;cursor:pointer}
+.gnb .glang{background:#fff;color:var(--text);border-radius:6px;height:30px;width:110px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:12px}
+.gnb .ilearn{background:#fff;color:var(--text);border-radius:6px;height:32px;padding:0 12px;font-size:12px;display:flex;align-items:center;gap:4px;font-weight:500}
+.gnb .ilearn b{color:#6b4ee6}
+
+.body{display:flex;flex:1}
+.side{width:220px;flex:none;background:var(--side-bg);border-right:1px solid var(--line);padding:12px 0}
+.side .grp{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:0 18px;height:40px;font-size:13.5px;font-weight:500;color:var(--text);cursor:pointer}
+.side .grp:hover{background:#fafafa}
+.side .grp svg{width:16px;height:16px;flex:none}
+.side .grp .chev{margin-left:auto;width:12px;height:12px;color:var(--text-3)}
+.side .grp.open{background:var(--side-active)}
+.side .divider{height:1px;background:var(--line);margin:6px 0}
+.side .subs{padding:4px 12px 8px;background:var(--side-active)}
+.side .sub{display:block;width:100%;border:0;background:none;text-align:left;padding:7px 10px;font-size:12px;color:var(--text-2);border-radius:6px;cursor:pointer}
+.side .sub:hover{color:var(--text)}
+.side .sub.active{background:#e2e2e6;color:var(--text);font-weight:700}
+
+.main{flex:1;min-width:0;padding:22px 24px 0;display:flex;flex-direction:column}
+.ptitle{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.ptitle h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.3px}
+.crumb{font-size:11.5px;color:var(--text-3)}
+.crumb span+span::before{content:">";margin:0 8px;color:var(--text-3)}
+.crumb span:last-child{color:var(--text-2)}
+.card{background:var(--card);border-radius:16px;padding:24px;margin-bottom:20px}
+.footer{text-align:center;color:var(--text-3);font-size:11px;padding:16px 0 20px;margin-top:auto}
+
+.search{background:var(--search-bg);border-radius:10px;padding:20px 20px 18px}
+.search .row{display:flex;flex-wrap:wrap;gap:16px 20px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>label,.field>.flabel{font-size:12px;font-weight:500;color:var(--text)}
+.select,.input{height:34px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;padding:0 10px;font-size:12.5px}
+.select{min-width:220px;appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.input{min-width:260px}
+.search .actions{display:flex;justify-content:flex-end;gap:6px;margin-top:16px;align-items:center}
+.btn{height:32px;border-radius:6px;padding:0 12px;font-size:12px;border:1px solid var(--line-strong);background:#fff;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.btn:hover:not(:disabled){background:#fafafa}
+.btn.search-btn{background:var(--btn-search);border-color:var(--btn-search);color:#fff}
+.btn.search-btn:hover{background:#5a5a5f}
+.btn.dark{background:var(--btn-dark);border-color:var(--btn-dark);color:#fff}
+.btn.dark:hover:not(:disabled){background:#333}
+.btn:disabled{background:var(--btn-disabled-bg);border-color:var(--btn-disabled-bg);color:var(--btn-disabled-text);cursor:not-allowed}
+.btn.sm{height:26px;padding:0 9px;font-size:11.5px}
+.btn.lg{height:40px;padding:0 18px;font-size:13px;border-radius:8px}
+
+/* 회사 선택 다중 */
+.msel{position:relative}
+.msel>button{min-width:240px;text-align:left;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.msel>button .ph{color:var(--text-3)}
+.msel .panel{position:absolute;top:38px;left:0;z-index:20;min-width:260px;background:#fff;border:1px solid var(--line-strong);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.1);padding:6px}
+.msel .opt{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:12.5px}
+.msel .opt:hover{background:#f6f6f7}
+.msel .opt.all{border-bottom:1px solid var(--line);border-radius:6px 6px 0 0;margin-bottom:2px}
+.msel .opt .lv{color:var(--text-3);font-size:11px}
+
+.notice{display:flex;align-items:center;gap:6px;margin:20px 0 0;font-size:12px;color:var(--text-2)}
+.notice svg{width:14px;height:14px;color:var(--text-3)}
+
+.listbar{display:flex;align-items:center;justify-content:space-between;margin:14px 0 10px;gap:8px;flex-wrap:wrap}
+.listbar .count{font-size:12px;color:var(--text-2)}
+.listbar .count b{color:var(--text);font-weight:700}
+.listbar .basis{font-size:12px;color:var(--text);font-weight:500;margin-right:8px}
+
+table.grid{width:100%;border-collapse:collapse;font-size:12.5px}
+table.grid th{background:var(--th-bg);color:var(--text-2);font-weight:500;font-size:12px;height:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:0 10px;text-align:center}
+table.grid td{height:50px;border-bottom:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
+table.grid td.name{word-break:keep-all;overflow-wrap:anywhere}
+table.grid tbody tr:hover td{background:#fbfbfc}
+table.grid td.empty{height:240px;color:var(--text-3);background:#fff !important}
+table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;cursor:pointer}
+.yn{display:inline-flex;align-items:center;gap:8px}
+.yn b{font-weight:500;min-width:10px}
+
+.status{display:inline-block;font-size:11.5px;padding:3px 8px;border-radius:12px}
+.status.ing{background:#fff2e0;color:#b25c00}
+.status.done{background:#e6f4ea;color:#1d7a3a}
+.spin{display:inline-block;width:10px;height:10px;border:2px solid #e2b37a;border-top-color:transparent;border-radius:50%;animation:sp .8s linear infinite;vertical-align:-1px;margin-right:4px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* ---------- 모달 · 다이얼로그 ---------- */
+.overlay{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal{background:#fff;border-radius:14px;width:480px;max-width:100%;max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 10px 32px rgba(0,0,0,.2)}
+.modal header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 8px}
+.modal header h2{margin:0;font-size:17px;font-weight:700}
+.xbtn{border:0;background:none;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:18px;color:var(--text-2)}
+.xbtn:hover{background:#f2f2f3}
+.modal .mbody{padding:8px 24px 4px}
+.modal footer{display:flex;justify-content:flex-end;gap:8px;padding:16px 24px 22px}
+.mco{font-size:14px;font-weight:700;padding:12px 14px;background:var(--search-bg);border-radius:8px;margin-bottom:16px;word-break:keep-all;overflow-wrap:anywhere}
+.msec{margin-bottom:16px}
+.msec .mlabel{font-size:12.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center}
+.sealbox{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:8px;padding:12px}
+.sealbox .imgwrap{width:84px;height:84px;border:1px dashed var(--line-strong);border-radius:6px;display:flex;align-items:center;justify-content:center;background:#fff;flex:none}
+.sealbox .imgwrap img{max-width:100%;max-height:100%;object-fit:contain}
+.sealbox .meta{flex:1;font-size:12px;color:var(--text-2);word-break:break-all}
+.filerow{display:flex;gap:8px;align-items:center}
+.filerow .fname{flex:1;height:34px;border:1px solid var(--line-strong);border-radius:6px;padding:0 10px;display:flex;align-items:center;color:var(--text-3);font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.filerow .fname.has{color:var(--text)}
+.guide{font-size:11.5px;color:var(--text-3);margin-top:6px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.dialog{background:#fff;border-radius:14px;width:360px;max-width:100%;box-shadow:0 10px 32px rgba(0,0,0,.2);padding:30px 24px 20px;text-align:center}
+.dialog .msg{font-size:14px;font-weight:500;margin-bottom:24px;word-break:keep-all;line-height:1.6}
+.dialog .btns{display:flex;gap:8px}
+.dialog .btns .btn{flex:1;height:40px;font-size:13px;border-radius:8px}
+.dialog .tags{margin-top:12px}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1b1b1d;color:#fff;padding:10px 16px;border-radius:8px;font-size:12.5px;z-index:300;max-width:calc(100vw - 32px);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+
+/* ---------- 계약서 미리보기 ---------- */
+.pv{position:fixed;inset:0;background:#3b3b3f;z-index:150;display:flex;flex-direction:column}
+.pv-bar{display:flex;align-items:center;gap:10px;background:#1b1b1d;color:#fff;padding:10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));flex:none;flex-wrap:wrap}
+.pv-bar h2{margin:0;font-size:14px;font-weight:700}
+.pv-bar .sub{font-size:12px;color:#bbb;word-break:break-all}
+.pv-bar .btn{margin-left:auto}
+.pv-body{flex:1;overflow:auto;display:flex;gap:20px;padding:20px max(16px, env(safe-area-inset-right, 0px)) 20px max(16px, env(safe-area-inset-left, 0px));align-items:flex-start}
+.pv-pages{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:20px}
+.pv-side{width:300px;flex:none;background:#fff;border-radius:10px;padding:16px;font-size:12px;position:sticky;top:0}
+.pv-side h3{font-size:13px;margin:0 0 8px}
+.pv-side ul{margin:0 0 14px;padding-left:16px}
+.pv-side li{margin-bottom:6px}
+.pv-side .mail{background:var(--search-bg);border-radius:8px;padding:10px;margin-bottom:8px}
+.pv-side .mail b{display:block;margin-bottom:2px}
+@media (max-width:900px){.pv-body{flex-direction:column-reverse;align-items:stretch}.pv-side{width:auto;position:static}}
+
+.doc{background:var(--doc-paper);width:794px;max-width:100%;padding:56px 64px;color:#111;font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:12.5px;line-height:1.75;box-shadow:0 2px 10px rgba(0,0,0,.35);position:relative}
+.doc .pgno{position:absolute;top:14px;right:20px;font-size:11px;color:#999;font-family:var(--font)}
+.doc .fax{font-size:12px;margin-bottom:8px}
+.doc h1{text-align:center;font-size:26px;letter-spacing:14px;margin:6px 0 16px;font-weight:700}
+.doc table{border-collapse:collapse;width:100%}
+.doc table.meta th,.doc table.meta td{border:1px solid #333;padding:6px 10px;font-size:12px}
+.doc table.meta th{background:#f2f2f2;width:90px;font-weight:700}
+.doc p{margin:0 0 6px;word-break:keep-all;overflow-wrap:anywhere}
+.doc .pre{margin:18px 0 14px}
+.doc h3{font-size:13px;margin:14px 0 4px;font-weight:700}
+.doc .item{padding-left:1.4em;text-indent:-1.4em}
+.doc .item.dash{padding-left:2.6em;text-indent:-1.2em}
+.doc .v{font-weight:700}
+.doc .date{text-align:center;font-size:14px;margin:26px 0 18px;font-weight:700}
+.doc table.sign th,.doc table.sign td{border:1px solid #333;padding:8px 10px;font-size:12.5px;vertical-align:middle}
+.doc table.sign th{background:#f2f2f2;font-weight:700;width:80px}
+.doc table.sign .head{text-align:center;background:#e8e8e8}
+.doc table.sign td{word-break:keep-all;overflow-wrap:anywhere}
+.slot{display:inline-flex;align-items:center;justify-content:center;width:1.48cm;height:1.48cm;position:relative;vertical-align:middle;margin-left:6px;color:#777;font-size:11px}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.doc .annex{margin-top:30px;border-top:2px solid #333;padding-top:14px;font-size:11.5px;line-height:1.7}
+.doc .annex .ttl{font-weight:700;margin-bottom:6px}
+.doc .note-tags{position:absolute;left:-2px;top:-26px;font-family:var(--font)}
+.tbd,.pid,.pv-side,.note-tags{display:none!important}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.search .row{align-items:center}
+.field{gap:0}
+</style>
+
+<div class="frame-scroll">
+<div class="frame" id="frame">
+  <header class="gnb">
+    <span class="logo">LABS New EDMS</span>
+    <span class="tenant">(주)예시그룹</span><span class="badge num">372</span>
+    <div class="right">
+      <span class="who" id="gnb-who">김그룹님</span>
+      <span class="gbtn" style="display:inline-flex;align-items:center">로그아웃</span>
+      <span class="glang">한국어 <span aria-hidden="true">▾</span></span>
+      <span class="ilearn"><b>◆</b> iLearn에게 물어보기</span>
+    </div>
+  </header>
+  <div class="body">
+    <nav class="side" id="side" aria-label="EDMS 메뉴"></nav>
+    <main class="main">
+      <!-- 위탁계약서 관리 -->
+      <section id="view-list">
+        <div class="ptitle">
+          <h1>위탁계약서 관리 <span class="pid" title="ARC-CONTRACT-01 메뉴 노출: HRD아카이브 계약이 있는 연수원만 · 교육담당자 공통 권한 · 사용 중이고 삭제되지 않은 계약만">ARC-CONTRACT-01</span></h1>
+          <div class="crumb"><span>부가서비스</span><span>위탁계약서 관리</span></div>
+        </div>
+        <div class="card">
+          <div class="search">
+            <div class="row">
+              <div class="field" hidden>
+                <label for="sel-contract">계약기간 <span class="pid" title="디폴트: 학습시작일이 오늘과 같거나 이전인 계약 중 가장 최근. 시작일이 같으면 종료일이 늦은 것. 없으면 학습시작일이 가장 빠른 계약">디폴트 규칙</span><span class="tbd" title="QA 3: 오늘 11.04, 계약 A 08.01~11.30 · B 11.10~ → 디폴트 A / A만 미래면 가장 빠른 것 / 문서번호 2608-372">회의에서 정할 것</span></label>
+                <select id="sel-contract" class="select num"></select>
+              </div>
+              <div class="field">
+                <span class="flabel sr" id="lbl-company">회사 선택 <span class="pid" title="ARC-CONTRACT-02 조회 범위: 회사 계층 조회 범위 공통 정책. 직인 등록 권한 아님">ARC-CONTRACT-02</span></span>
+                <div class="msel" id="msel">
+                  <button type="button" class="select" id="btn-company" aria-haspopup="true" aria-expanded="false" aria-labelledby="lbl-company btn-company"><span class="ph">회사 선택</span></button>
+                  <div class="panel" id="company-panel" hidden></div>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn search-btn" id="btn-search">검색</button>
+              <button type="button" class="btn" id="btn-reset">초기화</button>
+            </div>
+          </div>
+
+          
+
+          <div class="listbar">
+            <div class="count"><span class="basis">[재직 회원 기준]</span>검색결과 <b class="num" id="result-count">0</b>건<span class="tbd" title="프론트 3: 다시 조회하면 체크가 풀린다">회의에서 정할 것</span></div>
+            <div><span class="pid" title="ARC-CONTRACT-05 일괄 다운로드: 파일 다운로드에 등록해 만든다 · 회사마다 새 페이지 · 상한 없음 · 파일명 Hunet_위탁계약서_YYYYMMDD_HHMM.doc">ARC-CONTRACT-05</span>
+              <button type="button" class="btn" id="btn-bulk">일괄 위탁계약서 다운로드</button></div>
+          </div>
+          <table class="grid" aria-describedby="result-count">
+            <colgroup><col style="width:60px"><col><col style="width:220px"><col style="width:140px"><col style="width:170px"><col style="width:170px"></colgroup>
+            <thead><tr>
+              <th scope="col"><input type="checkbox" id="chk-all" aria-label="전체 선택"></th>
+              <th scope="col">업체명<span class="tbd" title="디자인 4: 긴 업체명 · 여러 대표자는 목록과 계약서 모두 줄바꿈, 말줄임 없음">회의에서 정할 것</span></th>
+              <th scope="col">계약기간</th>
+              <th scope="col">총 수강생수<span class="pid" title="ARC-CONTRACT-03 · 04: 회원의 회사는 조회 시점 소속 회사, 조회 시점 근무상태 '재직'만 셈. 계약 소속 기간이 학습기간과 하루라도 겹치는 회원">ARC-03·04</span><span class="tbd" title="QA 4: 시작 전 계약에서 소속이 이미 끝난 회원은 세지 않음 (조회 시점 소속만)">회의에서 정할 것</span></th>
+              <th scope="col">총 교육비</th>
+              <th scope="col">직인등록여부<span class="pid" title="ARC-CONTRACT-06 직인: 회사마다 1개 · 등록/교체/삭제는 로그인 계정이 속한 회사 것만">ARC-CONTRACT-06</span></th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 파일 다운로드 -->
+      <section id="view-files" hidden>
+        <div class="ptitle">
+          <h1>파일 다운로드</h1>
+          <div class="crumb"><span>부가서비스</span><span>파일 다운로드</span></div>
+        </div>
+        <div class="card">
+          <div class="search">
+            <div class="row">
+              <div class="field">
+                <label for="inp-title">제목</label>
+                <input id="inp-title" class="input" type="text" placeholder="제목을 입력해주세요.">
+              </div>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn search-btn" id="btn-fsearch">검색</button>
+              <button type="button" class="btn" id="btn-freset">초기화</button>
+            </div>
+          </div>
+          <div class="listbar"><div class="count">검색결과 <b class="num" id="file-count">0</b>건</div>
+            <span class="pid" title="ARC-CONTRACT-07 직인 사용 알림: 파일이 만들어졌을 때 직인이 들어간 회사의 교육담당자에게 1통씩. 실패하면 안 보냄">ARC-CONTRACT-07</span></div>
+          <table class="grid">
+            <colgroup><col style="width:70px"><col><col style="width:140px"><col style="width:130px"><col style="width:170px"></colgroup>
+            <thead><tr><th scope="col">No.</th><th scope="col">제목</th><th scope="col">진행상태</th><th scope="col">다운로드</th><th scope="col">요청일</th></tr></thead>
+            <tbody id="ftbody"></tbody>
+          </table>
+        </div>
+      </section>
+      <div class="footer">© hunet All rights reserved.</div>
+    </main>
+  </div>
+</div>
+</div>
+
+<div id="layer"></div>
+
+<script>
+(function(){
+'use strict';
+/* ===== 고정 값 (예시 데이터 · 가상) ===== */
+var TODAY = '2026-11-04';
+var TODAY_KR = '2026년 11월 4일';
+var PRICE = 140000;
+var CONTRACTS = [
+  {id:'c2026', start:'2026-08-01', end:'2026-11-30'}
+];
+var COMPANIES = {
+  G:{id:'G', name:'(주)예시그룹', code:'372', reps:['홍길동'], parent:null, managers:2},
+  A:{id:'A', name:'예시계열사A', code:'373', reps:['김철수'], parent:'G', managers:1},
+  B:{id:'B', name:'예시계열사B', code:'374', reps:['이영희','박민수'], parent:'G', managers:1},
+  C:{id:'C', name:'예시하위회사C', code:'375', reps:['최지훈'], parent:'A', managers:1}
+};
+/* 계약별 · 회사별: 재직 수강생(active), 아카이브 대상자(targets) */
+var STATS = {
+  c2026:{G:{active:321,targets:330}, A:{active:86,targets:88}, B:{active:0,targets:2}, C:{active:3,targets:4}}
+};
+var ACCOUNTS = {
+  grp:{company:'G', who:'김그룹님', label:'(주)예시그룹 교육담당자'},
+  aff:{company:'A', who:'박계열님', label:'예시계열사A 교육담당자'},
+  admin:{company:null, who:'labsadmin$님', label:'휴넷 관리자'}
+};
+var MAIL_SUBJECT = '[휴넷] 위탁계약서의 직인 날인이 사용되었습니다.';
+
+/* ===== 유틸 ===== */
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function $(id){return document.getElementById(id);}
+function dot(d){return d.replace(/-/g,'.');}
+function period(c){return dot(c.start)+' ~ '+dot(c.end);}
+function won(n){return n.toLocaleString('ko-KR');}
+function contractById(id){for(var i=0;i<CONTRACTS.length;i++) if(CONTRACTS[i].id===id) return CONTRACTS[i];}
+
+/* 한글 금액: 붙여 씀, "정" 없음. 억·만 앞 1은 "일", 천·백·십 앞 1은 생략. 0 → "영" */
+function korAmount(n){
+  if(n===0) return '영';
+  var D=['','일','이','삼','사','오','육','칠','팔','구'], S=['천','백','십',''], B=['','만','억','조'];
+  var out='', gi=0;
+  while(n>0){
+    var g=n%10000; n=Math.floor(n/10000);
+    if(g>0){
+      var str=String(g); while(str.length<4) str='0'+str;
+      var s='';
+      for(var i=0;i<4;i++){var d=+str[i]; if(!d) continue; s += (d===1 && S[i]) ? S[i] : D[d]+S[i];}
+      out = s + B[gi] + out;
+    }
+    gi++;
+  }
+  return out;
+}
+(function selfTest(){
+  var cases=[[140000,'십사만'],[12040000,'천이백사만'],[154280000,'일억오천사백이십팔만'],[10000,'일만'],[44940000,'사천사백구십사만'],[420000,'사십이만'],[0,'영']];
+  cases.forEach(function(c){ if(korAmount(c[0])!==c[1]) console.error('korAmount 실패', c, korAmount(c[0])); });
+})();
+
+/* 직인 이미지 (SVG → data URL) */
+function sealData(lines, w, h){
+  w=w||100; h=h||100;
+  var fs = lines.length>2 ? 15 : 17, lh=fs+3, y0 = h/2 - (lines.length-1)*lh/2 + fs*0.35;
+  var t = lines.map(function(l,i){return '<text x="'+w/2+'" y="'+(y0+i*lh)+'" text-anchor="middle" font-family="Noto Sans KR, Malgun Gothic, sans-serif" font-weight="700" font-size="'+fs+'" fill="#d42a2a">'+esc(l)+'</text>';}).join('');
+  var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><ellipse cx="'+w/2+'" cy="'+h/2+'" rx="'+(w/2-4)+'" ry="'+(h/2-4)+'" fill="none" stroke="#d42a2a" stroke-width="4"/>'+t+'</svg>';
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+var HUNET_SEAL = sealData(['주식회사','휴넷','대표이사'],100,100);
+/* 직인 저장소: 회사 → {src, name}. 예시계열사A만 등록됨(가로로 긴 직인 = 비율 유지 확인용) */
+var seals = { A:{src:sealData(['예시계열사A','대표이사'],130,86), name:'seal_A.png (예시)'} };
+
+/* ===== 회사 계층 · 조회 범위 ===== */
+function descendants(id){
+  var out=[id];
+  Object.keys(COMPANIES).forEach(function(k){ if(COMPANIES[k].parent===id) out=out.concat(descendants(k)); });
+  return out;
+}
+function scopeIds(){
+  var a=ACCOUNTS[account];
+  return a.company ? descendants(a.company) : Object.keys(COMPANIES);
+}
+function byName(a,b){return COMPANIES[a].name.localeCompare(COMPANIES[b].name,'ko');}
+
+/* 계약기간 디폴트 */
+function defaultContractId(){
+  var past = CONTRACTS.filter(function(c){return c.start<=TODAY;});
+  if(past.length){
+    past.sort(function(a,b){ return a.start!==b.start ? (a.start<b.start?1:-1) : (a.end<b.end?1:-1); });
+    return past[0].id;
+  }
+  return CONTRACTS.slice().sort(function(a,b){return a.start<b.start?-1:1;})[0].id;
+}
+
+/* ===== 상태 ===== */
+var account='grp', pending, applied, rows=[], checked={}, requests=[], reqSeq=0, view='list';
+
+function freshCond(){return {contract:defaultContractId(), companies:{}};}
+function cloneCond(c){var o={contract:c.contract, companies:{}}; Object.keys(c.companies).forEach(function(k){o.companies[k]=true;}); return o;}
+
+/* ===== 사이드바 ===== */
+var ICON = {
+  studio:'<circle cx="8" cy="8" r="6"/><circle cx="6" cy="6.5" r=".8"/><circle cx="10" cy="6.5" r=".8"/><path d="M5.5 10.2c1.5 1.2 3.5 1.2 5 0"/>',
+  grid:'<rect x="2.5" y="2.5" width="4.5" height="4.5"/><rect x="9" y="2.5" width="4.5" height="4.5"/><rect x="2.5" y="9" width="4.5" height="4.5"/><rect x="9" y="9" width="4.5" height="4.5"/>',
+  user:'<circle cx="7" cy="5.5" r="2.5"/><path d="M2.5 13.5c.6-2.6 2.4-4 4.5-4s3.9 1.4 4.5 4"/>',
+  pen:'<rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M6 10l.5-2 4-4 1.5 1.5-4 4z"/>',
+  book:'<path d="M2.5 3.5h4.5a1.5 1.5 0 0 1 1 .5 1.5 1.5 0 0 1 1-.5h4.5v9h-4.5a1 1 0 0 0-1 1 1 1 0 0 0-1-1H2.5z"/>',
+  monitor:'<rect x="2" y="3" width="12" height="8" rx="1"/><path d="M6 13.5h4M8 11v2.5"/>',
+  clip:'<rect x="3.5" y="3" width="9" height="11" rx="1.5"/><path d="M6 2.5h4v2H6z"/>',
+  card:'<rect x="2" y="3.5" width="12" height="9" rx="1.5"/><path d="M2 6.5h12"/>',
+  bld:'<path d="M3 13.5V3h6v10.5M9 6.5h4v7M5 5.5h2M5 8h2M5 10.5h2M2 13.5h12"/>',
+  chat:'<path d="M3 3.5h10v7H7l-3 2.5v-2.5H3z"/>',
+  doc:'<path d="M4 2.5h5.5L12 5v8.5H4z"/><path d="M6 8h4M6 10.5h4"/>',
+  plus:'<rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M8 5.5v5M5.5 8h5"/>',
+  chart:'<path d="M2.5 13.5h11M4 11l3-3.5 2.5 2L13 5"/>',
+  list:'<rect x="2.5" y="2.5" width="11" height="11" rx="1.5"/><path d="M5 6h6M5 8.5h6M5 11h4"/>',
+  gear:'<circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v2M8 12.2v2M1.8 8h2M12.2 8h2M3.6 3.6l1.4 1.4M11 11l1.4 1.4M3.6 12.4L5 11M11 5l1.4-1.4"/>'
+};
+var MENU = [
+  ['LABS Studio','studio',null,true],['대시보드','grid'],['임직원','user'],['수강신청','pen'],['학습','book'],['러닝메이커','monitor'],
+  ['결과','clip'],['교육비용','card'],['사외교육','bld'],['커넥트','user'],['게시글','doc'],
+  ['부가서비스','plus',['결재 관리','진단 관리','계획수립 관리','파일 다운로드','활동/미션','필수교육','위탁계약서 관리']],
+  ['학점','chart'],['과정 및 카테고리','list'],['수강신청 설정','list'],['아이런 설정','chat'],['설정 및 가이드','gear'],['이용가이드','book']
+];
+function svgIcon(k){return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">'+ICON[k]+'</svg>';}
+function renderSide(){
+  var h='';
+  MENU.forEach(function(m,i){
+    var subs=m[2], open=!!subs;
+    var chev = m[3] ? '<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M5 2h5v5M10 2L5 7M8 10H2V4"/></svg>'
+      : '<svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="'+(open?'M3 7.5l3-3 3 3':'M3 4.5l3 3 3-3')+'"/></svg>';
+    h+='<button type="button" class="grp'+(open?' open':'')+'" data-menu="'+esc(m[0])+'"'+(open?' aria-expanded="true"':'')+'>'+svgIcon(m[1])+'<span>'+esc(m[0])+'</span>'+chev+'</button>';
+    if(i===0) h+='<div class="divider"></div>';
+    if(subs){
+      h+='<div class="subs">';
+      subs.forEach(function(s){
+        var act = (s==='위탁계약서 관리' && view==='list') || (s==='파일 다운로드' && view==='files');
+        h+='<button type="button" class="sub'+(act?' active':'')+'" data-sub="'+esc(s)+'"'+(act?' aria-current="page"':'')+'>'+esc(s)+(s==='위탁계약서 관리'?'<span class="pid" title="ARC-CONTRACT-01: HRD아카이브 계약이 있는 연수원만 노출">ARC-01</span>':'')+'</button>';
+      });
+      h+='</div>';
+    }
+  });
+  $('side').innerHTML=h;
+}
+$('side').addEventListener('click',function(e){
+  var s=e.target.closest('.sub'), g=e.target.closest('.grp');
+  if(s){
+    var name=s.getAttribute('data-sub');
+    if(name==='위탁계약서 관리') showView('list');
+    else if(name==='파일 다운로드') showView('files');
+    else toast('프로토타입 범위 밖 메뉴입니다');
+  } else if(g && !g.classList.contains('open')) toast('프로토타입 범위 밖 메뉴입니다');
+});
+
+function showView(v){
+  view=v;
+  $('view-list').hidden = v!=='list';
+  $('view-files').hidden = v!=='files';
+  renderSide();
+  if(v==='files') renderFiles();
+  window.scrollTo(0,0);
+}
+
+/* ===== 검색 영역 ===== */
+function renderSearch(){
+  var sel=$('sel-contract'), list=CONTRACTS.slice().sort(function(a,b){return a.start<b.start?1:-1;});
+  sel.innerHTML = list.map(function(c){return '<option value="'+c.id+'">'+period(c)+'</option>';}).join('');
+  sel.value = pending.contract;
+  renderCompanyPanel();
+}
+function renderCompanyPanel(){
+  var ids=scopeIds().slice().sort(byName);
+  var allOn = ids.length && ids.every(function(id){return pending.companies[id];});
+  var h='<label class="opt all"><input type="checkbox" id="co-all"'+(allOn?' checked':'')+'> 전체</label>';
+  ids.forEach(function(id){
+    var c=COMPANIES[id], lv = c.parent ? (COMPANIES[c.parent].parent ? '하위회사' : '계열사') : '그룹사';
+    h+='<label class="opt"><input type="checkbox" id="co-'+id+'" data-co="'+id+'"'+(pending.companies[id]?' checked':'')+'> '+esc(c.name)+' <span class="lv">'+lv+'</span></label>';
+  });
+  $('company-panel').innerHTML=h;
+  var picked=ids.filter(function(id){return pending.companies[id];});
+  $('btn-company').innerHTML = picked.length
+    ? '<span>'+esc(COMPANIES[picked[0]].name)+(picked.length>1?' 외 '+(picked.length-1)+'개':'')+'</span>'
+    : '<span class="ph">회사 선택</span>';
+}
+$('sel-contract').addEventListener('change',function(){pending.contract=this.value;});
+$('btn-company').addEventListener('click',function(e){
+  e.stopPropagation();
+  var p=$('company-panel'); p.hidden=!p.hidden; this.setAttribute('aria-expanded', String(!p.hidden));
+});
+$('company-panel').addEventListener('change',function(e){
+  var t=e.target;
+  if(t.id==='co-all'){ scopeIds().forEach(function(id){ if(t.checked) pending.companies[id]=true; else delete pending.companies[id]; }); }
+  else if(t.dataset.co){ if(t.checked) pending.companies[t.dataset.co]=true; else delete pending.companies[t.dataset.co]; }
+  renderCompanyPanel();
+  var again = t.id==='co-all' ? $('co-all') : $('co-'+t.dataset.co); if(again) again.focus();
+});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#msel')){ $('company-panel').hidden=true; $('btn-company').setAttribute('aria-expanded','false'); }
+});
+$('btn-search').addEventListener('click',function(){ $('company-panel').hidden=true; applied=cloneCond(pending); query(); });
+$('btn-reset').addEventListener('click',function(){ pending=freshCond(); applied=cloneCond(pending); renderSearch(); query(); });
+
+/* ===== 목록 ===== */
+function query(){
+  checked={};
+  var st=STATS[applied.contract]||{}, scope=scopeIds(), picked=Object.keys(applied.companies);
+  rows = scope.filter(function(id){
+    if(picked.length && !applied.companies[id]) return false;
+    return st[id] && st[id].targets>=1;
+  }).sort(byName);
+  renderTable();
+}
+function renderTable(){
+  var c=contractById(applied.contract), st=STATS[applied.contract]||{}, me=ACCOUNTS[account].company;
+  $('result-count').textContent=rows.length;
+  var h='';
+  if(!rows.length){
+    h='<tr><td colspan="6" class="empty">현재 조회된 데이터가 없습니다.</td></tr>';
+  } else rows.forEach(function(id){
+    var co=COMPANIES[id], n=st[id].active, has=!!seals[id];
+    var btn = (id===me) ? '<button type="button" class="btn sm" data-seal="'+id+'">'+(has?'변경':'등록')+'</button>' : '';
+    h+='<tr><td><input type="checkbox" id="chk-'+id+'" data-chk="'+id+'" aria-label="'+esc(co.name)+' 선택"'+(checked[id]?' checked':'')+'></td>'
+      +'<td class="name">'+esc(co.name)+'</td>'
+      +'<td class="num">'+period(c)+'</td>'
+      +'<td class="num">'+won(n)+'명</td>'
+      +'<td class="num">'+won(n*PRICE)+'원</td>'
+      +'<td><span class="yn"><b>'+(has?'Y':'N')+'</b>'+btn+'</span></td></tr>';
+  });
+  $('tbody').innerHTML=h;
+  syncChecks();
+}
+function syncChecks(){
+  var n=rows.filter(function(id){return checked[id];}).length, all=$('chk-all');
+  all.disabled=!rows.length;
+  all.checked = rows.length>0 && n===rows.length;
+  all.indeterminate = n>0 && n<rows.length;
+  $('btn-bulk').disabled = !rows.length;
+}
+$('chk-all').addEventListener('change',function(){
+  var on=this.checked; checked={}; if(on) rows.forEach(function(id){checked[id]=true;});
+  rows.forEach(function(id){ $('chk-'+id).checked=on; }); syncChecks();
+});
+$('tbody').addEventListener('change',function(e){
+  var id=e.target.dataset.chk; if(!id) return;
+  if(e.target.checked) checked[id]=true; else delete checked[id];
+  syncChecks();
+});
+$('tbody').addEventListener('click',function(e){
+  var b=e.target.closest('[data-seal]'); if(b) openSealModal(b.dataset.seal, b);
+});
+
+/* ===== 공통 다이얼로그 (alert/confirm 대체) ===== */
+var layer=$('layer'), lastFocus=null;
+function trapKeys(box, onEsc){
+  box.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && onEsc){ e.preventDefault(); onEsc(); return; }
+    if(e.key!=='Tab') return;
+    var f=[].slice.call(box.querySelectorAll('button:not(:disabled),input:not(:disabled),select,[tabindex="0"]'));
+    if(!f.length) return;
+    var first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){e.preventDefault(); last.focus();}
+    else if(!e.shiftKey && document.activeElement===last){e.preventDefault(); first.focus();}
+  });
+}
+/* opts: {message, tags(html), buttons:[{label, value, primary, busyMs, busyLabel}]} → Promise(value) */
+function dialog(opts){
+  return new Promise(function(resolve){
+    var prev=document.activeElement;
+    var ov=document.createElement('div'); ov.className='overlay'; ov.style.zIndex=200;
+    var box=document.createElement('div'); box.className='dialog'; box.setAttribute('role','alertdialog'); box.setAttribute('aria-modal','true');
+    var mid='dlg-'+Date.now(); box.setAttribute('aria-labelledby',mid);
+    box.innerHTML='<div class="msg" id="'+mid+'">'+esc(opts.message)+'</div><div class="btns"></div>'+(opts.tags?'<div class="tags">'+opts.tags+'</div>':'');
+    var wrap=box.querySelector('.btns'), busy=false;
+    function close(v){ ov.remove(); if(prev && prev.focus) prev.focus(); resolve(v); }
+    opts.buttons.forEach(function(b){
+      var el=document.createElement('button'); el.type='button'; el.className='btn'+(b.primary?' dark':''); el.textContent=b.label;
+      el.addEventListener('click',function(){
+        if(busy) return;
+        if(b.busyMs){
+          busy=true; [].forEach.call(wrap.children,function(x){x.disabled=true;}); el.textContent=b.busyLabel||'처리 중…';
+          setTimeout(function(){close(b.value);}, b.busyMs);
+        } else close(b.value);
+      });
+      wrap.appendChild(el);
+    });
+    ov.appendChild(box); document.body.appendChild(ov);
+    trapKeys(box,function(){ if(!busy) close(opts.buttons[0].value); });
+    var p=wrap.querySelector('.dark')||wrap.firstChild; p.focus();
+  });
+}
+function alertBox(msg, tags){ return dialog({message:msg, tags:tags, buttons:[{label:'확인',value:true,primary:true}]}); }
+var toastTimer;
+function toast(msg){
+  var t=$('toast-el'); if(!t){t=document.createElement('div'); t.id='toast-el'; t.className='toast'; t.setAttribute('role','status'); document.body.appendChild(t);}
+  t.textContent=msg; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(function(){t.hidden=true;},2600);
+}
+
+/* ===== 직인 등록 모달 ===== */
+var MAX_BYTES = 100*1024*1024;
+function openSealModal(id, opener){
+  var co=COMPANIES[id], chosen=null;
+  var ov=document.createElement('div'); ov.className='overlay';
+  var m=document.createElement('div'); m.className='modal'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-labelledby','seal-title');
+  ov.appendChild(m); layer.appendChild(ov);
+  function close(){ ov.remove(); if(opener && document.body.contains(opener)) opener.focus(); }
+  function render(){
+    var cur=seals[id];
+    m.innerHTML =
+      '<header><h2 id="seal-title">직인 등록 <span class="pid" title="ARC-CONTRACT-06: 회사마다 1개 · 로그인 계정이 속한 회사 것만 등록/교체/삭제 · 그룹사도 계열사 직인은 다루지 않음 · 동시 등록은 나중 저장이 남음">ARC-CONTRACT-06</span></h2><button type="button" class="xbtn" id="seal-x" aria-label="닫기">✕</button></header>'
+      +'<div class="mbody">'
+      +'<div class="mco">'+esc(co.name)+'</div>'
+      +(cur ? '<div class="msec"><div class="mlabel">등록된 직인</div><div class="sealbox"><div class="imgwrap"><img src="'+cur.src+'" alt="'+esc(co.name)+' 등록된 직인"></div><div class="meta">'+esc(cur.name)+'</div><button type="button" class="btn sm" id="seal-del">삭제</button></div></div>' : '')
+      +'<div class="msec"><div class="mlabel">'+(cur?'새 직인 파일':'직인 파일')+'<span class="tbd" title="프론트 1: 파일을 안 고르면 [등록] 비활성. 고른 파일은 모달에 미리 보여 줌">회의에서 정할 것</span></div>'
+      +'<div class="filerow"><span class="fname'+(chosen?' has':'')+'" id="seal-fname">'+(chosen?esc(chosen.name):'선택된 파일 없음')+'</span>'
+      +'<label class="btn" for="seal-file" tabindex="0" id="seal-pick">파일 선택</label><input type="file" id="seal-file" class="vh" accept=".png,image/png"></div>'
+      +'<div class="guide">100MB 이하, png 파일만 업로드 가능합니다.</div>'
+      +(chosen ? '<div class="sealbox" style="margin-top:10px"><div class="imgwrap"><img src="'+chosen.src+'" alt="선택한 직인 미리보기"></div><div class="meta">미리보기 · '+esc(chosen.name)+' ('+(chosen.size/1024).toFixed(1)+'KB)</div></div>' : '')
+      +'</div></div>'
+      +'<footer><button type="button" class="btn lg" id="seal-cancel">취소</button><button type="button" class="btn lg dark" id="seal-save"'+(chosen?'':' disabled')+'>등록</button></footer>';
+    m.querySelector('#seal-x').onclick=close;
+    m.querySelector('#seal-cancel').onclick=close;
+    m.querySelector('#seal-pick').addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); m.querySelector('#seal-file').click();} });
+    m.querySelector('#seal-file').addEventListener('change',function(){
+      var f=this.files && this.files[0]; this.value='';
+      if(!f) return;
+      var isPng = f.type==='image/png' || /\.png$/i.test(f.name);
+      if(!isPng){ alertBox('지원하지 않는 파일 형식입니다.'); return; }
+      if(f.size>MAX_BYTES){ alertBox('파일 용량이 초과 되어 업로드 할 수 없습니다.'); return; }
+      var r=new FileReader();
+      r.onload=function(){ chosen={name:f.name, size:f.size, src:r.result}; render(); m.querySelector('#seal-save').focus(); };
+      r.readAsDataURL(f);
+    });
+    m.querySelector('#seal-save').onclick=function(){
+      if(!chosen) return;
+      seals[id]={src:chosen.src, name:chosen.name};
+      close(); query(); toast('직인이 등록되었습니다 (목록 다시 조회)');
+    };
+    var del=m.querySelector('#seal-del');
+    if(del) del.onclick=function(){
+      dialog({message:'등록된 직인을 삭제하시겠습니까?', buttons:[{label:'취소',value:false},{label:'확인',value:true,primary:true}]}).then(function(ok){
+        if(!ok) return;
+        delete seals[id]; close(); query(); toast('직인이 삭제되었습니다 (목록 다시 조회)');
+      });
+    };
+  }
+  render();
+  trapKeys(m, close);
+  m.querySelector('#seal-x').focus();
+}
+
+/* ===== 일괄 다운로드 ===== */
+$('btn-bulk').addEventListener('click',function(){
+  if(!rows.length) return;
+  var ids=rows.filter(function(id){return checked[id];});
+  if(!ids.length){ alertBox('다운로드할 업체를 선택해 주세요', '<span class="tbd" title="프론트 2: 알림 창 (확인 버튼) 형태">회의에서 정할 것</span>'); return; }
+  dialog({
+    message:'파일 다운로드 페이지로 이동하시겠습니까?',
+    tags:'<span class="tbd" title="프론트 4 · 백엔드 5: 처리 중에는 [예] 비활성 (화면에서 막음). 서버는 요청마다 만든다">회의에서 정할 것</span>',
+    buttons:[{label:'아니오',value:false},{label:'예',value:true,primary:true,busyMs:800,busyLabel:'처리 중…'}]
+  }).then(function(ok){ if(ok) createRequest(ids); });
+});
+function pad(n){return (n<10?'0':'')+n;}
+function createRequest(ids){
+  var now=new Date(), hh=pad(now.getHours()), mm=pad(now.getMinutes());
+  var req={no:++reqSeq, title:'Hunet_위탁계약서_20261104_'+hh+mm+'.doc', status:'ing', requested:'2026.11.04 '+hh+':'+mm,
+    contract:applied.contract, ids:ids.slice(), account:account, pages:null, mails:null};
+  requests.unshift(req);
+  showView('files');
+  setTimeout(function(){ completeRequest(req); }, 2000);
+}
+/* 계약서 값은 파일이 만들어지는 시점 값 (ARC-CONTRACT-04) */
+function completeRequest(req){
+  var c=contractById(req.contract), st=STATS[req.contract]||{};
+  req.pages = req.ids.map(function(id){
+    var co=COMPANIES[id], n=(st[id]||{active:0}).active, seal=seals[id];
+    return {id:id, name:co.name, code:co.code, reps:co.reps.slice(), count:n, fee:n*PRICE, seal:seal?seal.src:null,
+      docNo:c.start.slice(2,4)+c.start.slice(5,7)+'-'+co.code, start:c.start, end:c.end};
+  });
+  req.mails = req.pages.filter(function(p){return p.seal;}).map(function(p){return {name:p.name, n:COMPANIES[p.id].managers};});
+  req.status='done';
+  if(view==='files') renderFiles();
+  var sent=req.mails.reduce(function(a,m){return a+m.n;},0);
+  
+}
+
+/* ===== 파일 다운로드 화면 ===== */
+var fileFilter='';
+function renderFiles(){
+  var list=requests.filter(function(r){return !fileFilter || r.title.indexOf(fileFilter)>-1;});
+  $('file-count').textContent=list.length;
+  if(!list.length){ $('ftbody').innerHTML='<tr><td colspan="5" class="empty">현재 조회된 데이터가 없습니다.</td></tr>'; return; }
+  $('ftbody').innerHTML=list.map(function(r){
+    var st = r.status==='ing' ? '<span class="status ing"><span class="spin" aria-hidden="true"></span>생성중</span>' : '<span class="status done">완료</span>';
+    return '<tr><td class="num">'+r.no+'</td><td class="name" style="text-align:left">'+esc(r.title)+'</td><td>'+st+'</td>'
+      +'<td><button type="button" class="btn sm" data-dl="'+r.no+'"'+(r.status==='ing'?' disabled':'')+'>다운로드</button></td>'
+      +'<td class="num">'+r.requested+'</td></tr>';
+  }).join('');
+}
+$('btn-fsearch').addEventListener('click',function(){ fileFilter=$('inp-title').value.trim(); renderFiles(); });
+$('btn-freset').addEventListener('click',function(){ $('inp-title').value=''; fileFilter=''; renderFiles(); });
+$('ftbody').addEventListener('click',function(e){
+  var b=e.target.closest('[data-dl]'); if(!b) return;
+  var no=+b.dataset.dl, r=requests.filter(function(x){return x.no===no;})[0];
+  if(r && r.pages) openPreview(r, b);
+});
+
+/* ===== 계약서 미리보기 ===== */
+function feeText(p){ return korAmount(p.fee)+' 원 (₩'+won(p.fee)+')'; }
+function docPage(p, idx, total){
+  var T=function(s){return '<span class="tbd" title="'+esc(s)+'">회의에서 정할 것</span>';};
+  var first = idx===0;
+  return '<article class="doc" aria-label="'+esc(p.name)+' 위탁계약서">'
+  +'<span class="pgno num">'+(idx+1)+' / '+total+' 페이지</span>'
+  +'<div class="fax">FAX 02)6220-2577</div>'
+  +'<h1>위탁 계약서</h1>'
+  +'<table class="meta"><tr><th>문서번호</th><td class="num v">'+esc(p.docNo)+'</td><th>담당자</th><td>{휴넷 교육 담당자} {휴넷 영업 담당자}'+(first?T('백엔드 3: 휴넷 담당자 EDU · BIZ가 없으면 그 칸을 비움. 2명 이상은 없음 (유형별 1명)'):'')+'</td></tr></table>'
+  +'<p class="pre"><span class="v">'+esc(p.name)+'</span> (이하 "위탁자"라 함)와 ㈜휴넷 (이하 "수탁자"이라 함)은 아래와 같은 조건으로 통합 위탁교육 서비스 계약을 체결하며, 상호 신의성실의 원칙에 입각하여 이를 성실히 이행할 것을 합의한다</p>'
+  +'<h3>제1조 (목적)</h3><p>본 계약은 "위탁자"가 "수탁자"에게 제2조에서 정하는 휴넷HRD 아카이브 교육과정의 제공을 위탁하고, 수탁자가 위탁사의 요구에 따라 온라인 교육시스템 및 솔루션을 활용하여 이를 수행함에 있어서 수반되는 제반 권리, 의무 등 필요한 사항을 규정하는데 그 목적이 있다</p>'
+  +'<h3>제2조 (교육서비스 내역)</h3><p>본 계약에 의거 "수탁자"가 "위탁자"에게 제공하는 휴넷 HRD 아카이브교육과정은 한국산업인력공단의 사업주직업능력개발훈련의 일환으로 "수탁자"가 제공하는 HRD 아카이브 교육과정을 계약기간 동안 무제한으로 수강하는 패키지 구독형 원격훈련 서비스이다</p>'
+  +'<p class="item">가. 1인당 교육비는 140,000원이며 총 교육비는 1인당 교육비 X 교육인원으로 산정한다</p>'
+  +'<p class="item">나. 1인당 정부지원금은 기업규모에 따라 아래와 같이 산정한다</p>'
+  +'<p class="item dash">- 우선지원 기업 : (이수인원 X 140,000 원) X 90%</p>'
+  +'<p class="item dash">- 1,000 인 이하 기업 : (이수인원 X 140,000 원) X 80%</p>'
+  +'<p class="item">다. 이수 인원은 개인별 총 학습시간이 15시간 이상 일 경우 이수인원으로 본다</p>'
+  +'<p class="item">라. 정부지원금 외 교육비는 "위탁자"가 부담한다</p>'
+  +'<h3>제3조 (계약금액 및 지급)</h3>'
+  +'<p class="item">가. 계약기간은 <span class="v num">'+p.start+'</span>부터 <span class="v num">'+p.end+'</span>까지로 한다</p>'
+  +'<p class="item">나. 총 수강생은( <span class="v num">'+won(p.count)+'</span> 명), 총 계약 금액은 <span class="v">'+korAmount(p.fee)+'</span> 원 (₩<span class="v num">'+won(p.fee)+'</span>) 으로 한다. 본 금액은 1인당 교육비*교육인원으로 산정한 금액이다</p>'
+  +'<p class="item">다. "위탁자"가 수료기준이 충족하여 정부지원금을 받게 되면 "수탁자"는 "위탁자"를 대신하여 산업인력공단으로부터 정부지원금을 받고 "위탁자"에게 영수계산서를 발행하고, 자비 부담이 발생할 경우 "수탁자"는 확정된 인원을 기준으로 청구계산서를 발행하며 "위탁자"는 계산서 발행 후 30일 전까지 "수탁자"에게 해당 금액을 지급한다</p>'
+  +'<h3>제4조 (성실의무)</h3>'
+  +'<p class="item">가. "위탁자"와 "수탁자"는 본 계약서에 의거 훈련의 효율적인 진행과 훈련목표가 이루어 질 수 있도록 상호 협력하여 제반 사항을 성실히 이행하여야 한다</p>'
+  +'<p class="item">나. "위탁자"는 "수탁자"의 중대한 과실로 인해 훈련이 이행될 수 없을 경우 훈련의 중단을 요구할 수 있다</p>'
+  +'<p class="item">다. "수탁자"는 훈련을 실시함에 있어 고용노동부장관으로부터 지정 받은 내용과 한국산업인력공단에 제출한 훈련실시계획서에 따라 훈련을 성실히 실시해야 하며, 인정 받은 내용을 위반하여 허위ㆍ부정한 방법으로 훈련을 실시하는 등 "수탁자"의 귀책사유로 당해 훈련과정이 취소되어 "위탁자"가 고용보험법 및 근로자직업능력개발법에 의하여 훈련비용을 지원받을 수 없는 경우에 "수탁자"가 책임을 진다. 단, 훈련 목적에 위배되는 "위탁자"의 대리수강이나 그 밖의 부정 훈련 방법 적발 시에는 "위탁자"의 귀책 사유로 간주하고 부정행위에 따른 조치사항을 "위탁자"가 책임을 진다</p>'
+  +'<p class="item">라. 훈련 목적에 위배되는 "위탁자"의 대리수강이나 그 밖의 부정 훈련 방법과 같은 "위탁자"의 귀책사유가 확인된 경우에는 "위탁자"의 귀책사유에 따른 일체의 조치사항에 대하여 "위탁자"가 책임을 진다</p>'
+  +'<h3>제5조 (교육과정 운영)</h3>'
+  +'<p class="item">가. "수탁자"는 수료기준을 통과한 피교육자에 대해 수료처리 하며, "위탁자"는 "수탁자"에게 교육과정과 관련하여 고용보험 환급을 받기 위하여 필요한 제반 사항에 대해 협조하여야 한다</p>'
+  +'<p class="item">나. "수탁자"는 "위탁자"가 훈련비용 지원금 지급불가인 경우(고용보험 체납, 지원한도 초과, 훈련미수료자) 그로 인하여 지원되지 아니한 교육비는 "위탁자"가 부담하고, "위탁자"는 청구계산서 발행 후 30일 전까지 "수탁자"에게 해당 금액을 지급한다</p>'
+  +'<p class="item">다. "수탁자"는 "위탁자"의 별도 요청이 없더라도, 양질의 컨텐츠 제공 서비스를 위해 신규 개발되는 최신 과정을 신규 제공 또는 기존 컨텐츠 대체 등으로 "위탁자"에게 제공 할 수 있다</p>'
+  +'<h3>제6조 (개인정보 보호)</h3>'
+  +'<p class="item">가. "수탁자" 는 본 계약 수행기간 중 "위탁자"로부터 제공 받았거나 알게 된 "위탁자"의 모든 정보 및 개인 자료를 \'개인정보 보호법\'에 근거하여 보유 또는 파기하며, 본 계약 이외의 목적으로 사용하지 못한다</p>'
+  +'<h3>제7조 (해석 및 합의)</h3><p>본 계약서 상의 조문 해석과 관련하여 쌍방간에 이견이 있을 경우에는 상호 협의하여 결정하며, 본 계약서 상에 명시되지 아니한 사항은 쌍방이 협의한 바에 따른다. 이 계약을 증명하기 위하여 계약서를 2부 작성하고, 기명날인 후 "위탁자"와 "수탁자"가 각각 1부씩 보관한다</p>'
+  +'<div class="date">'+TODAY_KR+'</div>'
+  +'<table class="sign"><tr><th colspan="2" class="head">위탁자</th><th colspan="2" class="head">수탁자</th></tr>'
+  +'<tr><th>회사명</th><td class="v">'+esc(p.name)+'</td><th>훈련기관</th><td>(주)휴넷</td></tr>'
+  +'<tr><th>대표자</th><td>'+esc(p.reps.join(', '))+(first?T('디자인 4: 여러 대표자는 쉼표로 이어 쓰고 줄바꿈, 말줄임 없음'):'')
+    +' <span class="slot">(인)'+(p.seal?'<img src="'+p.seal+'" alt="'+esc(p.name)+' 직인">':'')+'</span>'+(first?T('디자인 5: 정사각형이 아닌 직인은 비율을 지켜 1.48cm 칸 안에 맞춤'):'')+'</td>'
+  +'<th>대표자</th><td>(휴넷 대표자)'+(first?T('디자인 3: 양식 고정 문구 ((주)휴넷 대표자 이름). 맞춤형 실물 그대로'):'')+' <span class="slot">(인)<img src="'+HUNET_SEAL+'" alt="휴넷 직인"></span></td></tr></table>'
+  +'<section class="annex"><div class="ttl">[별첨] ■ 개인정보 처리 위탁에 대한 사전 안내 사항</div>'
+  +'<p>1. \'수탁사\'(휴넷)은 \'위탁사\'(고객사)로부터 \'임직원 교육 훈련\' 목적에 한해 \'위탁사\'에게 전달받은 개인정보를 수집 및 이용을 할 수 있습니다</p>'
+  +'<p>2. 교육 대상자의 퇴사 또는 계약 종료, 이용 중단 등의 이용목적이 달성된 경우 해당 정보주체의 정보를 \'수탁사\'에게 전달하여야 합니다</p>'
+  +'<p>3. \'위탁사\'는 임직원에게 교육 훈련의 목적으로 개인정보를 수집 및 이용할 수 있다는 동의를 받지 않은 경우 별도의 동의를 받을 의무가 있으며, 동의 받지 않은 경우 교육시작 최소 3일전 연수원에 로그인하여 별도의 동의를 받아야 합니다</p>'
+  +'<p>4. \'위탁사\'는 임직원 교육 훈련의 목적으로 개인정보가 \'수탁사\'에게 제공된다는 사항을 사전에 고지할 의무가 있습니다</p>'
+  +'<p>5. \'수탁사\'는 제공받는 개인정보를 국내 법률 및 서비스 제공을 위해 아래의 기관에게 제공 됩니다</p>'
+  +'<p>└ 재위탁 : CJ올리브네트웍스 / 목적 : 모바일 학습독려 메세징 발송 / 제공항목 : 휴대전화번호 / 이용기간 : 6개월</p>'
+  +'<p>※ 재위탁을 거부할 수 있으며, 거부하는 경우 모바일 학습독려를 발송하지 않습니다</p>'
+  +'<p>└ 제3자 제공 : 고용노동부 / 한국산업인력공단 / 목적 : 고용보험 환급과정 수강생 정보 신고 / 제공항목 : 성명, 주민등록번호, 휴대폰번호, 이메일, 접속로그, 교육이력, 교육수강 PC환경 정보 / 이용기간 : 3년</p>'
+  +'<p>※ 제3자 제공을 거부하시는 경우 HRD FLEX 서비스를 이용할 수 없습니다</p></section>'
+  +'</article>';
+}
+function openPreview(r, opener){
+  var c=contractById(r.contract);
+  var pv=document.createElement('div'); pv.className='pv'; pv.setAttribute('role','dialog'); pv.setAttribute('aria-modal','true'); pv.setAttribute('aria-labelledby','pv-title');
+  var mails = r.mails.length ? r.mails.map(function(m){
+      return '<div class="mail"><b>'+esc(m.name)+'</b>'+(m.n ? '교육담당자 <span class="num">'+m.n+'</span>명에게 메일 1통씩' : '교육담당자 계정 없음 → 받는 사람 없음')+'</div>';
+    }).join('') : '<div class="mail">직인이 들어간 회사가 없어 보내지 않음</div>';
+  var none = r.pages.filter(function(p){return !p.seal;}).map(function(p){return esc(p.name);});
+  pv.innerHTML='<div class="pv-bar"><h2 id="pv-title">계약서 미리보기</h2><span class="sub">'+esc(r.title)+' · 실제 파일은 받지 않음</span><button type="button" class="btn" id="pv-close">닫기</button></div>'
+   +'<div class="pv-body"><div class="pv-pages">'+r.pages.map(function(p,i){return docPage(p,i,r.pages.length);}).join('')+'</div>'
+   +'<aside class="pv-side"><h3>파일 정보 <span class="pid" title="ARC-CONTRACT-04 · 05">ARC-04·05</span></h3><ul>'
+   +'<li>계약기간 <span class="num">'+period(c)+'</span></li><li>회사 <span class="num">'+r.pages.length+'</span>곳, 회사마다 새 페이지</li>'
+   +'<li>값 기준: 파일이 만들어진 시점 (직인 · 기업명 · 대표자 포함)</li><li>계약일 = 파일이 만들어진 날 ('+TODAY_KR+')</li></ul>'
+   +'<h3>직인 사용 알림 메일 <span class="pid" title="ARC-CONTRACT-07">ARC-CONTRACT-07</span><span class="tbd" title="디자인 6: 메일 본문 문장은 2018 직인 기획 메일 문장을 바탕으로 노티센터 템플릿에서 정함">회의에서 정할 것</span></h3>'
+   +'<p style="margin:0 0 8px">제목 "'+esc(MAIL_SUBJECT)+'"</p>'+mails
+   +(none.length?'<p style="margin:8px 0 0;color:var(--text-2)">직인 N (안 보냄): '+none.join(', ')+'</p>':'')
+   +'<p style="margin:8px 0 0;color:var(--text-2)">본문: 연수원명, 계약기간, 받은 계정, 받은 일시, [확인하기] → 위탁계약서 관리. 받은 본인이 그 회사 교육담당자면 본인도 받음</p>'
+   +'</aside></div>';
+  layer.appendChild(pv);
+  function close(){ pv.remove(); if(opener && document.body.contains(opener)) opener.focus(); }
+  pv.querySelector('#pv-close').onclick=close;
+  trapKeys(pv, close);
+  pv.querySelector('#pv-close').focus();
+}
+
+/* ===== 시작: 디폴트 계약으로 바로 조회 ===== */
+pending=freshCond(); applied=cloneCond(pending);
+renderSide(); renderSearch(); query();
+})();
+</script>
