@@ -120,13 +120,20 @@ body.show-pid .pid{display:inline-block}
 
 /* 회사 선택 다중 */
 .msel{position:relative}
-.msel>button{min-width:240px;text-align:left;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.msel>button .ph{color:var(--text-3)}
-.msel .panel{position:absolute;top:38px;left:0;z-index:20;min-width:260px;background:#fff;border:1px solid var(--line-strong);border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.1);padding:6px}
-.msel .opt{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;cursor:pointer;font-size:12.5px}
+.msel .selwrap{position:relative;width:300px}
+.msel .selbox{height:40px;border:1px solid #e1e1e4;border-radius:8px;background:#fff;padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--text-3);cursor:pointer;user-select:none}
+.msel .selbox:hover,.msel .selbox[aria-expanded="true"]{border-color:var(--line-strong)}
+.msel .selbox .arr{color:var(--text);font-size:10px}
+.msel .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;max-width:640px}
+.msel .chips:empty{display:none}
+.msel .chip{display:inline-flex;align-items:center;gap:4px;background:#ececee;color:#333;border-radius:6px;padding:4px 6px 4px 9px;font-size:12px;white-space:nowrap}
+.msel .chip-x{border:0;background:none;color:#7a7a80;font-size:13px;line-height:1;padding:0 2px;cursor:pointer}
+.msel .chip-x:hover{color:var(--text)}
+.msel .panel{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;max-height:240px;overflow-y:auto;background:#fff;border:1px solid #ececee;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.14);padding:6px;display:flex;flex-direction:column;gap:4px}
+.msel .panel[hidden]{display:none}
+.msel .opt{padding:9px 12px;font-size:13px;cursor:pointer;color:#222;border-radius:8px}
 .msel .opt:hover{background:#f6f6f7}
-.msel .opt.all{border-bottom:1px solid var(--line);border-radius:6px 6px 0 0;margin-bottom:2px}
-.msel .opt .lv{color:var(--text-3);font-size:11px}
+.msel .opt.on{background:#ececee}
 
 .notice{display:flex;align-items:center;gap:6px;margin:20px 0 0;font-size:12px;color:var(--text-2)}
 .notice svg{width:14px;height:14px;color:var(--text-3)}
@@ -257,10 +264,13 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
                 <select id="sel-contract" class="select num"></select>
               </div>
               <div class="field">
-                <span class="flabel sr" id="lbl-company">회사 선택 <span class="pid" title="ARC-CONTRACT-02 조회 범위: 회사 계층 조회 범위 공통 정책. 직인 등록 권한 아님">ARC-CONTRACT-02</span></span>
+                <span class="flabel sr" id="lbl-company">회사검색<span class="pid" title="ARC-CONTRACT-02 조회 범위: 회사 계층 조회 범위 공통 정책. 직인 등록 권한 아님">ARC-CONTRACT-02</span></span>
                 <div class="msel" id="msel">
-                  <button type="button" class="select" id="btn-company" aria-haspopup="true" aria-expanded="false" aria-labelledby="lbl-company btn-company"><span class="ph">회사 선택</span></button>
-                  <div class="panel" id="company-panel" hidden></div>
+                  <div class="selwrap">
+                    <div class="selbox" id="btn-company" role="button" tabindex="0" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl-company"><span>회사검색</span><span class="arr" aria-hidden="true">▼</span></div>
+                    <div class="panel" id="company-panel" role="listbox" aria-labelledby="lbl-company" hidden></div>
+                  </div>
+                  <div class="chips" id="company-chips" aria-label="선택한 회사"></div>
                 </div>
               </div>
             </div>
@@ -496,30 +506,41 @@ function renderSearch(){
   renderCompanyPanel();
 }
 function renderCompanyPanel(){
+  /* EDMS 공통 회사검색: 상자를 누르면 목록, 고른 회사는 상자 아래 칩으로 쌓임(×로 빼기), 고른 항목은 목록에서 회색 배경(다시 누르면 풀림).
+     하위회사는 "계열사 - 하위회사"로 표시 */
   var ids=scopeIds().slice().sort(byName);
-  var allOn = ids.length && ids.every(function(id){return pending.companies[id];});
-  var h='<label class="opt all"><input type="checkbox" id="co-all"'+(allOn?' checked':'')+'> 전체</label>';
-  ids.forEach(function(id){
-    var c=COMPANIES[id], lv = c.parent ? (COMPANIES[c.parent].parent ? '하위회사' : '계열사') : '그룹사';
-    h+='<label class="opt"><input type="checkbox" id="co-'+id+'" data-co="'+id+'"'+(pending.companies[id]?' checked':'')+'> '+esc(c.name)+' <span class="lv">'+lv+'</span></label>';
-  });
-  $('company-panel').innerHTML=h;
+  $('company-panel').innerHTML = ids.map(function(id){
+    var on=!!pending.companies[id];
+    return '<div class="opt'+(on?' on':'')+'" role="option" aria-selected="'+on+'" data-co="'+id+'">'+esc(coLabel(id))+'</div>';
+  }).join('');
   var picked=ids.filter(function(id){return pending.companies[id];});
-  $('btn-company').innerHTML = picked.length
-    ? '<span>'+esc(COMPANIES[picked[0]].name)+(picked.length>1?' 외 '+(picked.length-1)+'개':'')+'</span>'
-    : '<span class="ph">회사 선택</span>';
+  $('company-chips').innerHTML = picked.map(function(id){ var n=esc(coLabel(id)); return '<span class="chip">'+n+'<button type="button" class="chip-x" data-x="'+id+'" aria-label="'+n+' 빼기">×</button></span>'; }).join('');
+}
+function coLabel(id){
+  var c=COMPANIES[id], p=c.parent && COMPANIES[c.parent];
+  return (p && p.parent) ? p.name+' - '+c.name : c.name;
+}
+function toggleCompanyPanel(){
+  var p=$('company-panel'); p.hidden=!p.hidden; $('btn-company').setAttribute('aria-expanded', String(!p.hidden));
 }
 $('sel-contract').addEventListener('change',function(){pending.contract=this.value;});
 $('btn-company').addEventListener('click',function(e){
   e.stopPropagation();
-  var p=$('company-panel'); p.hidden=!p.hidden; this.setAttribute('aria-expanded', String(!p.hidden));
+  toggleCompanyPanel();
 });
-$('company-panel').addEventListener('change',function(e){
-  var t=e.target;
-  if(t.id==='co-all'){ scopeIds().forEach(function(id){ if(t.checked) pending.companies[id]=true; else delete pending.companies[id]; }); }
-  else if(t.dataset.co){ if(t.checked) pending.companies[t.dataset.co]=true; else delete pending.companies[t.dataset.co]; }
+$('company-chips').addEventListener('click',function(e){
+  e.stopPropagation();
+  var x=e.target.closest('.chip-x'); if(!x) return;
+  delete pending.companies[x.dataset.x]; renderCompanyPanel();
+});
+$('btn-company').addEventListener('keydown',function(e){
+  if((e.key==='Enter'||e.key===' ') && e.target===this){ e.preventDefault(); toggleCompanyPanel(); }
+});
+$('company-panel').addEventListener('click',function(e){
+  e.stopPropagation();
+  var o=e.target.closest('.opt'); if(!o) return;
+  if(pending.companies[o.dataset.co]) delete pending.companies[o.dataset.co]; else pending.companies[o.dataset.co]=true;
   renderCompanyPanel();
-  var again = t.id==='co-all' ? $('co-all') : $('co-'+t.dataset.co); if(again) again.focus();
 });
 document.addEventListener('click',function(e){
   if(!e.target.closest('#msel')){ $('company-panel').hidden=true; $('btn-company').setAttribute('aria-expanded','false'); }
