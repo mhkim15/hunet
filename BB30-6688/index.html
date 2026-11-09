@@ -172,10 +172,12 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
 .mco{font-size:14px;font-weight:700;padding:12px 14px;background:var(--search-bg);border-radius:8px;margin-bottom:16px;word-break:keep-all;overflow-wrap:anywhere}
 .msec{margin-bottom:16px}
 .msec .mlabel{font-size:12.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center}
-.sealbox{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:8px;padding:12px}
-.sealbox .imgwrap{width:84px;height:84px;border:1px dashed var(--line-strong);border-radius:6px;display:flex;align-items:center;justify-content:center;background:#fff;flex:none}
-.sealbox .imgwrap img{max-width:100%;max-height:100%;object-fit:contain}
-.sealbox .meta{flex:1;font-size:12px;color:var(--text-2);word-break:break-all}
+.sealbox{display:flex;flex-direction:column;align-items:flex-start;width:120px}
+.sealbox .imgwrap{position:relative;width:120px;height:120px;border:1px solid var(--line);border-radius:50%;display:flex;align-items:center;justify-content:center;background:repeating-conic-gradient(#f3f3f3 0 25%,#fff 0 50%) 0 0/12px 12px;overflow:visible}
+.sealbox .imgwrap img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.sealbox .plus{position:absolute;right:0;bottom:0;width:32px;height:32px;border-radius:50%;border:1px solid var(--line-strong);background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;cursor:pointer;color:var(--text)}
+.sealbox .plus:focus-visible{outline:2px solid #111;outline-offset:2px}
+.sealbox .del{margin-top:12px;align-self:center;background:none;border:0;padding:4px 8px;font-size:12px;color:var(--text-2);text-decoration:underline;cursor:pointer}
 .filerow{display:flex;gap:8px;align-items:center}
 .filerow .fname{flex:1;height:34px;border:1px solid var(--line-strong);border-radius:6px;padding:0 10px;display:flex;align-items:center;color:var(--text-3);font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .filerow .fname.has{color:var(--text)}
@@ -280,10 +282,9 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
             </div>
           </div>
 
-          
 
           <div class="listbar">
-            <div class="count"><span class="basis">[재직 회원 기준]</span>검색결과 <b class="num" id="result-count">0</b>건<span class="tbd" title="프론트 3: 다시 조회하면 체크가 풀린다">회의에서 정할 것</span></div>
+            <div class="count">검색결과 <b class="num" id="result-count">0</b>건<span class="tbd" title="프론트 3: 다시 조회하면 체크가 풀린다">회의에서 정할 것</span></div>
             <div><span class="pid" title="ARC-CONTRACT-05 일괄 다운로드: 파일 다운로드에 등록해 만든다 · 회사마다 새 페이지 · 상한 없음 · 파일명 Hunet_위탁계약서_YYYYMMDD_HHMM.doc">ARC-CONTRACT-05</span>
               <button type="button" class="btn" id="btn-bulk">일괄 위탁계약서 다운로드</button></div>
           </div>
@@ -576,6 +577,7 @@ function renderTable(){
   });
   $('tbody').innerHTML=h;
   syncChecks();
+
 }
 function syncChecks(){
   var n=rows.filter(function(id){return checked[id];}).length, all=$('chk-all');
@@ -593,6 +595,7 @@ $('tbody').addEventListener('change',function(e){
   if(e.target.checked) checked[id]=true; else delete checked[id];
   syncChecks();
 });
+
 $('tbody').addEventListener('click',function(e){
   var b=e.target.closest('[data-seal]'); if(b) openSealModal(b.dataset.seal, b);
 });
@@ -646,48 +649,52 @@ function toast(msg){
 /* ===== 직인 등록 모달 ===== */
 var MAX_BYTES = 100*1024*1024;
 function openSealModal(id, opener){
-  var co=COMPANIES[id], chosen=null;
+  /* 3.0 커넥트 채널정보 썸네일과 같은 방식: [추가]/[변경] → 파일 탐색기, [삭제]는 알럿 없이, [저장] 때 반영 */
+  var co=COMPANIES[id], draft=seals[id]?{src:seals[id].src,name:seals[id].name}:null, changed=false;
   var ov=document.createElement('div'); ov.className='overlay';
   var m=document.createElement('div'); m.className='modal'; m.setAttribute('role','dialog'); m.setAttribute('aria-modal','true'); m.setAttribute('aria-labelledby','seal-title');
   ov.appendChild(m); layer.appendChild(ov);
   function close(){ ov.remove(); if(opener && document.body.contains(opener)) opener.focus(); }
+  function zoom(){
+    var z=document.createElement('div'); z.className='overlay'; z.style.zIndex=60;
+    z.innerHTML='<div class="modal" role="dialog" aria-modal="true" aria-label="직인 크게 보기" style="width:auto;padding:16px;text-align:center"><img src="'+draft.src+'" alt="직인 크게 보기" style="max-width:420px;max-height:420px;display:block;margin:0 auto 12px;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/16px 16px"><button type="button" class="btn lg">닫기</button></div>';
+    layer.appendChild(z); var bt=z.querySelector('button'); bt.onclick=function(){z.remove();}; bt.focus();
+  }
   function render(){
-    var cur=seals[id];
     m.innerHTML =
       '<header><h2 id="seal-title">직인 등록 <span class="pid" title="ARC-CONTRACT-06: 회사마다 1개 · 로그인 계정이 속한 회사 것만 등록/교체/삭제 · 그룹사도 계열사 직인은 다루지 않음 · 동시 등록은 나중 저장이 남음">ARC-CONTRACT-06</span></h2><button type="button" class="xbtn" id="seal-x" aria-label="닫기">✕</button></header>'
       +'<div class="mbody">'
       +'<div class="mco">'+esc(co.name)+'</div>'
-      +(cur ? '<div class="msec"><div class="mlabel">등록된 직인</div><div class="sealbox"><div class="imgwrap"><img src="'+cur.src+'" alt="'+esc(co.name)+' 등록된 직인"></div><div class="meta">'+esc(cur.name)+'</div><button type="button" class="btn sm" id="seal-del">삭제</button></div></div>' : '')
-      +'<div class="msec"><div class="mlabel">'+(cur?'새 직인 파일':'직인 파일')+'<span class="tbd" title="프론트 1: 파일을 안 고르면 [등록] 비활성. 고른 파일은 모달에 미리 보여 줌">회의에서 정할 것</span></div>'
-      +'<div class="filerow"><span class="fname'+(chosen?' has':'')+'" id="seal-fname">'+(chosen?esc(chosen.name):'선택된 파일 없음')+'</span>'
-      +'<label class="btn" for="seal-file" tabindex="0" id="seal-pick">파일 선택</label><input type="file" id="seal-file" class="vh" accept=".png,image/png"></div>'
-      +'<div class="guide">100MB 이하, png 파일만 업로드 가능합니다.</div>'
-      +(chosen ? '<div class="sealbox" style="margin-top:10px"><div class="imgwrap"><img src="'+chosen.src+'" alt="선택한 직인 미리보기"></div><div class="meta">미리보기 · '+esc(chosen.name)+' ('+(chosen.size/1024).toFixed(1)+'KB)</div></div>' : '')
-      +'</div></div>'
-      +'<footer><button type="button" class="btn lg" id="seal-cancel">취소</button><button type="button" class="btn lg dark" id="seal-save"'+(chosen?'':' disabled')+'>등록</button></footer>';
+      +'<div class="msec"><div class="mlabel">직인 이미지</div><div class="sealbox">'
+      +'<div class="imgwrap">'+(draft?'<img src="'+draft.src+'" alt="'+esc(co.name)+' 직인 (누르면 크게 보기)" id="seal-img" style="cursor:zoom-in">':'<span style="font-size:12px;color:var(--text-3)">등록된 직인 없음</span>')
+      +'<label class="plus" for="seal-file" tabindex="0" id="seal-pick" role="button" aria-label="'+(draft?'직인 변경':'직인 추가')+'" title="'+(draft?'직인 변경':'직인 추가')+'">+</label></div>'
+      +'<input type="file" id="seal-file" class="vh" accept=".png,image/png">'
+      +(draft?'<button type="button" class="del" id="seal-del">직인 삭제</button>':'')
+      +'</div>'
+      +'<div class="guide">100MB 이하, png 파일만 업로드 가능합니다.<br>배경이 투명한 PNG를 권장합니다.</div></div>'
+      +'</div>'
+      +'<footer><button type="button" class="btn lg" id="seal-cancel">취소</button><button type="button" class="btn lg dark" id="seal-save">저장</button></footer>';
     m.querySelector('#seal-x').onclick=close;
     m.querySelector('#seal-cancel').onclick=close;
+    var img=m.querySelector('#seal-img'); if(img) img.onclick=zoom;
     m.querySelector('#seal-pick').addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault(); m.querySelector('#seal-file').click();} });
     m.querySelector('#seal-file').addEventListener('change',function(){
       var f=this.files && this.files[0]; this.value='';
       if(!f) return;
       var isPng = f.type==='image/png' || /\.png$/i.test(f.name);
-      if(!isPng){ alertBox('지원하지 않는 파일 형식입니다.'); return; }
+      if(!isPng){ alertBox('허용되지 않은 파일 형식입니다.'); return; }
       if(f.size>MAX_BYTES){ alertBox('파일 용량이 초과 되어 업로드 할 수 없습니다.'); return; }
       var r=new FileReader();
-      r.onload=function(){ chosen={name:f.name, size:f.size, src:r.result}; render(); m.querySelector('#seal-save').focus(); };
+      r.onload=function(){ draft={name:f.name, src:r.result}; changed=true; render(); m.querySelector('#seal-save').focus(); };
       r.readAsDataURL(f);
     });
-    m.querySelector('#seal-save').onclick=function(){
-      if(!chosen) return;
-      seals[id]={src:chosen.src, name:chosen.name};
-      close(); query(); toast('직인이 등록되었습니다 (목록 다시 조회)');
-    };
     var del=m.querySelector('#seal-del');
-    if(del) del.onclick=function(){
-      dialog({message:'등록된 직인을 삭제하시겠습니까?', buttons:[{label:'취소',value:false},{label:'확인',value:true,primary:true}]}).then(function(ok){
+    if(del) del.onclick=function(){ draft=null; changed=true; render(); m.querySelector('#seal-pick').focus(); };
+    m.querySelector('#seal-save').onclick=function(){
+      dialog({message:'직인을 저장하시겠습니까?', buttons:[{label:'취소',value:false},{label:'확인',value:true,primary:true}]}).then(function(ok){
         if(!ok) return;
-        delete seals[id]; close(); query(); toast('직인이 삭제되었습니다 (목록 다시 조회)');
+        if(changed){ if(draft) seals[id]={src:draft.src,name:draft.name}; else delete seals[id]; }
+        close(); query(); toast('저장되었습니다 (목록 다시 조회)');
       });
     };
   }
