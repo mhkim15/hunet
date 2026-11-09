@@ -181,6 +181,11 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
 .filerow{display:flex;gap:8px;align-items:center}
 .filerow .fname{flex:1;height:34px;border:1px solid var(--line-strong);border-radius:6px;padding:0 10px;display:flex;align-items:center;color:var(--text-3);font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .filerow .fname.has{color:var(--text)}
+.psize{height:32px;border:1px solid var(--line-strong);border-radius:6px;padding:0 8px;font-size:12.5px;margin-right:8px;background:#fff}
+.pager{display:flex;justify-content:center;gap:4px;margin-top:16px}
+.pager .pg{min-width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:#fff;font-size:13px;cursor:pointer}
+.pager .pg.on{background:#111;color:#fff;border-color:#111}
+.pager .pg:disabled{opacity:.35;cursor:default}
 .guide{font-size:11.5px;color:var(--text-3);margin-top:6px}
 .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
@@ -285,7 +290,8 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
 
           <div class="listbar">
             <div class="count">검색결과 <b class="num" id="result-count">0</b>건<span class="tbd" title="프론트 3: 다시 조회하면 체크가 풀린다">회의에서 정할 것</span></div>
-            <div><span class="pid" title="ARC-CONTRACT-05 일괄 다운로드: 파일 다운로드에 등록해 만든다 · 회사마다 새 페이지 · 상한 없음 · 파일명 Hunet_위탁계약서_YYYYMMDD_HHMM.doc">ARC-CONTRACT-05</span>
+            <div><select id="page-size" class="psize" aria-label="페이지당 노출 수" title="EDMS 공통 페이징: 30/50/100/200, 기본 50. 바꾸면 1페이지로 다시 조회, 체크 해제. 전체 건수가 N개 이하면 페이지 번호 미노출"><option value="30">30개씩 보기</option><option value="50" selected>50개씩 보기</option><option value="100">100개씩 보기</option><option value="200">200개씩 보기</option></select>
+              <span class="pid" title="ARC-CONTRACT-05 일괄 다운로드: 파일 다운로드에 등록해 만든다 · 회사마다 새 페이지 · 상한 없음 · 파일명 Hunet_위탁계약서_YYYYMMDD_HHMM.doc">ARC-CONTRACT-05</span>
               <button type="button" class="btn" id="btn-bulk">일괄 위탁계약서 다운로드</button></div>
           </div>
           <table class="grid" aria-describedby="result-count">
@@ -300,6 +306,7 @@ table.grid input[type=checkbox]{width:16px;height:16px;accent-color:#1b1b1d;curs
             </tr></thead>
             <tbody id="tbody"></tbody>
           </table>
+          <div class="pager" id="pager" hidden></div>
         </div>
       </section>
 
@@ -431,7 +438,7 @@ function defaultContractId(){
 }
 
 /* ===== 상태 ===== */
-var account='grp', pending, applied, rows=[], checked={}, requests=[], reqSeq=0, view='list';
+var account='grp', pending, applied, rows=[], pageRows=[], page=1, pageSize=50, checked={}, requests=[], reqSeq=0, view='list';
 
 function freshCond(){return {contract:defaultContractId(), companies:{}};}
 function cloneCond(c){var o={contract:c.contract, companies:{}}; Object.keys(c.companies).forEach(function(k){o.companies[k]=true;}); return o;}
@@ -557,15 +564,18 @@ function query(){
     if(picked.length && !applied.companies[id]) return false;
     return st[id] && st[id].targets>=1;
   }).sort(byName);
+  page=1;
   renderTable();
 }
 function renderTable(){
   var c=contractById(applied.contract), st=STATS[applied.contract]||{}, me=ACCOUNTS[account].company;
   $('result-count').textContent=rows.length;
+  var pages=Math.max(1,Math.ceil(rows.length/pageSize)); if(page>pages) page=pages;
+  pageRows=rows.slice((page-1)*pageSize, page*pageSize);
   var h='';
   if(!rows.length){
     h='<tr><td colspan="6" class="empty">현재 조회된 데이터가 없습니다.</td></tr>';
-  } else rows.forEach(function(id){
+  } else pageRows.forEach(function(id){
     var co=COMPANIES[id], n=st[id].active, has=!!seals[id];
     var btn = (id===me) ? '<button type="button" class="btn sm" data-seal="'+id+'">'+(has?'변경':'등록')+'</button>' : '';
     h+='<tr><td><input type="checkbox" id="chk-'+id+'" data-chk="'+id+'" aria-label="'+esc(co.name)+' 선택"'+(checked[id]?' checked':'')+'></td>'
@@ -576,19 +586,29 @@ function renderTable(){
       +'<td><span class="yn"><b>'+(has?'Y':'N')+'</b>'+btn+'</span></td></tr>';
   });
   $('tbody').innerHTML=h;
+  renderPager(pages);
   syncChecks();
 
 }
+function renderPager(pages){
+  var pg=$('pager');
+  if(rows.length<=pageSize){ pg.hidden=true; pg.innerHTML=''; return; }
+  pg.hidden=false;
+  var start=Math.max(1,Math.min(page-2,pages-4)), end=Math.min(pages,start+4), h='<button type="button" class="pg" data-pg="'+(page-1)+'" aria-label="이전 페이지"'+(page===1?' disabled':'')+'>＜</button>';
+  for(var i=start;i<=end;i++) h+='<button type="button" class="pg'+(i===page?' on':'')+'" data-pg="'+i+'"'+(i===page?' aria-current="page"':'')+'>'+i+'</button>';
+  h+='<button type="button" class="pg" data-pg="'+(page+1)+'" aria-label="다음 페이지"'+(page===pages?' disabled':'')+'>＞</button>';
+  pg.innerHTML=h;
+}
 function syncChecks(){
-  var n=rows.filter(function(id){return checked[id];}).length, all=$('chk-all');
-  all.disabled=!rows.length;
-  all.checked = rows.length>0 && n===rows.length;
-  all.indeterminate = n>0 && n<rows.length;
+  var n=pageRows.filter(function(id){return checked[id];}).length, all=$('chk-all');
+  all.disabled=!pageRows.length;
+  all.checked = pageRows.length>0 && n===pageRows.length;
+  all.indeterminate = n>0 && n<pageRows.length;
   $('btn-bulk').disabled = !rows.length;
 }
 $('chk-all').addEventListener('change',function(){
-  var on=this.checked; checked={}; if(on) rows.forEach(function(id){checked[id]=true;});
-  rows.forEach(function(id){ $('chk-'+id).checked=on; }); syncChecks();
+  var on=this.checked; checked={}; if(on) pageRows.forEach(function(id){checked[id]=true;});
+  pageRows.forEach(function(id){ $('chk-'+id).checked=on; }); syncChecks();
 });
 $('tbody').addEventListener('change',function(e){
   var id=e.target.dataset.chk; if(!id) return;
@@ -702,6 +722,10 @@ function openSealModal(id, opener){
   trapKeys(m, close);
   m.querySelector('#seal-x').focus();
 }
+
+/* ===== 페이징 (EDMS 공통) ===== */
+$('page-size').addEventListener('change',function(){ pageSize=+this.value; page=1; checked={}; renderTable(); });
+$('pager').addEventListener('click',function(e){ var b=e.target.closest('[data-pg]'); if(!b||b.disabled) return; page=+b.getAttribute('data-pg'); checked={}; renderTable(); $('tbody').closest('table').scrollIntoView({block:'start'}); });
 
 /* ===== 일괄 다운로드 ===== */
 $('btn-bulk').addEventListener('click',function(){
